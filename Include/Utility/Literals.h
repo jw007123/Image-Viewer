@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 typedef double                 f64;
 typedef float                  f32;
 typedef int                    i16;

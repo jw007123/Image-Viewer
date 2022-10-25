@@ -1,5 +1,5 @@
 # CMake setup
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 
 # Project setup
 project(ImageViewer VERSION 1.0)
@@ -16,9 +16,7 @@ include_directories("External/eigen")
 include_directories("External/stb")
 include_directories("External/imgui")
 include_directories("External/implot")
-
-# Build and add GL3W headers
-add_subdirectory(External/gl3w)
+include_directories("External/gl3w/include")
 
 # Build and link GLFW
 
