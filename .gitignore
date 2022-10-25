@@ -1,7 +1,6 @@
 # MSVS
 .vs/
-External/eigen/
-External/stb/
+External/
 Build/
 
 # Prerequisites
