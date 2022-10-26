@@ -43,8 +43,16 @@ endif()
 find_package(OpenGL REQUIRED)
 target_link_libraries(ImageViewer OpenGL::GL)
 
+# Setup ImGui and ImPlot
+if (EXISTS "../External/imgui")
+    file(GLOB SOURCES "../External/imgui/*.cpp")
+    file(GLOB SOURCES "../External/imgui/backends/*.cpp")
 
-
-
-
-
+    if (EXISTS "../External/implot")
+        file (GLOB SOURCES "../External/implot/*.cpp")
+    else()
+        message(FATAL_ERROR "implot not setup!")
+    endif()
+else()
+    message(FATAL_ERROR "imgui not setup!")
+endif()
