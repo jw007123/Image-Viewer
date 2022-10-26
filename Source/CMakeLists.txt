@@ -31,3 +31,20 @@ if (EXISTS "../External/gl3w/src/gl3w.c")
 else()
     message(FATAL_ERROR "gl3w not setup!")
 endif()
+
+# Setup GLFW
+if (EXISTS "../External/glfw")
+    target_link_libraries(ImageViewer glfw)
+else()
+    message(FATAL_ERROR "glfw not setup!")
+endif()
+
+# Setup OpenGL
+find_package(OpenGL REQUIRED)
+target_link_libraries(ImageViewer OpenGL::GL)
+
+
+
+
+
+

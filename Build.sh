@@ -1,5 +1,8 @@
 #!/bin/sh
 
+sudo apt-get update -y
+sudo apt-get install freeglut3-dev libxinerama-dev libxcursor-dev libxi-dev libxrandr2 -y
+
 if [ ! -d "External/eigen" ]
 then
     git clone https://gitlab.com/libeigen/eigen.git External/eigen
@@ -33,9 +36,6 @@ fi
 if [ ! -d "External/glfw" ]
 then
     git clone https://github.com/glfw/glfw.git External/glfw
-
-
-
 fi
 
 if [ ! -d "Build" ]
