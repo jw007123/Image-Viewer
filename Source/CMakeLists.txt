@@ -21,38 +21,26 @@ if (EXISTS "../Resources")
     file(COPY "../Resources" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
-# Setup required .c files from gl3w
-if (EXISTS "../External/gl3w/src/gl3w.c")
-    target_sources(ImageViewer PUBLIC "../External/gl3w/src/gl3w.c")
+# Setup Externals
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../External DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+	target_sources(ImageViewer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../External/gl3w/src/gl3w.c)
 
     if (UNIX)
         target_link_libraries(ImageViewer dl)
     endif()
-else()
-    message(FATAL_ERROR "gl3w not setup!")
-endif()
 
-# Setup GLFW
-if (EXISTS "../External/glfw")
     target_link_libraries(ImageViewer glfw)
+
+	# Setup OpenGL
+	find_package(OpenGL REQUIRED)
+	target_link_libraries(ImageViewer OpenGL::GL)
+
+	# Setup ImGui
+	file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/*.cpp)
+    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*.cpp)
+    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/implot/*.cpp)
 else()
-    message(FATAL_ERROR "glfw not setup!")
-endif()
-
-# Setup OpenGL
-find_package(OpenGL REQUIRED)
-target_link_libraries(ImageViewer OpenGL::GL)
-
-# Setup ImGui and ImPlot
-if (EXISTS "../External/imgui")
-    file(GLOB SOURCES "../External/imgui/*.cpp")
-    file(GLOB SOURCES "../External/imgui/backends/*.cpp")
-
-    if (EXISTS "../External/implot")
-        file (GLOB SOURCES "../External/implot/*.cpp")
-    else()
-        message(FATAL_ERROR "implot not setup!")
-    endif()
-else()
-    message(FATAL_ERROR "imgui not setup!")
+	message(FATAL_ERROR "SetupExternals not called!")
 endif()
