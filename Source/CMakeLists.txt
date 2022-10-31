@@ -1,6 +1,3 @@
-# Define target
-add_executable(ImageViewer "Main.cpp")
-
 # OpenMP for Eigen
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -21,26 +18,39 @@ if (EXISTS "../Resources")
     file(COPY "../Resources" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
+# Add any other source files to target
+file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/GUI/*.cpp)
+file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Rendering/*.cpp)
+file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Algorithms/*.cpp) 
+
 # Setup Externals
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../External DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+    # Add any sources and define target
+    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/*.cpp
+                      ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*glfw.cpp
+                      ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*opengl3.cpp
+                      ${CMAKE_CURRENT_SOURCE_DIR}/../External/implot/*.cpp
+                      ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp)
+    add_executable(ImageViewer ${SOURCES})
+
+    # Target the pre-built gl3w .c
 	target_sources(ImageViewer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../External/gl3w/src/gl3w.c)
 
+    # Required lib for glfw on Unix
     if (UNIX)
         target_link_libraries(ImageViewer dl)
     endif()
 
+    # Link against glfw
     target_link_libraries(ImageViewer glfw)
 
 	# Setup OpenGL
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(ImageViewer OpenGL::GL)
-
-	# Setup ImGui
-	file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/*.cpp)
-    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*.cpp)
-    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/implot/*.cpp)
 else()
 	message(FATAL_ERROR "SetupExternals not called!")
 endif()
+
+message(${SOURCES})
