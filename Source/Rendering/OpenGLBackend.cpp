@@ -59,4 +59,42 @@ namespace Rendering
 
 		ImGui::DestroyContext(imguiContext);
 	}
+
+
+	bool OpenGLBackend::IsRunning()
+	{
+		return !glfwWindowShouldClose(glWindow);
+	}
+
+	void OpenGLBackend::StartFrame()
+	{
+		// Read user IO
+		glfwPollEvents();
+
+		// Clear frame
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Start ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+	}
+
+
+	void OpenGLBackend::EndFrame()
+	{
+		// Set VP size
+		i16 width  = 0;
+		i16 height = 0;
+		glfwGetFramebufferSize(glWindow, &width, &height);
+		glViewport(0, 0, width, height);
+
+		// Render ImGui
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Display back buffer to user
+		glfwSwapBuffers(glWindow);
+	}
 }

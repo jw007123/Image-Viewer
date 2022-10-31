@@ -20,6 +20,12 @@ namespace Rendering
 		OpenGLBackend();
 		~OpenGLBackend();
 
+		/// Is true for as long as the window is open
+		bool IsRunning();
+
+		void StartFrame();
+		void EndFrame();
+
 	private:
 		GLFWwindow* glWindow;
 

@@ -11,7 +11,7 @@ namespace Utility
 		va_start(args, str_);
 
 		vsnprintf(buff, buffSize, str_, args);
-		printf("%s: %s", LogStrings[logFlag_], buff);
+		printf("%s: %s\n", LogStrings[logFlag_], buff);
 
 		va_end(args);
 	}
