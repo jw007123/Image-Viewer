@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Utility/Literals.h"
+#include "Utility/Log.h"
 
 #include <GL/gl3w.h>       
 #include <GLFW/glfw3.h>

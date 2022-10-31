@@ -2,8 +2,11 @@
 
 #include "Utility/Literals.h"
 
-struct MemoryBlock
+namespace Utility
 {
-	usize size;
-	void* ptr;
-};
+	struct MemoryBlock
+	{
+		usize size;
+		void* ptr;
+	};
+}
