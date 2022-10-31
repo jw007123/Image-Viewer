@@ -7,7 +7,7 @@
 
 namespace Utility
 {
-	static enum LogFlag : u8
+	enum LogFlag : u8
 	{
 		Info  = 0,
 		Warn  = 1,
