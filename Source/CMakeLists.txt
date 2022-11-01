@@ -18,11 +18,6 @@ if (EXISTS "../Resources")
     file(COPY "../Resources" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
-# Add any other source files to target
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/GUI/*.cpp)
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Rendering/*.cpp)
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Algorithms/*.cpp) 
-
 # Setup Externals
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../External DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -52,5 +47,3 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 else()
 	message(FATAL_ERROR "SetupExternals not called!")
 endif()
-
-message(${SOURCES})

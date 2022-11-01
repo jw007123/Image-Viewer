@@ -7,7 +7,7 @@ namespace Rendering
 		// Initialise glfw
 		if (!glfwInit())
 		{
-			Utility::Log(Utility::LogFlag::Error, "Failed to init GLFW!");
+			Utility::Log(Utility::LogFlag::Error, "Failed to init glfw!");
 			assert(0);
 		}
 
@@ -20,7 +20,7 @@ namespace Rendering
 		glWindow = glfwCreateWindow(1280, 720, "ImageViewer", NULL, NULL);
 		if (!glWindow)
 		{
-			Utility::Log(Utility::LogFlag::Error, "Failed to create a GLFW::Window(%zu, %zu) object!", 1280, 720);
+			Utility::Log(Utility::LogFlag::Error, "Failed to create a glfw::Window(%zu, %zu) object!", 1280, 720);
 			assert(0);
 		}
 
