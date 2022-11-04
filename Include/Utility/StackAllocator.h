@@ -27,5 +27,8 @@ namespace Utility
 	private:
 		MemoryBlock buffer;
 		usize		offset;
+
+		static constexpr u8 alignment = sizeof(usize);
+		inline usize AlignAddress(const usize address_) const;
 	};
 }

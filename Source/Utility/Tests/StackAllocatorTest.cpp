@@ -2,7 +2,7 @@
 
 namespace Utility::Test
 {
-	bool StackAllocatorTest::RunTests() const
+	bool StackAllocatorTest::Run() const
 	{
 		std::function<bool()> TestFuncs[Test::Num] =
 		{

@@ -9,7 +9,7 @@ namespace Utility::Test
 	class StackAllocatorTest
 	{
 	public:
-		bool RunTests() const;
+		bool Run() const;
 
 	private:
 		enum Test : u8

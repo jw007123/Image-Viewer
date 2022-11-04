@@ -10,14 +10,12 @@ namespace Utility
 			assert(0);
 		}
 
+		// Setup buffer
 		buffer = MemoryBlock(allocSize_, malloc(allocSize_));
-		if (buffer.ptr == nullptr)
-		{
-			Log(LogFlag::Error, "malloc() error in StackAllocator()!");
-			assert(0);
-		}
-
-		offset = 0;
+		
+		// Determine aligned buffer and offset by amount
+		const usize alignedBuffer = AlignAddress((usize)buffer.ptr);
+		offset					  = (alignedBuffer - (usize)buffer.ptr);
 	}
 
 
@@ -31,16 +29,24 @@ namespace Utility
 	MemoryBlock StackAllocator::Allocate(const usize size_)
 	{
 		// Check that we have space available
-		if ((offset + size_) > buffer.size)
+		if ((offset + (alignment + size_)) > buffer.size)
 		{
-			
-			Log(LogFlag::Error, "StackAllocator::Allocate() %zu bytes requested, but only %zu available!", size_, (buffer.size - offset));
+			Log(LogFlag::Error, "StackAllocator::Allocate() %zu bytes requested, but only %zu available!", (alignment + size_), (buffer.size - offset));
 			assert(0);
 		}
 
+		// Align the buffer
+		const usize currentBuffer	  = (usize)buffer.ptr + offset;
+		const usize alignedBuffer	  = AlignAddress(currentBuffer);
+		offset						 += (alignedBuffer - currentBuffer);
+
 		// Create block and add size_ to offset
 		const MemoryBlock retBlk = MemoryBlock(size_, (void*)((char*)buffer.ptr + offset));
-		offset += size_;
+		offset					+= size_;
+
+		// Store alignment 
+		*((char*)buffer.ptr + offset) = (alignedBuffer - currentBuffer);
+		offset						 += 1;
 
 		return retBlk;
 	}
@@ -48,58 +54,29 @@ namespace Utility
 
 	MemoryBlock StackAllocator::Reallocate(MemoryBlock& oldBlock_, const usize newSize_)
 	{
-		// oldBlock_ must be last allocation. Perform check to make sure that this is the case
-		const usize lookAtPos = (offset >= oldBlock_.size) ? (offset - oldBlock_.size) : -1;
-		if (lookAtPos == -1)
-		{
-			Log(LogFlag::Error, "StackAllocator::Reallocate() called with incorrect original block!");
-			assert(0);
-		}
-
-		// Perform the check
-		void* lastAllocPtr = (void*)((char*)buffer.ptr + lookAtPos);
-		if (lastAllocPtr != oldBlock_.ptr)
-		{
-			Log(LogFlag::Error, "StackAllocator::Reallocate() called with incorrect original block!");
-			assert(0);
-		}
-
-		// Check we have the bytes available and resize the offset
-		if ((lookAtPos + newSize_) > buffer.size)
-		{
-			Log(LogFlag::Error, "StackAllocator::Reallocate() %zu bytes required, but only %zu available!", newSize_, (buffer.size - lookAtPos));
-			assert(0);
-		}
-
-		// Can now resize allocation
-		offset = lookAtPos + newSize_;
-
-		// Return new block and set old to null
-		oldBlock_ = MemoryBlock();
-		return MemoryBlock(newSize_, lastAllocPtr);
+		// Set oldBlock empty and return the new one
+		Free(oldBlock_);
+		return Allocate(newSize_);
 	}
 
 
 	void StackAllocator::Free(MemoryBlock& block_)
 	{
-		// block_ must be last allocation. Perform check to make sure that this is the case
-		const usize lookAtPos = (offset >= block_.size) ? (offset - block_.size) : -1;
-		if (lookAtPos == -1)
-		{
-			Log(LogFlag::Error, "StackAllocator::Free() called with incorrect original block!");
-			assert(0);
-		}
+		// Recover alignment size
+		offset				  -= 1;
+		const u8 alignmentSize = *((char*)buffer.ptr + offset);
 
-		// Perform the check
-		void* lastAllocPtr = (void*)((char*)buffer.ptr + lookAtPos);
-		if (lastAllocPtr != block_.ptr)
-		{
-			Log(LogFlag::Error, "StackAllocator::Free() called with incorrect original block!");
-			assert(0);
-		}
+		// Reduce offset by block size and alignment size
+		offset -= (block_.size + alignmentSize);
 
-		// All OK. Simply reduce offset by block_.size
-		offset -= block_.size;
-		block_  = MemoryBlock();
+		block_ = MemoryBlock();
+	}
+
+
+	inline usize StackAllocator::AlignAddress(const usize address_) const
+	{
+		// Compiler will optimise to the usual
+		const usize pad = (alignment - (address_ % alignment)) % alignment;
+		return address_ + pad;
 	}
 }
