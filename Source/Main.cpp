@@ -3,6 +3,7 @@
 #include "Utility/MemoryBlock.cpp"
 #include "Utility/Log.cpp"
 #include "Utility/StackAllocator.cpp"
+#include "Utility/HeapAllocator.cpp"
 
 #include "Rendering/OpenGLBackend.cpp"
 
