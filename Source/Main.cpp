@@ -7,6 +7,8 @@
 
 #include "Rendering/OpenGLBackend.cpp"
 
+#include "GUI/ViewerUI.cpp"
+
 i16 main()
 {
 	Rendering::OpenGLBackend glBackend;

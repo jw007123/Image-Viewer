@@ -28,7 +28,7 @@ then
     git clone https://github.com/skaslev/gl3w.git External/gl3w
 
     cd External/gl3w
-    cmake .
+    cmake . -DCMAKE_BUILD_TYPE=Release
     make
     cd ../..
 fi
@@ -36,4 +36,12 @@ fi
 if [ ! -d "External/glfw" ]
 then
     git clone https://github.com/glfw/glfw.git External/glfw
+fi
+
+if [! -d "External/nativefiledialog"]
+then
+    git clone https://github.com/mlabbe/nativefiledialog.git External/nativefiledialog
+    cd External/nativefiledialog/build/gmake_linux
+    make config=release_x64
+    cd ../../../..
 fi

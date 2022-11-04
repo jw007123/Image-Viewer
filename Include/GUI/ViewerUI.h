@@ -8,8 +8,6 @@ namespace GUI
 	class ViewerUI
 	{
 	public:
-		ViewerUI();
-		~ViewerUI();
 
 	private:
 

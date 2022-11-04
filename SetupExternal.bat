@@ -21,10 +21,18 @@ if not exist External/gl3w (
 
 	cd External/gl3w
 	cmake .
-	msbuild gl3w.sln
+	msbuild gl3w.sln -p:Configuration=Release
 	cd ../..
 )
 
 if not exist External/glfw (
 	git clone https://github.com/glfw/glfw.git External/glfw
+)
+
+if not exist External/nativefiledialog (
+	git clone https://github.com/mlabbe/nativefiledialog.git External/nativefiledialog
+
+	cd External/nativefiledialog/build/vs2010
+	msbuild NativeFileDialog.sln -p:PlatformToolset=v143 -p:Configuration=Release -p:Platform=x64
+	cd ../../../..
 )

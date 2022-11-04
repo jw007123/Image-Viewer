@@ -44,6 +44,10 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 	# Setup OpenGL
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(ImageViewer OpenGL::GL)
+
+    # Setup nativefiledialog
+    target_link_libraries(ImageViewer nfd)
+
 else()
 	message(FATAL_ERROR "SetupExternals not called!")
 endif()

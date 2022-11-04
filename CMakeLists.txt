@@ -18,6 +18,9 @@ include_directories("External/imgui")
 include_directories("External/implot")
 include_directories("External/gl3w/include")
 include_directories("External/glfw/include")
+include_directories("External/nativefiledialog/src/include")
+
+link_directories("External/nativefiledialog/build/lib/Release/x64")
 
 # Build GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
