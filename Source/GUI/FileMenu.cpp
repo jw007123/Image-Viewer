@@ -50,6 +50,7 @@ namespace GUI
 		if (resultNfd == NFD_OKAY)
 		{
 			memcpy(openFilePath, pathNfd, sizeof(openFilePath));
+			return true;
 		}
 		else if (resultNfd == NFD_CANCEL)
 		{
@@ -61,7 +62,7 @@ namespace GUI
 			assert(0);
 		}
 
-		return (resultNfd == NFD_OKAY);
+		return false;
 	}
 
 
