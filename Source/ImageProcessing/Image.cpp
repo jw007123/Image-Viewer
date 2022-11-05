@@ -30,6 +30,12 @@ namespace ImageProcessing
 	}
 
 
+	bool Image::IsValid() const
+	{
+		return (width != 0) && (height != 0);
+	}
+
+
 	bool Image::Load(const char* filePath_)
 	{
 		// Attempt to load file with stb. Force RGBA with '4'
@@ -79,7 +85,7 @@ namespace ImageProcessing
 	bool Image::Save(const char* savePath_) const
 	{
 		// Determine type of image
-		FileType saveType;
+		FileType saveType = FileType::Num;
 		char typeBuff[32];
 		strcpy(typeBuff, savePath_ + (strlen(savePath_) - 3));
 		for (usize i = 0; i < FileType::Num; ++i)

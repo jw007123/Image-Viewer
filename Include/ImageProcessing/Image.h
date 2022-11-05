@@ -20,6 +20,7 @@ namespace ImageProcessing
 		~Image();
 
 		void Clear();
+		bool IsValid() const;
 
 		bool Load(const char* filePath_);
 		bool Save(const char* savePath_) const;
