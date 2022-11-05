@@ -2,6 +2,13 @@
 
 namespace Utility
 {
+	template <typename T>
+	MemoryBlock HeapAllocator::Allocate(const usize n_)
+	{
+		return Allocate(sizeof(T) * n_);
+	}
+
+
 	MemoryBlock HeapAllocator::Allocate(const usize size_)
 	{
 		if (size_ == 0)
@@ -24,6 +31,13 @@ namespace Utility
 		// Move returned ptr along to align
 		retBlk.ptr = ((char*)retBlk.ptr + alignmentSize);
 		return retBlk;
+	}
+
+
+	template <typename T>
+	MemoryBlock HeapAllocator::Reallocate(MemoryBlock& oldBlock_, const usize newN_)
+	{
+		return Reallocate(oldBlock_, sizeof(T) * newN_);
 	}
 
 

@@ -72,10 +72,30 @@ namespace ImageProcessing
 		// Get new allocation
 		height	  = heightStb;
 		width	  = widthStb;
-		imageData = heapAllocator->Allocate(height * width * compStb);
+		imageData = heapAllocator->Allocate(height * width * 4);
 
-		// Copy to our block and free stb's data
-		memcpy(imageData.ptr, dataStb, height * width * compStb);
+		// Copy to our block
+		if (compStb == 4)
+		{
+			memcpy(imageData.ptr, dataStb, height * width * compStb);
+		}
+		else if (compStb == 3)
+		{
+			u8* imageDataArr = (u8*)imageData.ptr;
+			for (usize i = 0; i < height * width; ++i)
+			{
+				imageDataArr[i * 4 + 0] = dataStb[i * 3 + 0];
+				imageDataArr[i * 4 + 1] = dataStb[i * 3 + 1];
+				imageDataArr[i * 4 + 2] = dataStb[i * 3 + 2];
+				imageDataArr[i * 4 + 3] = 255;
+			}
+		}
+		else
+		{
+			Utility::Log(Utility::LogFlag::Warn, "Unhandled image format with %s!", filePath_);
+		}
+
+		// Free original data
 		stbi_image_free(dataStb);
 
 		return true;
@@ -121,5 +141,23 @@ namespace ImageProcessing
 		}
 		
 		return success;
+	}
+
+
+	Utility::MemoryBlock Image::GetData() const
+	{
+		return imageData;
+	}
+
+
+	usize Image::GetWidth() const
+	{
+		return width;
+	}
+
+
+	usize Image::GetHeight() const
+	{
+		return height;
 	}
 }

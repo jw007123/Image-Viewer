@@ -16,14 +16,26 @@ namespace GUI
 	class MainMenuBar
 	{
 	public:
+		struct Status
+		{
+			enum Flags : u8
+			{
+				NoOp	   = 0,
+				NewTexture = 1
+			} flags;
+
+			Status();
+		};
+
 		MainMenuBar(ImageProcessing::Image* image_);
 
-		void Draw();
+		Status Draw();
 
 	private:
 		ImageProcessing::Image* image;
 		FileMenu				fileMenu;
 
-		void HandleFileMenuStatus(const FileMenu::Status& status_);
+		/// Returns true if 'image' was updated
+		bool HandleFileMenuStatus(const FileMenu::Status& status_);
 	};
 }

@@ -25,6 +25,10 @@ namespace ImageProcessing
 		bool Load(const char* filePath_);
 		bool Save(const char* savePath_) const;
 
+		Utility::MemoryBlock GetData()   const;
+		usize				 GetWidth()  const;
+		usize				 GetHeight() const;
+
 	private:
 		// imageData.size = width * height
 		Utility::MemoryBlock imageData;

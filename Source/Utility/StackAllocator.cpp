@@ -26,6 +26,13 @@ namespace Utility
 	}
 
 
+	template <typename T>
+	MemoryBlock StackAllocator::Allocate(const usize n_)
+	{
+		return Allocate(sizeof(T) * n_);
+	}
+
+
 	MemoryBlock StackAllocator::Allocate(const usize size_)
 	{
 		// Check that we have space available
@@ -49,6 +56,13 @@ namespace Utility
 		offset						 += 1;
 
 		return retBlk;
+	}
+
+
+	template <typename T>
+	MemoryBlock StackAllocator::Reallocate(MemoryBlock& oldBlock_, const usize newN_)
+	{
+		return Reallocate(oldBlock_, sizeof(T) * newN_);
 	}
 
 

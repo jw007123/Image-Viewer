@@ -28,7 +28,7 @@ namespace Rendering
 		Type   GetShaderType() const;
 
 	private:
-		inline static const char* shaderPath = "..\\Resources\\Shaders\\";
+		inline static const char* shaderPath = ".\\Resources\\Shaders\\";
 
 		GLuint glShaderIdx;
 		Type   shaderType;

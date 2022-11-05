@@ -1,7 +1,7 @@
 #version 450 core
 
 layout (location = 0) in vec3 inPoints;
-layout (location = 3) in vec2 aTexCoord;
+layout (location = 1) in vec2 aTexCoord;
 
 out vec2 TexCoord;
 
@@ -11,6 +11,6 @@ uniform mat4 modelToWorld;
 
 void main()
 {
-	gl_Position =  viewToProj * worldToView * modelToWorld * vec4(inPoints, 1.0f);
-	TexCoord	= vec2(aTexCoord.x, aTexCoord.y);
+	gl_Position = viewToProj * worldToView * modelToWorld * vec4(inPoints, 1.0f);
+	TexCoord	= aTexCoord;
 }

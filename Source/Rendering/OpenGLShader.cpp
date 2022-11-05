@@ -8,7 +8,6 @@ namespace Rendering
 		assert(PATH_MAX_LEN > (strlen(fName_) + strlen(shaderPath)));
 		assert(strlen(fName_));
 		assert(strlen(shaderPath));
-		assert(glShaderIdx == GL_INVALID_INDEX);
 
 		char concatPath[PATH_MAX_LEN];
 		sprintf(concatPath, "%s%s.glsl", shaderPath, fName_);

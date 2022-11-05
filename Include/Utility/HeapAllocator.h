@@ -12,9 +12,13 @@ namespace Utility
 	class HeapAllocator
 	{
 	public:
+		template <typename T>
+		MemoryBlock Allocate(const usize n_);
 		MemoryBlock Allocate(const usize size_);
 
 		/// Sets oldBlock_ as empty on return
+		template <typename T>
+		MemoryBlock Reallocate(MemoryBlock& oldBlock_, const usize newN_);
 		MemoryBlock Reallocate(MemoryBlock& oldBlock_, const usize newSize_);
 
 		/// Sets block_ as empty on return

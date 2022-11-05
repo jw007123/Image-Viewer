@@ -16,7 +16,7 @@ namespace Rendering
 		OpenGLProgram(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_);
 		~OpenGLProgram();
 
-		void Use();
+		void Use() const;
 
 		/// Gets a GLuint handle into a uniform variable for the program
 		GLuint GetUniformLoc(const char* glslName_);

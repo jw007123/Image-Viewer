@@ -55,17 +55,18 @@ namespace GUI
 
 	Eigen::Matrix4f Camera::CalculateOrthographicProj(const f32 aspectRatio_) const
 	{
-		const f32 xScale		  = 1.0f / (5.0f * aspectRatio_);
-		const f32 yScale		  = 1.0f / 5.0f;
-		const f32 zScale		  = 2.0f / (nearPlane - farPlane);
-		const f32 orthoCorrection = (farPlane + nearPlane) / (nearPlane - farPlane);
+		f32 range = tanf(3.142 / 4.0f) * nearPlane;
+		f32 xScale = (2.0f * nearPlane) / (2.0f * range * aspectRatio_);
+		f32 yScale = nearPlane / range;
+		f32 zScale = (farPlane + nearPlane) / (nearPlane - farPlane);
+		f32 perpCorrection = (2.0f * farPlane * nearPlane) / (nearPlane - farPlane);
 
 		Eigen::Matrix4f projMat;
 		projMat <<
-			xScale, 0.0f,   0.0f,   0.0f,
-			0.0f,   yScale, 0.0f,   0.0f,
-			0.0f,   0.0f,   zScale, orthoCorrection,
-			0.0f,   0.0f,   0.0f,   1.0f;
+			xScale, 0.0, 0.0, 0.0,
+			0.0, yScale, 0.0, 0.0,
+			0.0, 0.0f, zScale, perpCorrection,
+			0.0, 0.0f, -1.0f, 0.0;
 
 		return projMat;
 	}

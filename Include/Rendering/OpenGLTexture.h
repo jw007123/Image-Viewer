@@ -12,13 +12,15 @@ namespace Rendering
 	class OpenGLTexture
 	{
 	public:
-		OpenGLTexture(const usize width_, const usize height_);
+		OpenGLTexture();
 		~OpenGLTexture();
 
-		void Resize(const usize width_, const usize height_);
+		/// data_ assumed to be RGBA
+		void Update(const u8* data_, const usize width_, const usize height_);
 
-		/// Renders the texture centred at (0, 0, 0) and of size (width, height)
-		void Render();
+		GLuint GetTextureIdx() const;
+		usize  GetWidth() const;
+		usize  GetHeight() const;
 
 	private:
 		GLuint glTextIdx;

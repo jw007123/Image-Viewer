@@ -25,7 +25,7 @@ namespace GUI
 		Eigen::Matrix4f GetViewToProj() const;
 
 	private:
-		static constexpr f32 nearPlane = 0.01f;
+		static constexpr f32 nearPlane = 0.1f;
 		static constexpr f32 farPlane  = 500.0f;
 
 		Eigen::Matrix4f worldToView;

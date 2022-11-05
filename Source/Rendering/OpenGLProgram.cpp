@@ -4,8 +4,6 @@ namespace Rendering
 {
 	OpenGLProgram::OpenGLProgram(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_)
 	{
-		assert(glProgramIdx == GL_INVALID_INDEX);
-
 		glProgramIdx = glCreateProgram();
 
 		glAttachShader(glProgramIdx, vsShader_.GetShaderIdx());
@@ -28,12 +26,11 @@ namespace Rendering
 		if (glProgramIdx != GL_INVALID_INDEX)
 		{
 			glDeleteProgram(glProgramIdx);
-			glUniformLocMap.clear();
 		}
 	}
 
 
-	void OpenGLProgram::Use()
+	void OpenGLProgram::Use() const
 	{
 		assert(glProgramIdx != GL_INVALID_INDEX);
 		glUseProgram(glProgramIdx);

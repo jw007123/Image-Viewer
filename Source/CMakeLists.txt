@@ -14,8 +14,10 @@ if (UNIX)
 endif (UNIX)
 
 # Copy any resources
-if (EXISTS "../Resources")
-    file(COPY "../Resources" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Resources")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../Resources" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
+    message(FATAL_ERROR "No resources found!")
 endif()
 
 # Setup Externals

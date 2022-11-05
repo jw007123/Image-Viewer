@@ -14,30 +14,43 @@
 #include "GUI/FileMenu.cpp"
 #include "GUI/Camera.cpp"
 #include "GUI/Viewport.cpp"
-#include "GUI/Window.cpp"
 
 #include "Rendering/OpenGLBackend.cpp"
 #include "Rendering/OpenGLShader.cpp"
 #include "Rendering/OpenGLProgram.cpp"
 #include "Rendering/OpenGLFramebuffer.cpp"
 #include "Rendering/OpenGLTexture.cpp"
+#include "Rendering/OpenGLRenderer.cpp"
 
 i16 main()
 {
-	Rendering::OpenGLBackend glBackend;
+	Utility::HeapAllocator  heapAllocator;
+	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
 
-	Utility::HeapAllocator heapAllocator;
+	Rendering::OpenGLBackend  glBackend;
+	Rendering::OpenGLRenderer glRenderer(&stackAllocator, &heapAllocator);
+
 	ImageProcessing::Image image(&heapAllocator);
 
 	GUI::MainMenuBar mainMenuBar(&image);
-	GUI::Viewport    viewport(&image);
+	GUI::Viewport    viewport("Main Viewport", &image);
 
 	while (glBackend.IsRunning())
 	{
 		glBackend.StartFrame();
 		{
-			mainMenuBar.Draw();
-			viewport.Draw();
+			// If new file opened, need to update GL portions
+			const GUI::MainMenuBar::Status barStatus = mainMenuBar.Draw();
+			if (barStatus.flags == GUI::MainMenuBar::Status::Flags::NewTexture)
+			{
+				glRenderer.UpdateTexture((u8*)image.GetData().ptr, image.GetWidth(), image.GetHeight());
+			}
+
+			viewport.StartFrame();
+			{
+				glRenderer.Render(viewport.GetCamera());
+			}
+			viewport.EndFrame();
 		}
 		glBackend.EndFrame();
 	}

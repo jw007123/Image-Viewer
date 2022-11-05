@@ -2,25 +2,38 @@
 
 namespace GUI
 {
+	MainMenuBar::Status::Status()
+	{
+		flags = Status::Flags::NoOp;
+	}
+
+
 	MainMenuBar::MainMenuBar(ImageProcessing::Image* image_)
 	{
 		image = image_;
 	}
 
 
-	void MainMenuBar::Draw()
+	MainMenuBar::Status MainMenuBar::Draw()
 	{
+		Status barStatus;
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			const FileMenu::Status fileStatus = fileMenu.Draw();
-			HandleFileMenuStatus(fileStatus);
+			if (HandleFileMenuStatus(fileStatus))
+			{
+				barStatus.flags = Status::Flags::NewTexture;
+			}
 
 			ImGui::EndMainMenuBar();
 		}
+
+		return barStatus;
 	}
 
 
-	void MainMenuBar::HandleFileMenuStatus(const FileMenu::Status& status_)
+	bool MainMenuBar::HandleFileMenuStatus(const FileMenu::Status& status_)
 	{
 		if (status_.flags == FileMenu::Status::Flags::Open)
 		{
@@ -28,6 +41,8 @@ namespace GUI
 			{
 				Utility::Log(Utility::LogFlag::Warn, "Failed to load %s", (*status_.openFilePathPtr));
 			}
+
+			return true;
 		}
 		else if (status_.flags == FileMenu::Status::Flags::Save)
 		{
@@ -40,5 +55,7 @@ namespace GUI
 		{
 			// Nothing to do
 		}
+
+		return false;
 	}
 }
