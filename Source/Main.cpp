@@ -5,19 +5,25 @@
 #include "Utility/StackAllocator.cpp"
 #include "Utility/HeapAllocator.cpp"
 
-#include "Rendering/OpenGLBackend.cpp"
+#include "GUI/FileMenu.cpp"
 
-#include "GUI/ViewerUI.cpp"
+#include "Rendering/OpenGLBackend.cpp"
 
 i16 main()
 {
 	Rendering::OpenGLBackend glBackend;
 
+	GUI::FileMenu fileMenu;
+
 	while (glBackend.IsRunning())
 	{
 		glBackend.StartFrame();
 		{
-			ImGui::ShowDemoWindow();
+			ImGui::BeginMainMenuBar();
+			{
+				fileMenu.Draw();
+			}
+			ImGui::EndMainMenuBar();
 		}
 		glBackend.EndFrame();
 	}
