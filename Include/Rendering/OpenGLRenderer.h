@@ -43,17 +43,21 @@ namespace Rendering
 			GLuint EBO;
 
 			GLuint vertexVBO;
-			GLuint normalVBO;
 			GLuint textureVBO;
 
 		} textureMeshData;
 
+		enum ProgramID : u8
+		{
+			Texture = 0,
+			BGround = 1,
+			Num
+		};
+
 		Utility::HeapAllocator*  heapAllocator;
 		Utility::StackAllocator* stackAllocator;
 
-		OpenGLShader  vsTextureShader;
-		OpenGLShader  fsTextureShader;
-		OpenGLProgram textureProgram;
+		OpenGLProgram programs[ProgramID::Num];
 		OpenGLTexture texture;
 
 		void LoadTextureMesh();

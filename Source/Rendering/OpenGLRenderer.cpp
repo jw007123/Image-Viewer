@@ -8,7 +8,6 @@ namespace Rendering
 		EBO = GL_INVALID_INDEX;
 
 		vertexVBO  = GL_INVALID_INDEX;
-		normalVBO  = GL_INVALID_INDEX;
 		textureVBO = GL_INVALID_INDEX;
 	}
 
@@ -28,11 +27,6 @@ namespace Rendering
 		if (vertexVBO != GL_INVALID_INDEX)
 		{
 			glDeleteBuffers(1, &vertexVBO);
-		}
-
-		if (normalVBO != GL_INVALID_INDEX)
-		{
-			glDeleteBuffers(1, &normalVBO);
 		}
 
 		if (textureVBO != GL_INVALID_INDEX)
@@ -74,13 +68,30 @@ namespace Rendering
 
 
 
-	OpenGLRenderer::OpenGLRenderer(Utility::StackAllocator* stackAllocator_, Utility::HeapAllocator* heapAllocator_) :
-					vsTextureShader(stackAllocator_, OpenGLShader::Type::Vertex, "vsTexture"),
-					fsTextureShader(stackAllocator_, OpenGLShader::Type::Fragment, "fsTexture"),
-					textureProgram(vsTextureShader, fsTextureShader)
+	OpenGLRenderer::OpenGLRenderer(Utility::StackAllocator* stackAllocator_, Utility::HeapAllocator* heapAllocator_)
 	{
 		stackAllocator = stackAllocator_;
 		heapAllocator  = heapAllocator_;
+
+		{
+			OpenGLShader vsTexture;
+			vsTexture.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsTexture");
+
+			OpenGLShader fsTexture;
+			fsTexture.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsTexture");
+
+			programs[ProgramID::Texture].Load(vsTexture, fsTexture);
+		}
+
+		{
+			OpenGLShader vsBGround;
+			vsBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsBGround");
+
+			OpenGLShader fsBGround;
+			fsBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsBGround");
+
+			programs[ProgramID::BGround].Load(vsBGround, fsBGround);
+		}
 
 		LoadTextureMesh();
 	}
@@ -101,14 +112,14 @@ namespace Rendering
 		}
 
 		// Use correct program
-		textureProgram.Use();
+		programs[ProgramID::Texture].Use();
 
 		glBindVertexArray(textureMeshData.VAO);
 		{
 			// Set uniforms
-			const GLuint viewToProjLoc   = textureProgram.GetUniformLoc("viewToProj");
-			const GLuint worldToViewLoc  = textureProgram.GetUniformLoc("worldToView");
-			const GLuint modelToWorldLoc = textureProgram.GetUniformLoc("modelToWorld");
+			const GLuint viewToProjLoc   = programs[ProgramID::Texture].GetUniformLoc("viewToProj");
+			const GLuint worldToViewLoc  = programs[ProgramID::Texture].GetUniformLoc("worldToView");
+			const GLuint modelToWorldLoc = programs[ProgramID::Texture].GetUniformLoc("modelToWorld");
 
 			// Calculate texture model mat
 			Eigen::Matrix4f modelToWorld = Eigen::Matrix4f::Identity();

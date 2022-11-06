@@ -13,9 +13,10 @@ namespace Rendering
 	class OpenGLProgram
 	{
 	public:
-		OpenGLProgram(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_);
+		OpenGLProgram();
 		~OpenGLProgram();
 
+		bool Load(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_);
 		void Use() const;
 
 		/// Gets a GLuint handle into a uniform variable for the program

@@ -2,7 +2,22 @@
 
 namespace Rendering
 {
-	OpenGLProgram::OpenGLProgram(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_)
+	OpenGLProgram::OpenGLProgram()
+	{
+		glProgramIdx = GL_INVALID_INDEX;
+	}
+
+
+	OpenGLProgram::~OpenGLProgram()
+	{
+		if (glProgramIdx != GL_INVALID_INDEX)
+		{
+			glDeleteProgram(glProgramIdx);
+		}
+	}
+
+
+	bool OpenGLProgram::Load(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_)
 	{
 		glProgramIdx = glCreateProgram();
 
@@ -18,15 +33,8 @@ namespace Rendering
 
 		glDetachShader(glProgramIdx, vsShader_.GetShaderIdx());
 		glDetachShader(glProgramIdx, fsShader_.GetShaderIdx());
-	}
 
-
-	OpenGLProgram::~OpenGLProgram()
-	{
-		if (glProgramIdx != GL_INVALID_INDEX)
-		{
-			glDeleteProgram(glProgramIdx);
-		}
+		return linked;
 	}
 
 

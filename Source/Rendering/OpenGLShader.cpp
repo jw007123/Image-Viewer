@@ -2,7 +2,22 @@
 
 namespace Rendering
 {
-	OpenGLShader::OpenGLShader(Utility::StackAllocator* stackAllocator_, const Type shaderType_, const char* fName_)
+	OpenGLShader::OpenGLShader()
+	{
+		glShaderIdx = GL_INVALID_INDEX;
+	}
+
+
+	OpenGLShader::~OpenGLShader()
+	{
+		if (glShaderIdx != GL_INVALID_INDEX)
+		{
+			glDeleteShader(glShaderIdx);
+		}
+	}
+
+
+	bool OpenGLShader::Load(Utility::StackAllocator* stackAllocator_, const Type shaderType_, const char* fName_)
 	{
 		// Checks
 		assert(PATH_MAX_LEN > (strlen(fName_) + strlen(shaderPath)));
@@ -17,7 +32,7 @@ namespace Rendering
 		if (!fStream.is_open())
 		{
 			Utility::Log(Utility::LogFlag::Error, "Shader file %s does not exist!", concatPath);
-			assert(0);
+			return false;
 		}
 
 		// Read file and determine size
@@ -49,15 +64,8 @@ namespace Rendering
 		}
 
 		stackAllocator_->Free(fDataBlock);
-	}
 
-
-	OpenGLShader::~OpenGLShader()
-	{
-		if (glShaderIdx != GL_INVALID_INDEX)
-		{
-			glDeleteShader(glShaderIdx);
-		}
+		return compiled;
 	}
 
 

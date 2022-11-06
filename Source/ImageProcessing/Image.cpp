@@ -42,7 +42,7 @@ namespace ImageProcessing
 		i16 widthStb  = 0;
 		i16 heightStb = 0;
 		i16 compStb   = 0;
-		u8* dataStb   = stbi_load(filePath_, &widthStb, &heightStb, &compStb, 4);
+		u8* dataStb   = stbi_load(filePath_, &widthStb, &heightStb, &compStb, 0);
 		if (dataStb == nullptr)
 		{
 			return false;

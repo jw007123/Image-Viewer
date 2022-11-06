@@ -17,10 +17,10 @@ namespace Rendering
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// Setup window
-		glWindow = glfwCreateWindow(1280, 720, "ImageViewer", NULL, NULL);
+		glWindow = glfwCreateWindow(Consts::startWidth, Consts::startHeight, "ImageViewer", NULL, NULL);
 		if (!glWindow)
 		{
-			Utility::Log(Utility::LogFlag::Error, "Failed to create a glfw::Window(%zu, %zu) object!", 1280, 720);
+			Utility::Log(Utility::LogFlag::Error, "Failed to create a glfw::Window(%zu, %zu) object!", Consts::startWidth, Consts::startHeight);
 			assert(0);
 		}
 

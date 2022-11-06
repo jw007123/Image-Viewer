@@ -27,6 +27,12 @@ namespace Rendering
 		void EndFrame();
 
 	private:
+		struct Consts
+		{
+			static constexpr usize startWidth  = 1280;
+			static constexpr usize startHeight = 720;
+		};
+
 		GLFWwindow* glWindow;
 
 		ImGuiContext*  imguiContext;

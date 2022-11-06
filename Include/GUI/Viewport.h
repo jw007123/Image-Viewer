@@ -27,6 +27,12 @@ namespace GUI
 		const Camera& GetCamera() const;
 
 	private:
+		struct Consts
+		{
+			static constexpr usize startWidth  = 1280;
+			static constexpr usize startHeight = 720;
+		};
+
 		ImageProcessing::Image*		 image;
 		GUI::Camera					 camera;
 		Rendering::OpenGLFramebuffer framebuffer;

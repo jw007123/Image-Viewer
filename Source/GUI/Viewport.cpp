@@ -3,12 +3,12 @@
 namespace GUI
 {
 	Viewport::Viewport(const char* name_, ImageProcessing::Image* image_)
-			 : framebuffer(1280, 720),
-			   camera((f32)1280 / 720)
+			 : framebuffer(Consts::startWidth, Consts::startHeight),
+			   camera((f32)Consts::startWidth / Consts::startHeight)
 	{
 		image  = image_;
-		width  = 1280;
-		height = 720;
+		width  = Consts::startWidth;
+		height = Consts::startHeight;
 
 		strcpy(name, name_);
 		imguiViewport = ImGui::GetMainViewport();
@@ -20,7 +20,7 @@ namespace GUI
 		const ImVec2 winSize = imguiViewport->WorkSize;
 		const ImVec2 winPos  = imguiViewport->WorkPos;
 
-		ImGui::SetNextWindowPos(imguiViewport->Pos);
+		ImGui::SetNextWindowPos(winPos);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -34,7 +34,7 @@ namespace GUI
 		// Resize internal structs if viewport resized by user
 		if (winSize.x != width || winSize.y != height)
 		{
-			width = winSize.x;
+			width  = winSize.x;
 			height = winSize.y;
 
 			framebuffer.Resize(width, height);
