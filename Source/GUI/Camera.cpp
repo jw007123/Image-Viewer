@@ -6,38 +6,54 @@ namespace GUI
 	{
 		Reset();
 
-		viewToProj = CalculateOrthographicProj(aspectRatio_);
+		viewToProj = CalculateProjection(aspectRatio_);
 	}
 
 
 	void Camera::Update(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
 	{
-		viewToProj = CalculateOrthographicProj((f32)vpWidth_ / vpHeight_);
+		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
 
 		// Determine translation w/ right mouse button engaged and scrollwheel
-		Eigen::Vector3f camTranslation = Eigen::Vector3f::Zero();
 		{
-			const f32 scale = 0.01f;
+			const f32 scale = Consts::camXYScF * worldToView(2, 3) * - 1.0f;
 			if (io_.MouseDown[1])
 			{
 				// Obtain translation in XY
-				camTranslation.x() = io_.MouseDelta.x * scale;
-				camTranslation.y() = io_.MouseDelta.y * scale * -1.0f;
+				worldToView(0, 3) += io_.MouseDelta.x * scale;
+				worldToView(1, 3) += io_.MouseDelta.y * scale * -1.0f;
 			}
 
 			// Obtain translation in Z
-			camTranslation.z() = io_.MouseWheel * -1.0f;
+			const Eigen::Vector2f mousePos = Eigen::Vector2f(io_.MousePos.x, io_.MousePos.y);
+			const Eigen::Vector3f rayDir   = GenerateRayToMousePosition(mousePos, vpWidth_, vpHeight_).second;
+			if (io_.MouseWheel > 0)
+			{
+				worldToView.block<3, 1>(0, 3) += (Consts::camZScF * (worldToView(2, 3))) * rayDir;
+			}
+			else if (io_.MouseWheel < 0)
+			{
+				worldToView.block<3, 1>(0, 3) -= (Consts::camZScF * (worldToView(2, 3))) * rayDir;
+			}
 		}
 
-		// Apply update to camera
-		worldToView.block<3, 1>(0, 3) += camTranslation;
+		// Clamp to avoid straying too far
+		worldToView(0, 3) = std::clamp<f32>(worldToView(0, 3), Consts::camXMin, Consts::camXMax);
+		worldToView(1, 3) = std::clamp<f32>(worldToView(1, 3), Consts::camYMin, Consts::camYMax);
+		worldToView(2, 3) = std::clamp<f32>(worldToView(2, 3), Consts::camZMin, Consts::camZMax);
+	}
+
+
+	void Camera::UpdateProjection(const usize vpWidth_, const usize vpHeight_)
+	{
+		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
 	}
 
 
 	void Camera::Reset()
 	{
 		worldToView.setIdentity();
-		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, -5.0f);
+		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, -1.0f);
 	}
 
 
@@ -53,21 +69,41 @@ namespace GUI
 	}
 
 
-	Eigen::Matrix4f Camera::CalculateOrthographicProj(const f32 aspectRatio_) const
+	Eigen::Matrix4f Camera::CalculateProjection(const f32 aspectRatio_) const
 	{
-		f32 range = tanf(3.142 / 4.0f) * nearPlane;
-		f32 xScale = (2.0f * nearPlane) / (2.0f * range * aspectRatio_);
-		f32 yScale = nearPlane / range;
-		f32 zScale = (farPlane + nearPlane) / (nearPlane - farPlane);
-		f32 perpCorrection = (2.0f * farPlane * nearPlane) / (nearPlane - farPlane);
+		const f32 range			 = tanf(PI / 4.0f) * Consts::nearPlane;
+		const f32 xScale		 = (2.0f * Consts::nearPlane) / (2.0f * range * aspectRatio_);
+		const f32 yScale		 = Consts::nearPlane / range;
+		const f32 zScale		 = (Consts::farPlane + Consts::nearPlane) / (Consts::nearPlane - Consts::farPlane);
+		const f32 perpCorrection = (2.0f * Consts::farPlane * Consts::nearPlane) / (Consts::nearPlane - Consts::farPlane);
 
 		Eigen::Matrix4f projMat;
 		projMat <<
-			xScale, 0.0, 0.0, 0.0,
-			0.0, yScale, 0.0, 0.0,
-			0.0, 0.0f, zScale, perpCorrection,
-			0.0, 0.0f, -1.0f, 0.0;
+			xScale, 0.0,	0.0,	0.0,
+			0.0,	yScale, 0.0,	0.0,
+			0.0,	0.0f,	zScale, perpCorrection,
+			0.0,	0.0f,	-1.0f,	0.0;
 
 		return projMat;
+	}
+
+
+	std::pair<Eigen::Vector3f, Eigen::Vector3f> Camera::GenerateRayToMousePosition(const Eigen::Vector2f& mousePos_, const usize vpWidth_, const usize vpHeight_) const
+	{
+		// (0, 0) is top-left corner by convention
+		const f32 aspectRatio = (f32)vpWidth_ / vpHeight_;
+		const f32 fov		  = PI * 0.5f;
+
+		Eigen::Vector2f p = Eigen::Vector2f::Zero();
+		p.x()			  = (2.0f * ((mousePos_.x() + 0.5f) / vpWidth_) - 1.0f)  * tanf(fov / 2.0f) * aspectRatio;
+		p.y()			  = (1.0f - 2.0f * ((mousePos_.y() + 0.5f) / vpHeight_)) * tanf(fov / 2.0f);
+
+		std::pair<Eigen::Vector3f, Eigen::Vector3f> cameraRay;
+
+		cameraRay.first  = (worldToView.inverse() * Eigen::Vector4f(0.0f, 0.0f, 0.0f, 1.0f)).topLeftCorner<3, 1>();
+		cameraRay.second = (worldToView.inverse() * Eigen::Vector4f(p.x(), p.y(), -1.0f, 1.0f)).topLeftCorner<3, 1>();
+		cameraRay.second = (cameraRay.second - cameraRay.first).normalized().eval();
+
+		return cameraRay;
 	}
 }

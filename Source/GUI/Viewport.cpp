@@ -25,10 +25,10 @@ namespace GUI
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-		ImGui::Begin(name, NULL, ImGuiWindowFlags_NoResize |
-			ImGuiWindowFlags_NoTitleBar |
-			ImGuiWindowFlags_NoScrollbar |
-			ImGuiWindowFlags_NoBringToFrontOnFocus);
+		ImGui::Begin(name, NULL, ImGuiWindowFlags_NoResize	  |
+								 ImGuiWindowFlags_NoTitleBar  |
+								 ImGuiWindowFlags_NoScrollbar |
+								 ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::PopStyleVar(3);
 
 		// Resize internal structs if viewport resized by user
@@ -44,6 +44,10 @@ namespace GUI
 		if (ImGui::IsWindowHovered())
 		{
 			camera.Update(ImGui::GetIO(), Eigen::Vector2f(winPos.x, winPos.y), width, height);
+		}
+		else
+		{
+			camera.UpdateProjection(width, height);
 		}
 
 		// Render the scene

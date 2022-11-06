@@ -15,3 +15,4 @@ typedef size_t                 usize;
 
 constexpr usize PATH_MAX_LEN = 1024;
 constexpr f32   EPSILON_F32  = 0.000001f;
+constexpr f32	PI			 = 3.1421f;

@@ -150,8 +150,8 @@ namespace Rendering
 
 		// Texture Coords
 		{
-			textureCoords[0] = Eigen::Vector2f(1.0f, 1.0f);
-			textureCoords[1] = Eigen::Vector2f(1.0f, 0.0f);
+			textureCoords[0] = Eigen::Vector2f(1.0f, 0.0f);
+			textureCoords[1] = Eigen::Vector2f(1.0f, 1.0f);
 			textureCoords[2] = Eigen::Vector2f(0.0f, 1.0f);
 			textureCoords[3] = Eigen::Vector2f(0.0f, 0.0f);
 		}
