@@ -68,4 +68,10 @@ namespace GUI
 	{
 		return camera;
 	}
+
+
+	f32	Viewport::GetAspectRatio() const
+	{
+		return ((f32)width / height);
+	}
 }

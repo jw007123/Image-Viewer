@@ -103,18 +103,24 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::Render(const GUI::Camera& cam_)
+	void OpenGLRenderer::Render(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
 		const GLuint textureIdx = texture.GetTextureIdx();
-		if (textureIdx == GL_INVALID_INDEX)
+		if (textureIdx != GL_INVALID_INDEX)
 		{
-			return;
+			RenderTexture(cam_);
 		}
 
+		RenderBGround(cam_, aspectRatio_);
+	}
+
+
+	void OpenGLRenderer::RenderTexture(const GUI::Camera& cam_)
+	{
 		// Use correct program
 		programs[ProgramID::Texture].Use();
 
-		glBindVertexArray(textureMeshData.VAO);
+		glBindVertexArray(quadMeshData.VAO);
 		{
 			// Set uniforms
 			const GLuint viewToProjLoc   = programs[ProgramID::Texture].GetUniformLoc("viewToProj");
@@ -123,7 +129,7 @@ namespace Rendering
 
 			// Calculate texture model mat
 			Eigen::Matrix4f modelToWorld = Eigen::Matrix4f::Identity();
-			modelToWorld(0, 0) = (f32)texture.GetWidth() / texture.GetHeight();
+			modelToWorld(0, 0)			 = (f32)texture.GetWidth() / texture.GetHeight();
 
 			glUniformMatrix4fv(viewToProjLoc,   1, false, cam_.GetViewToProj().data());
 			glUniformMatrix4fv(worldToViewLoc,  1, false, cam_.GetWorldToView().data());
@@ -131,9 +137,32 @@ namespace Rendering
 
 			// Bind texture. For now, we're just binding one texture a time and can use the 0th unit
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, textureIdx);
+			glBindTexture(GL_TEXTURE_2D, texture.GetTextureIdx());
 
 			// Draw
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(0);
+	}
+
+
+	void OpenGLRenderer::RenderBGround(const GUI::Camera& cam_, const f32 aspectRatio_)
+	{
+		// Use correct program
+		programs[ProgramID::BGround].Use();
+
+		glBindVertexArray(quadMeshData.VAO);
+		{
+			// Set uniforms
+			const GLuint cameraPosLoc   = programs[ProgramID::BGround].GetUniformLoc("cameraPos");
+			const GLuint aspectRatioLoc = programs[ProgramID::BGround].GetUniformLoc("aspectRatio");
+
+			// Set uniforms
+			const Eigen::Vector3f cameraPos = cam_.GetWorldToView().block<3, 1>(0, 3);
+			glUniform3f(cameraPosLoc,	cameraPos.x(), cameraPos.y(), cameraPos.z());
+			glUniform1f(aspectRatioLoc, aspectRatio_);
+
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
@@ -153,10 +182,10 @@ namespace Rendering
 
 		// Points
 		{
-			points[0] = Eigen::Vector3f(0.5f, 0.5f, 0.0f);
-			points[1] = Eigen::Vector3f(0.5f, -0.5f, 0.0f);
+			points[0] = Eigen::Vector3f(0.5f,   0.5f, 0.0f);
+			points[1] = Eigen::Vector3f(0.5f,  -0.5f, 0.0f);
 			points[2] = Eigen::Vector3f(-0.5f, -0.5f, 0.0f);
-			points[3] = Eigen::Vector3f(-0.5f, 0.5f, 0.0f);
+			points[3] = Eigen::Vector3f(-0.5f,  0.5f, 0.0f);
 		}
 
 		// Texture Coords
@@ -177,7 +206,7 @@ namespace Rendering
 			indices[5] = 2;
 		}
 
-		textureMeshData.Create(points, 4, textureCoords, 4, indices, 6);
+		quadMeshData.Create(points, 4, textureCoords, 4, indices, 6);
 
 		stackAllocator->Free(indicesBuff);
 		stackAllocator->Free(textureCoordsBuff);

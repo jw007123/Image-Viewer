@@ -27,7 +27,7 @@ namespace Rendering
 		void UpdateTexture(const u8* data_, const usize width_, const usize height_);
 
 		/// Renders the scene from cam_'s view
-		void Render(const GUI::Camera& cam_);
+		void Render(const GUI::Camera& cam_, const f32 aspectRatio_);
 
 	private:
 		struct MeshOpenGLData
@@ -45,7 +45,7 @@ namespace Rendering
 			GLuint vertexVBO;
 			GLuint textureVBO;
 
-		} textureMeshData;
+		} quadMeshData;
 
 		enum ProgramID : u8
 		{
@@ -59,6 +59,9 @@ namespace Rendering
 
 		OpenGLProgram programs[ProgramID::Num];
 		OpenGLTexture texture;
+
+		void RenderTexture(const GUI::Camera& cam_);
+		void RenderBGround(const GUI::Camera& cam_, const f32 aspectRatio_);
 
 		void LoadTextureMesh();
 	};

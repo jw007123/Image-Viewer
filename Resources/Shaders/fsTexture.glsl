@@ -8,5 +8,7 @@ uniform sampler2D textureSamp;
 
 void main()
 {
-	fColours = texture(textureSamp, TexCoord);
+	// Use texture colours and set always on top
+	fColours	 = texture(textureSamp, TexCoord);
+	gl_FragDepth = 0.0f;	
 }

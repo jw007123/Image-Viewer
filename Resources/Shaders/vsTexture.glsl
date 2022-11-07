@@ -11,6 +11,6 @@ uniform mat4 modelToWorld;
 
 void main()
 {
-	gl_Position = viewToProj * worldToView * modelToWorld * vec4(inPoints, 1.0f);
-	TexCoord	= aTexCoord;
+	gl_Position	  = viewToProj * worldToView * modelToWorld * vec4(inPoints, 1.0f);
+	TexCoord	  = aTexCoord;
 }

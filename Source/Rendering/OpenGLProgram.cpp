@@ -48,11 +48,11 @@ namespace Rendering
 	GLuint OpenGLProgram::GetUniformLoc(const char* glslName_)
 	{
 		GLuint loc = -1;
-		std::unordered_map<const char*, GLuint>::const_iterator iter = glUniformLocMap.find(glslName_);
+		std::unordered_map<usize, GLuint>::const_iterator iter = glUniformLocMap.find(HashFunc(glslName_));
 		if (iter == glUniformLocMap.end())
 		{
 			loc = glGetUniformLocation(glProgramIdx, glslName_);
-			glUniformLocMap.insert(std::make_pair(glslName_, loc));
+			glUniformLocMap.insert(std::make_pair(HashFunc(glslName_), loc));
 
 			return loc;
 		}
@@ -60,6 +60,21 @@ namespace Rendering
 		{
 			return iter->second;
 		}
+	}
+
+
+	usize OpenGLProgram::HashFunc(const char* str_) const
+	{
+		// c.f. https://stackoverflow.com/questions/7666509/hash-function-for-string
+		usize hash = 5381;
+		usize c	   = 0;
+
+		while (c = *str_++)
+		{
+			hash = ((hash << 5) + hash) + c;
+		}
+
+		return hash;
 	}
 
 

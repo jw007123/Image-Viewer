@@ -35,9 +35,9 @@ namespace GUI
 			static constexpr f32 camZMin   = -5.0f;
 			static constexpr f32 camXMax   =  2.5f;
 			static constexpr f32 camYMax   =  2.5f;
-			static constexpr f32 camZMax   =  0.0f;
-			static constexpr f32 camZScF   = 0.1f;
-			static constexpr f32 camXYScF  = 0.001f;
+			static constexpr f32 camZMax   = -0.01f;
+			static constexpr f32 camZScF   =  0.1f;
+			static constexpr f32 camXYScF  =  0.001f;
 		};
 
 		Eigen::Matrix4f worldToView;

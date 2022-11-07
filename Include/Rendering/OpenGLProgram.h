@@ -23,8 +23,11 @@ namespace Rendering
 		GLuint GetUniformLoc(const char* glslName_);
 
 	private:
-		GLuint									glProgramIdx;
-		std::unordered_map<const char*, GLuint> glUniformLocMap;
+		GLuint							  glProgramIdx;
+		std::unordered_map<usize, GLuint> glUniformLocMap;
+
+		/// Hashing function used for the unordered_map
+		usize HashFunc(const char* str_) const;
 
 		/// Print linkage stage compilation errors
 		bool FindAndPrintProgramLinkageErrors() const;

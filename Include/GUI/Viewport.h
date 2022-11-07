@@ -25,6 +25,7 @@ namespace GUI
 		void EndFrame();
 
 		const Camera& GetCamera() const;
+		f32		 GetAspectRatio() const;
 
 	private:
 		struct Consts

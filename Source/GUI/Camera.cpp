@@ -31,10 +31,12 @@ namespace GUI
 			{
 				worldToView.block<3, 1>(0, 3) += (Consts::camZScF * (worldToView(2, 3))) * rayDir;
 			}
-			else if (io_.MouseWheel < 0)
+			else if (io_.MouseWheel < 0 && worldToView(2, 3) != Consts::camZMin)
 			{
 				worldToView.block<3, 1>(0, 3) -= (Consts::camZScF * (worldToView(2, 3))) * rayDir;
 			}
+
+			
 		}
 
 		// Clamp to avoid straying too far

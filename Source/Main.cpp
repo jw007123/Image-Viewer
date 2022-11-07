@@ -48,7 +48,7 @@ i16 main()
 
 			viewport.StartFrame();
 			{
-				glRenderer.Render(viewport.GetCamera());
+				glRenderer.Render(viewport.GetCamera(), viewport.GetAspectRatio());
 			}
 			viewport.EndFrame();
 		}
