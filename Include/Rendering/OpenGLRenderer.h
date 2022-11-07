@@ -11,6 +11,8 @@
 #include "Utility/HeapAllocator.h"
 #include "Utility/StackAllocator.h"
 
+#include "ImageProcessing/Image.h"
+
 #include "GUI/Camera.h"
 
 #include "Rendering/OpenGLShader.h"
@@ -24,10 +26,8 @@ namespace Rendering
 	public:
 		OpenGLRenderer(Utility::StackAllocator* stackAllocator_, Utility::HeapAllocator* heapAllocator_);
 
-		void UpdateTexture(const u8* data_, const usize width_, const usize height_);
-
 		/// Renders the scene from cam_'s view
-		void Render(const GUI::Camera& cam_, const f32 aspectRatio_);
+		void Render(const GUI::Camera& cam_, const ImageProcessing::Image* const image_, const f32 aspectRatio_);
 
 	private:
 		struct MeshOpenGLData

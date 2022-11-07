@@ -20,10 +20,8 @@ namespace Rendering
 		void Resize(const usize width_, const usize height_);
 
 		/// Start/Stop rendering to this framebuffer
-		void Use();
-		void Release();
-
-		void RenderToTexture();
+		void StartFrame();
+		void EndFrame();
 
 	private:
 		GLuint glMSAAFBO;

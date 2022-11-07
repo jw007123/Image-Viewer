@@ -19,6 +19,7 @@ namespace Rendering
 
 	void OpenGLTexture::Update(const u8* data_, const usize width_, const usize height_)
 	{
+		// Do we need to do anything?
 		if (glTextIdx == GL_INVALID_INDEX)
 		{
 			glGenTextures(1, &glTextIdx);

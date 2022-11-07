@@ -28,29 +28,18 @@ i16 main()
 	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
 
 	Rendering::OpenGLBackend  glBackend;
-	Rendering::OpenGLRenderer glRenderer(&stackAllocator, &heapAllocator);
 
 	ImageProcessing::Image image(&heapAllocator);
 
 	GUI::MainMenuBar mainMenuBar(&image);
-	GUI::Viewport    viewport("Main Viewport", &image);
+	GUI::Viewport    viewport(&heapAllocator, &stackAllocator, &image);
 
 	while (glBackend.IsRunning())
 	{
 		glBackend.StartFrame();
 		{
-			// If new file opened, need to update GL portions
-			const GUI::MainMenuBar::Status barStatus = mainMenuBar.Draw();
-			if (barStatus.flags == GUI::MainMenuBar::Status::Flags::NewTexture)
-			{
-				glRenderer.UpdateTexture((u8*)image.GetData().ptr, image.GetWidth(), image.GetHeight());
-			}
-
-			viewport.StartFrame();
-			{
-				glRenderer.Render(viewport.GetCamera(), viewport.GetAspectRatio());
-			}
-			viewport.EndFrame();
+			const GUI::MainMenuBar::Status mainMenuBarStatus = mainMenuBar.Draw();
+			const GUI::Viewport::Status viewportStatus		 = viewport.Draw();
 		}
 		glBackend.EndFrame();
 	}

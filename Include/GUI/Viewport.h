@@ -11,6 +11,7 @@
 #include "ImageProcessing/Image.h"
 
 #include "Rendering/OpenGLFramebuffer.h"
+#include "Rendering/OpenGLRenderer.h"
 
 #include "imgui.h"
 
@@ -19,13 +20,14 @@ namespace GUI
 	class Viewport
 	{
 	public:
-		Viewport(const char* name_, ImageProcessing::Image* image_);
+		struct Status
+		{
+			// Nothing here yet
+		};
 
-		void StartFrame();
-		void EndFrame();
+		Viewport(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_);
 
-		const Camera& GetCamera() const;
-		f32		 GetAspectRatio() const;
+		Status Draw();
 
 	private:
 		struct Consts
@@ -36,11 +38,14 @@ namespace GUI
 
 		ImageProcessing::Image*		 image;
 		GUI::Camera					 camera;
-		Rendering::OpenGLFramebuffer framebuffer;
+		Rendering::OpenGLFramebuffer glFramebuffer;
+		Rendering::OpenGLRenderer	 glRenderer;
 
 		ImGuiViewport* imguiViewport;
 		usize width;
 		usize height;
-		char  name[PATH_MAX_LEN];
+
+		void StartFrame();
+		void EndFrame();
 	};
 }

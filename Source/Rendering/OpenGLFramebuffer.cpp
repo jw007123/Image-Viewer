@@ -80,7 +80,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLFramebuffer::Use()
+	void OpenGLFramebuffer::StartFrame()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, glMSAAFBO);
 
@@ -98,18 +98,14 @@ namespace Rendering
 	}
 
 
-	void OpenGLFramebuffer::Release()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-
-	void OpenGLFramebuffer::RenderToTexture()
+	void OpenGLFramebuffer::EndFrame()
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, glMSAAFBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, glFBO);
 		glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
 		ImGui::Image((GLuint*)glFBOText, ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }

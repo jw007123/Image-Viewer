@@ -27,7 +27,7 @@ namespace GUI
 			// Obtain translation in Z
 			const Eigen::Vector2f mousePos = Eigen::Vector2f(io_.MousePos.x, io_.MousePos.y);
 			const Eigen::Vector3f rayDir   = GenerateRayToMousePosition(mousePos, vpWidth_, vpHeight_).second;
-			if (io_.MouseWheel > 0)
+			if (io_.MouseWheel > 0 && worldToView(2, 3) != Consts::camZMax)
 			{
 				worldToView.block<3, 1>(0, 3) += (Consts::camZScF * (worldToView(2, 3))) * rayDir;
 			}

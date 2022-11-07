@@ -2,16 +2,30 @@
 
 namespace GUI
 {
-	Viewport::Viewport(const char* name_, ImageProcessing::Image* image_)
-			 : framebuffer(Consts::startWidth, Consts::startHeight),
+	Viewport::Viewport(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_)
+			 : glFramebuffer(Consts::startWidth, Consts::startHeight),
+			   glRenderer(stackAllocator_, heapAllocator_),
 			   camera((f32)Consts::startWidth / Consts::startHeight)
 	{
 		image  = image_;
 		width  = Consts::startWidth;
 		height = Consts::startHeight;
 
-		strcpy(name, name_);
 		imguiViewport = ImGui::GetMainViewport();
+	}
+
+
+	Viewport::Status Viewport::Draw()
+	{
+		Status viewportStatus;
+
+		StartFrame();
+		{
+			// Additional ImGui code
+		}
+		EndFrame();
+
+		return viewportStatus;
 	}
 
 
@@ -25,10 +39,10 @@ namespace GUI
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-		ImGui::Begin(name, NULL, ImGuiWindowFlags_NoResize	  |
-								 ImGuiWindowFlags_NoTitleBar  |
-								 ImGuiWindowFlags_NoScrollbar |
-								 ImGuiWindowFlags_NoBringToFrontOnFocus);
+		ImGui::Begin("##Main viewport", NULL, ImGuiWindowFlags_NoResize	   |
+											  ImGuiWindowFlags_NoTitleBar  |
+											  ImGuiWindowFlags_NoScrollbar |
+											  ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::PopStyleVar(3);
 
 		// Resize internal structs if viewport resized by user
@@ -37,7 +51,7 @@ namespace GUI
 			width  = winSize.x;
 			height = winSize.y;
 
-			framebuffer.Resize(width, height);
+			glFramebuffer.Resize(width, height);
 		}
 
 		// Update camera
@@ -49,29 +63,18 @@ namespace GUI
 		{
 			camera.UpdateProjection(width, height);
 		}
-
-		// Render the scene
-		framebuffer.Use();
 	}
 
 
 	void Viewport::EndFrame()
 	{
-		framebuffer.RenderToTexture();
-		framebuffer.Release();
+		// Render to texture. Could add framebuffer to renderer, but keep this way for genericism
+		glFramebuffer.StartFrame();
+		{
+			glRenderer.Render(camera, image, (f32)width / height);
+		}
+		glFramebuffer.EndFrame();
 
 		ImGui::End();
-	}
-
-
-	const Camera& Viewport::GetCamera() const
-	{
-		return camera;
-	}
-
-
-	f32	Viewport::GetAspectRatio() const
-	{
-		return ((f32)width / height);
 	}
 }
