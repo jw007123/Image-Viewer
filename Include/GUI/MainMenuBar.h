@@ -18,13 +18,7 @@ namespace GUI
 	public:
 		struct Status
 		{
-			enum Flags : u8
-			{
-				NoOp	   = 0,
-				NewTexture = 1
-			} flags;
-
-			Status();
+			FileMenu::Status fileStatus;
 		};
 
 		MainMenuBar(ImageProcessing::Image* image_);

@@ -2,12 +2,6 @@
 
 namespace GUI
 {
-	MainMenuBar::Status::Status()
-	{
-		flags = Status::Flags::NoOp;
-	}
-
-
 	MainMenuBar::MainMenuBar(ImageProcessing::Image* image_)
 	{
 		image = image_;
@@ -20,11 +14,8 @@ namespace GUI
 
 		if (ImGui::BeginMainMenuBar())
 		{
-			const FileMenu::Status fileStatus = fileMenu.Draw();
-			if (HandleFileMenuStatus(fileStatus))
-			{
-				barStatus.flags = Status::Flags::NewTexture;
-			}
+			barStatus.fileStatus = fileMenu.Draw();
+			HandleFileMenuStatus(barStatus.fileStatus);
 
 			ImGui::EndMainMenuBar();
 		}
