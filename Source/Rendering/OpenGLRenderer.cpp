@@ -99,11 +99,9 @@ namespace Rendering
 
 	void OpenGLRenderer::Render(const GUI::Camera& cam_, const ImageProcessing::Image* const image_, const f32 aspectRatio_)
 	{
-		texture.Update((u8*)image_->GetData().ptr, image_->GetWidth(), image_->GetHeight());
-
-		const GLuint textureIdx = texture.GetTextureIdx();
-		if (textureIdx != GL_INVALID_INDEX)
+		if (image_->IsValid())
 		{
+			texture.Update((u8*)image_->GetData().ptr, image_->GetWidth(), image_->GetHeight());
 			RenderTexture(cam_);
 		}
 

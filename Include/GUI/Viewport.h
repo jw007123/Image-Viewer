@@ -6,6 +6,7 @@
 #include "Utility/Log.h"
 #include "Utility/HeapAllocator.h"
 
+#include "GUI/SizeConsts.h"
 #include "GUI/Camera.h"
 
 #include "ImageProcessing/Image.h"
@@ -30,12 +31,6 @@ namespace GUI
 		Status Draw();
 
 	private:
-		struct Consts
-		{
-			static constexpr usize startWidth  = 1280;
-			static constexpr usize startHeight = 720;
-		};
-
 		ImageProcessing::Image*		 image;
 		GUI::Camera					 camera;
 		Rendering::OpenGLFramebuffer glFramebuffer;

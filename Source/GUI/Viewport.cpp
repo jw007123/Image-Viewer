@@ -3,13 +3,13 @@
 namespace GUI
 {
 	Viewport::Viewport(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_)
-			 : glFramebuffer(Consts::startWidth, Consts::startHeight),
+			 : glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
 			   glRenderer(stackAllocator_, heapAllocator_),
-			   camera((f32)Consts::startWidth / Consts::startHeight)
+			   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight)
 	{
 		image  = image_;
-		width  = Consts::startWidth;
-		height = Consts::startHeight;
+		width  = SizeConsts::viewportWidth;
+		height = SizeConsts::viewportHeight;
 
 		imguiViewport = ImGui::GetMainViewport();
 	}
@@ -31,8 +31,9 @@ namespace GUI
 
 	void Viewport::StartFrame()
 	{
-		const ImVec2 winSize = imguiViewport->WorkSize;
-		const ImVec2 winPos  = imguiViewport->WorkPos;
+		ImVec2 winSize      = imguiViewport->WorkSize;
+		winSize.x		   -= SizeConsts::optionsPanelWidth;
+		const ImVec2 winPos = imguiViewport->WorkPos;
 
 		ImGui::SetNextWindowPos(winPos);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);

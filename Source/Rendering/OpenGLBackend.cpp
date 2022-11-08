@@ -17,10 +17,13 @@ namespace Rendering
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// Setup window
-		glWindow = glfwCreateWindow(Consts::startWidth, Consts::startHeight, "ImageViewer", NULL, NULL);
+		const usize width  = GUI::SizeConsts::viewportWidth	+ GUI::SizeConsts::optionsPanelWidth;
+		const usize height = std::max<usize>(GUI::SizeConsts::optionsPanelWidth, GUI::SizeConsts::optionsPanelHeight);
+
+		glWindow = glfwCreateWindow(width, height, "ImageViewer", NULL, NULL);
 		if (!glWindow)
 		{
-			Utility::Log(Utility::LogFlag::Error, "Failed to create a glfw::Window(%zu, %zu) object!", Consts::startWidth, Consts::startHeight);
+			Utility::Log(Utility::LogFlag::Error, "Failed to create a glfw::Window(%zu, %zu) object!", width, height);
 			assert(0);
 		}
 
