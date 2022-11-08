@@ -2,6 +2,12 @@
 
 namespace ImageProcessing
 {
+	WorkerThread::Request::Request()
+	{
+		type = Type::Num;
+	}
+
+
 	WorkerThread::InitialData::InitialData(Image& inputImage_) :
 										   inputImage(inputImage_)
 	{
@@ -18,6 +24,7 @@ namespace ImageProcessing
 							   initialData(initialData_),
 							   image(heapAllocator_)
 	{
+		memset(requestFlags, 0, sizeof(requestFlags));
 	}
 
 	WorkerThread::~WorkerThread()
@@ -49,14 +56,34 @@ namespace ImageProcessing
 	void WorkerThread::Tick()
 	{
 		// Try and find a job
-		bool haveJob = false;
 		initialData.requestsMutex.lock();
 		{
-			haveJob = initialData.requests.size();
+			for (usize i = 0; i < initialData.requests.size(); ++i)
+			{
+				// Use vector elements to set request flags and values to their new values
+				requestFlags[initialData.requests[i].type]  = 1;
+
+				// Depding on type, call respective class
+				switch (initialData.requests[i].type)
+				{
+					case Request::Luminance:
+					{
+						luminanceFilter.UpdateRequests(initialData.requests[i].lumValue);
+						break;
+					}
+
+					default:
+						assert(0);
+				}
+			}
+
+			// Allow new values to be placed into array
+			initialData.requests.clear();
 		}
 		initialData.requestsMutex.unlock();
 
-		if (!haveJob)
+		constexpr u8 emptyArr[Request::Num] = { 0 };
+		if (!memcmp((void*)requestFlags, emptyArr, sizeof(requestFlags)))
 		{
 			// Nothing to do
 			return;
@@ -69,11 +96,32 @@ namespace ImageProcessing
 		}
 		initialData.inputMutex.unlock();
 
-		//
-		// Do processing
-		//
+		// Process the image
+		for (usize i = 0; i < Request::Num; ++i)
+		{
+			if (!requestFlags[i])
+			{
+				continue;
+			}
+
+			// Call class depending on flag
+			switch (i)
+			{
+				case Request::Luminance:
+				{
+					luminanceFilter.ApplyFilter(image);
+					break;
+				}
+
+				default:
+					assert(0);
+			}
+
+			requestFlags[i] = 0;
+		}
 
 		// Set output
-		initialData.outputImage.store(&image);
+		Image* expectedVal = nullptr;
+		initialData.outputImage.compare_exchange_strong(expectedVal, &image);
 	}
 }

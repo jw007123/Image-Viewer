@@ -10,7 +10,10 @@
 #include "Utility/HeapAllocator.h"
 #include "Utility/StackAllocator.h"
 
+#include "GUI/LuminanceOptions.h"
+
 #include "ImageProcessing/Image.h"
+#include "ImageProcessing/LuminanceFilter.h"
 
 namespace ImageProcessing
 {
@@ -19,7 +22,18 @@ namespace ImageProcessing
 	public:
 		struct Request
 		{
+			enum Type : u8
+			{
+				Luminance,
+				Num
+			} type;
 
+			union
+			{
+				GUI::LuminanceOptions::Status lumValue;
+			};
+
+			Request();
 		};
 
 		struct InitialData
@@ -52,6 +66,9 @@ namespace ImageProcessing
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 		InitialData&			 initialData;
+
+		u8				requestFlags[Request::Num];
+		LuminanceFilter luminanceFilter;
 
 		// initialData.image is read-only in the main thread, so copying into this image is well-defined
 		Image image;

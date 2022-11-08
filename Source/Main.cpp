@@ -10,6 +10,7 @@
 
 #include "ImageProcessing/ImageTypes.h"
 #include "ImageProcessing/Image.cpp"
+#include "ImageProcessing/LuminanceFilter.cpp"
 #include "ImageProcessing/WorkerThread.cpp"
 
 #include "GUI/SizeConsts.h"
@@ -27,11 +28,27 @@
 #include "Rendering/OpenGLTexture.cpp"
 #include "Rendering/OpenGLRenderer.cpp"
 
+void SendLuminanceRequest(const GUI::LuminanceOptions::Status& status_, std::vector<ImageProcessing::WorkerThread::Request>& addTo_)
+{
+	if (status_.flags == GUI::LuminanceOptions::Status::Flags::NoOp)
+	{
+		return;
+	}
+
+	ImageProcessing::WorkerThread::Request request;
+	request.lumValue = status_;
+	request.type	 = ImageProcessing::WorkerThread::Request::Type::Luminance;
+
+	addTo_.push_back(request);
+}
+
+
 i16 main()
 {
 	Utility::HeapAllocator  heapAllocator;
 	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
 	ImageProcessing::Image  image(heapAllocator);
+	ImageProcessing::Image  editingImage(heapAllocator);
 
 	// Setup worker thread
 	ImageProcessing::WorkerThread::InitialData threadData(image);
@@ -51,9 +68,24 @@ i16 main()
 	{
 		glBackend.StartFrame();
 		{
+			// Check thread output
+			ImageProcessing::Image* outputImage = threadData.outputImage.load();
+			if (outputImage != nullptr)
+			{
+				image.Copy((*outputImage));
+				threadData.outputImage.store(nullptr);
+			}
+
 			const GUI::MainMenuBar::Status mainMenuBarStatus = mainMenuBar.Draw();
 			const GUI::Viewport::Status viewportStatus		 = viewport.Draw();
 			const GUI::OptionsPanel::Status panelStatus		 = optionsPanel.Draw();
+
+			threadData.requestsMutex.lock();
+			{
+				// Send any requests to thread
+				SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
+			}
+			threadData.requestsMutex.unlock();
 		}
 		glBackend.EndFrame();
 	}
