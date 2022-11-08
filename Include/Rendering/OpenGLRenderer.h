@@ -24,10 +24,10 @@ namespace Rendering
 	class OpenGLRenderer
 	{
 	public:
-		OpenGLRenderer(Utility::StackAllocator* stackAllocator_, Utility::HeapAllocator* heapAllocator_);
+		OpenGLRenderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_);
 
 		/// Renders the scene from cam_'s view
-		void Render(const GUI::Camera& cam_, const ImageProcessing::Image* const image_, const f32 aspectRatio_);
+		void Render(const GUI::Camera& cam_, const ImageProcessing::Image& image_, const f32 aspectRatio_);
 
 	private:
 		struct MeshOpenGLData
@@ -54,8 +54,8 @@ namespace Rendering
 			Num
 		};
 
-		Utility::HeapAllocator*  heapAllocator;
-		Utility::StackAllocator* stackAllocator;
+		Utility::HeapAllocator&  heapAllocator;
+		Utility::StackAllocator& stackAllocator;
 
 		OpenGLProgram programs[ProgramID::Num];
 		OpenGLTexture texture;

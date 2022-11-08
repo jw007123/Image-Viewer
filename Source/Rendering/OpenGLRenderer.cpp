@@ -68,11 +68,10 @@ namespace Rendering
 
 
 
-	OpenGLRenderer::OpenGLRenderer(Utility::StackAllocator* stackAllocator_, Utility::HeapAllocator* heapAllocator_)
+	OpenGLRenderer::OpenGLRenderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_) :
+								   heapAllocator(heapAllocator_),
+								   stackAllocator(stackAllocator_)
 	{
-		stackAllocator = stackAllocator_;
-		heapAllocator  = heapAllocator_;
-
 		{
 			OpenGLShader vsTexture;
 			vsTexture.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsTexture");
@@ -97,11 +96,11 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::Render(const GUI::Camera& cam_, const ImageProcessing::Image* const image_, const f32 aspectRatio_)
+	void OpenGLRenderer::Render(const GUI::Camera& cam_, const ImageProcessing::Image& image_, const f32 aspectRatio_)
 	{
-		if (image_->IsValid())
+		if (image_.IsValid())
 		{
-			texture.Update((u8*)image_->GetData().ptr, image_->GetWidth(), image_->GetHeight());
+			texture.Update((u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
 			RenderTexture(cam_);
 		}
 
@@ -166,9 +165,9 @@ namespace Rendering
 
 	void OpenGLRenderer::LoadTextureMesh()
 	{
-		Utility::MemoryBlock pointsBuff		   = stackAllocator->Allocate<Eigen::Vector3f>(4);
-		Utility::MemoryBlock textureCoordsBuff = stackAllocator->Allocate<Eigen::Vector2f>(4);
-		Utility::MemoryBlock indicesBuff	   = stackAllocator->Allocate<GLuint>(6);
+		Utility::MemoryBlock pointsBuff		   = stackAllocator.Allocate<Eigen::Vector3f>(4);
+		Utility::MemoryBlock textureCoordsBuff = stackAllocator.Allocate<Eigen::Vector2f>(4);
+		Utility::MemoryBlock indicesBuff	   = stackAllocator.Allocate<GLuint>(6);
 
 		Eigen::Vector3f* points		   = (Eigen::Vector3f*)pointsBuff.ptr;
 		Eigen::Vector2f* textureCoords = (Eigen::Vector2f*)textureCoordsBuff.ptr;
@@ -202,8 +201,8 @@ namespace Rendering
 
 		quadMeshData.Create(points, 4, textureCoords, 4, indices, 6);
 
-		stackAllocator->Free(indicesBuff);
-		stackAllocator->Free(textureCoordsBuff);
-		stackAllocator->Free(pointsBuff);
+		stackAllocator.Free(indicesBuff);
+		stackAllocator.Free(textureCoordsBuff);
+		stackAllocator.Free(pointsBuff);
 	}
 }

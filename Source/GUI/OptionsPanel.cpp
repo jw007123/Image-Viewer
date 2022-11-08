@@ -2,11 +2,11 @@
 
 namespace GUI
 {
-	OptionsPanel::OptionsPanel(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_)
+	OptionsPanel::OptionsPanel(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, ImageProcessing::Image& image_) :
+							   heapAllocator(heapAllocator_),
+							   stackAllocator(stackAllocator_),
+							   image(image_)
 	{
-		heapAllocator  = heapAllocator_;
-		stackAllocator = stackAllocator_;
-		image		   = image_;
 	}
 
 

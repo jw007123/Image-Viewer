@@ -2,12 +2,11 @@
 
 namespace ImageProcessing
 {
-	Image::Image(Utility::HeapAllocator* heapAllocator_)
+	Image::Image(Utility::HeapAllocator& heapAllocator_) :
+				 heapAllocator(heapAllocator_)
 	{
 		width  = 0;
 		height = 0;
-
-		heapAllocator = heapAllocator_;
 	}
 
 
@@ -21,7 +20,7 @@ namespace ImageProcessing
 	{
 		if (imageData.ptr)
 		{
-			heapAllocator->Free(imageData);
+			heapAllocator.Free(imageData);
 		}
 
 		width  = 0;
@@ -72,7 +71,7 @@ namespace ImageProcessing
 		// Get new allocation
 		height	  = heightStb;
 		width	  = widthStb;
-		imageData = heapAllocator->Allocate(height * width * 4);
+		imageData = heapAllocator.Allocate(height * width * 4);
 
 		// Copy to our block
 		if (compStb == 4)
@@ -159,5 +158,17 @@ namespace ImageProcessing
 	usize Image::GetHeight() const
 	{
 		return height;
+	}
+
+
+	void Image::Copy(const Image& other_)
+	{
+		Clear();
+
+		imageData = heapAllocator.Allocate(other_.imageData.size);
+		memcpy(imageData.ptr, other_.imageData.ptr, imageData.size);
+
+		width  = other_.width;
+		height = other_.height;
 	}
 }

@@ -17,7 +17,7 @@ namespace Rendering
 	}
 
 
-	bool OpenGLShader::Load(Utility::StackAllocator* stackAllocator_, const Type shaderType_, const char* fName_)
+	bool OpenGLShader::Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_)
 	{
 		// Checks
 		assert(PATH_MAX_LEN > (strlen(fName_) + strlen(shaderPath)));
@@ -40,7 +40,7 @@ namespace Rendering
 		fStream.seekg(0, std::ios_base::beg);
 
 		// Copy to block
-		Utility::MemoryBlock fDataBlock = stackAllocator_->Allocate(sizeof(char) * fSize);
+		Utility::MemoryBlock fDataBlock = stackAllocator_.Allocate(sizeof(char) * fSize);
 		fStream.read((char*)fDataBlock.ptr, fSize);
 		fStream.close();
 
@@ -63,7 +63,7 @@ namespace Rendering
 			Utility::Log(Utility::LogFlag::Info, "Successfuly compiled %s!", concatPath);
 		}
 
-		stackAllocator_->Free(fDataBlock);
+		stackAllocator_.Free(fDataBlock);
 
 		return compiled;
 	}

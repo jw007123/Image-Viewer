@@ -31,13 +31,21 @@ i16 main()
 {
 	Utility::HeapAllocator  heapAllocator;
 	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
-	ImageProcessing::Image  image(&heapAllocator);
+	ImageProcessing::Image  image(heapAllocator);
 
+	// Setup worker thread
+	ImageProcessing::WorkerThread::InitialData threadData(image);
+	std::thread								   workerThread(ImageProcessing::WorkerThread::Main, &threadData);
+	while (!threadData.threadReady.load())
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
+	// Setup rendering
 	Rendering::OpenGLBackend glBackend;
-
-	GUI::MainMenuBar  mainMenuBar(&image);
-	GUI::Viewport     viewport(&heapAllocator, &stackAllocator, &image);
-	GUI::OptionsPanel optionsPanel(&heapAllocator, &stackAllocator, &image);
+	GUI::MainMenuBar		 mainMenuBar(threadData.inputMutex, image);
+	GUI::Viewport			 viewport(heapAllocator, stackAllocator, image);
+	GUI::OptionsPanel		 optionsPanel(heapAllocator, stackAllocator, image);
 
 	while (glBackend.IsRunning())
 	{
@@ -49,6 +57,15 @@ i16 main()
 		}
 		glBackend.EndFrame();
 	}
+
+	// Shutdown thread
+	threadData.threadShutdown.store(true);
+	while (threadData.threadReady.load())
+	{
+		// Wait for thread to signal shutdown
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	workerThread.join();
 
 	return -1;
 }

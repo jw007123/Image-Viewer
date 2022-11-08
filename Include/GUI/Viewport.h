@@ -26,12 +26,15 @@ namespace GUI
 			// Nothing here yet
 		};
 
-		Viewport(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_);
+		Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, ImageProcessing::Image& image_);
 
 		Status Draw();
 
 	private:
-		ImageProcessing::Image*		 image;
+		Utility::HeapAllocator&  heapAllocator;
+		Utility::StackAllocator& stackAllocator;
+		ImageProcessing::Image&	 image;
+
 		GUI::Camera					 camera;
 		Rendering::OpenGLFramebuffer glFramebuffer;
 		Rendering::OpenGLRenderer	 glRenderer;

@@ -2,9 +2,10 @@
 
 namespace GUI
 {
-	MainMenuBar::MainMenuBar(ImageProcessing::Image* image_)
+	MainMenuBar::MainMenuBar(std::mutex& imageReadMutex_, ImageProcessing::Image& image_) :
+							 imageReadMutex(imageReadMutex_),
+							 image(image_)
 	{
-		image = image_;
 	}
 
 
@@ -28,16 +29,20 @@ namespace GUI
 	{
 		if (status_.flags == FileMenu::Status::Flags::Open)
 		{
-			if (!image->Load((*status_.openFilePathPtr)))
+			imageReadMutex.lock();
 			{
-				Utility::Log(Utility::LogFlag::Warn, "Failed to load %s", (*status_.openFilePathPtr));
+				if (!image.Load((*status_.openFilePathPtr)))
+				{
+					Utility::Log(Utility::LogFlag::Warn, "Failed to load %s", (*status_.openFilePathPtr));
+				}
 			}
+			imageReadMutex.unlock();
 
 			return true;
 		}
 		else if (status_.flags == FileMenu::Status::Flags::Save)
 		{
-			if (!image->Save((*status_.saveFilePathPtr)))
+			if (!image.Save((*status_.saveFilePathPtr)))
 			{
 				Utility::Log(Utility::LogFlag::Warn, "Failed to save %s", (*status_.saveFilePathPtr));
 			}

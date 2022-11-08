@@ -15,6 +15,8 @@ namespace Rendering
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_SAMPLES, 8);
 
 		// Setup window
 		const usize width  = GUI::SizeConsts::viewportWidth	+ GUI::SizeConsts::optionsPanelWidth;
@@ -77,6 +79,7 @@ namespace Rendering
 		// Clear frame
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_MULTISAMPLE);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Start ImGui frame

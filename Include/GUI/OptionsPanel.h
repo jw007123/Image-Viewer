@@ -24,14 +24,14 @@ namespace GUI
 			LuminanceOptions::Status lumStatus;
 		};
 
-		OptionsPanel(Utility::HeapAllocator* heapAllocator_, Utility::StackAllocator* stackAllocator_, ImageProcessing::Image* image_);
+		OptionsPanel(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, ImageProcessing::Image& image_);
 
 		Status Draw();
 
 	private:
-		Utility::HeapAllocator*  heapAllocator;
-		Utility::StackAllocator* stackAllocator;
-		ImageProcessing::Image*  image;
+		Utility::HeapAllocator&  heapAllocator;
+		Utility::StackAllocator& stackAllocator;
+		ImageProcessing::Image&  image;
 
 		LuminanceOptions luminanceOptions;
 

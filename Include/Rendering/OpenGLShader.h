@@ -24,7 +24,7 @@ namespace Rendering
 		OpenGLShader();
 		~OpenGLShader();
 
-		bool Load(Utility::StackAllocator* stackAllocator_, const Type shaderType_, const char* fName_);
+		bool Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_);
 
 		GLuint GetShaderIdx()  const;
 		Type   GetShaderType() const;

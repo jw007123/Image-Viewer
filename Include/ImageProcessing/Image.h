@@ -16,7 +16,7 @@ namespace ImageProcessing
 	class Image
 	{
 	public:
-		Image(Utility::HeapAllocator* heapAllocator_);
+		Image(Utility::HeapAllocator& heapAllocator_);
 		~Image();
 
 		void Clear();
@@ -24,6 +24,8 @@ namespace ImageProcessing
 
 		bool Load(const char* filePath_);
 		bool Save(const char* savePath_) const;
+
+		void Copy(const Image& other_);
 
 		Utility::MemoryBlock GetData()   const;
 		usize				 GetWidth()  const;
@@ -36,6 +38,6 @@ namespace ImageProcessing
 		usize				 height;
 		FileType			 type;
 
-		Utility::HeapAllocator* heapAllocator;
+		Utility::HeapAllocator& heapAllocator;
 	};
 }

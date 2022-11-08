@@ -21,12 +21,13 @@ namespace GUI
 			FileMenu::Status fileStatus;
 		};
 
-		MainMenuBar(ImageProcessing::Image* image_);
+		MainMenuBar(std::mutex& imageReadMutex_, ImageProcessing::Image& image_);
 
 		Status Draw();
 
 	private:
-		ImageProcessing::Image* image;
+		ImageProcessing::Image& image;
+		std::mutex&				imageReadMutex;
 		FileMenu				fileMenu;
 
 		/// Returns true if 'image' was updated
