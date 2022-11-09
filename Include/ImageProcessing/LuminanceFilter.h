@@ -19,7 +19,7 @@ namespace ImageProcessing
 		LuminanceFilter();
 
 		void UpdateRequests(const GUI::LuminanceOptions::Status& request_);
-		void ApplyFilter(Image& image_) const;
+		void ApplyFilter(Image& image_);
 
 	private:
 		u8				updatedFlags[4];

@@ -71,17 +71,22 @@ namespace ImageProcessing
 		// Get new allocation
 		height	  = heightStb;
 		width	  = widthStb;
-		imageData = heapAllocator.Allocate(height * width * 4);
+		imageData = heapAllocator.Allocate(height * width * 4 * sizeof(f32));
 
 		// Copy to our block
 		if (compStb == 4)
 		{
+			for (usize i = 0; i < (height * width * 4); ++i)
+			{
+
+			}
+
 			memcpy(imageData.ptr, dataStb, height * width * compStb);
 		}
 		else if (compStb == 3)
 		{
 			u8* imageDataArr = (u8*)imageData.ptr;
-			for (usize i = 0; i < height * width; ++i)
+			for (usize i = 0; i < (height * width); ++i)
 			{
 				imageDataArr[i * 4 + 0] = dataStb[i * 3 + 0];
 				imageDataArr[i * 4 + 1] = dataStb[i * 3 + 1];
@@ -170,5 +175,23 @@ namespace ImageProcessing
 
 		width  = other_.width;
 		height = other_.height;
+	}
+
+
+	u8& Image::Get(const usize i_, const usize j_, const u8 rgbw_)
+	{
+		return *(u8*)((char*)imageData.ptr + (i_ * 4) * height + (j_ * 4) + rgbw_);
+	}
+
+
+	u8 Image::Get(const usize i_, const usize j_, const u8 rgbw_) const
+	{
+		return *(u8*)((char*)imageData.ptr + (i_ * 4) * height + (j_ * 4) + rgbw_);
+	}
+
+
+	void Image::Set(const usize i_, const usize j_, const u8 rgbw_, const u8 val_)
+	{
+		*((char*)imageData.ptr + (i_ * 4) * height + (j_ * 4) + rgbw_) = val_;
 	}
 }

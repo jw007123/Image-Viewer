@@ -44,9 +44,17 @@ namespace ImageProcessing
 		(*initialData_).threadReady.store(true);
 		while (!(*initialData_).threadShutdown.load())
 		{
-			thread.Tick();
+			const auto startTime = std::chrono::system_clock::now();
+			{
+				thread.Tick();
+			}
+			const auto endTime    = std::chrono::system_clock::now();
+			const auto timePassed = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			if (timePassed.count() < 10)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(10 - timePassed.count()));
+			}
 		}
 
 		return -1;

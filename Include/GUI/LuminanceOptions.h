@@ -38,6 +38,6 @@ namespace GUI
 		Status Draw();
 
 	private:
-		Eigen::Vector4f lumValsRGB;
+		Eigen::Vector4f lumValsRGBW;
 	};
 }

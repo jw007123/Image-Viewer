@@ -27,12 +27,16 @@ namespace ImageProcessing
 
 		void Copy(const Image& other_);
 
+		u8& Get(const usize i_, const usize j_, const u8 rgbw_);
+		u8  Get(const usize i_, const usize j_, const u8 rgbw_) const;
+
+		void Set(const usize i_, const usize j_, const u8 rgbw_, const u8 val_);
+
 		Utility::MemoryBlock GetData()   const;
 		usize				 GetWidth()  const;
 		usize				 GetHeight() const;
 
 	private:
-		// imageData.size = width * height
 		Utility::MemoryBlock imageData;
 		usize				 width;
 		usize				 height;

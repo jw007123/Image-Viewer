@@ -10,7 +10,7 @@ namespace GUI
 
 	LuminanceOptions::LuminanceOptions()
 	{
-		lumValsRGB.setOnes();
+		lumValsRGBW.setConstant(0.5f);
 	}
 
 
@@ -18,28 +18,28 @@ namespace GUI
 	{
 		Status optionStatus;
 
-		if (ImGui::SliderFloat("Red", &lumValsRGB.x(), 0.0f, 1.0f))
+		if (ImGui::SliderFloat("Red", &lumValsRGBW.x(), 0.0f, 1.0f))
 		{
 			optionStatus.flags		 = Status::Flags::RChange;
-			optionStatus.newLumValue = lumValsRGB.x();
+			optionStatus.newLumValue = lumValsRGBW.x();
 		}
 
-		if (ImGui::SliderFloat("Green", &lumValsRGB.y(), 0.0f, 1.0f))
+		if (ImGui::SliderFloat("Green", &lumValsRGBW.y(), 0.0f, 1.0f))
 		{
 			optionStatus.flags		 = Status::Flags::GChange;
-			optionStatus.newLumValue = lumValsRGB.y();
+			optionStatus.newLumValue = lumValsRGBW.y();
 		}
 
-		if (ImGui::SliderFloat("Blue", &lumValsRGB.z(), 0.0f, 1.0f))
+		if (ImGui::SliderFloat("Blue", &lumValsRGBW.z(), 0.0f, 1.0f))
 		{
 			optionStatus.flags		 = Status::Flags::BChange;
-			optionStatus.newLumValue = lumValsRGB.z();
+			optionStatus.newLumValue = lumValsRGBW.z();
 		}
 
-		if (ImGui::SliderFloat("White", &lumValsRGB.w(), 0.0f, 1.0f))
+		if (ImGui::SliderFloat("White", &lumValsRGBW.w(), 0.0f, 1.0f))
 		{
 			optionStatus.flags		 = Status::Flags::WChange;
-			optionStatus.newLumValue = lumValsRGB.w();
+			optionStatus.newLumValue = lumValsRGBW.w();
 		}
 
 		return optionStatus;

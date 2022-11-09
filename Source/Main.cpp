@@ -61,8 +61,8 @@ i16 main()
 	// Setup rendering
 	Rendering::OpenGLBackend glBackend;
 	GUI::MainMenuBar		 mainMenuBar(threadData.inputMutex, image);
-	GUI::Viewport			 viewport(heapAllocator, stackAllocator, image);
-	GUI::OptionsPanel		 optionsPanel(heapAllocator, stackAllocator, image);
+	GUI::Viewport			 viewport(heapAllocator, stackAllocator, editingImage);
+	GUI::OptionsPanel		 optionsPanel(heapAllocator, stackAllocator);
 
 	while (glBackend.IsRunning())
 	{
@@ -72,20 +72,28 @@ i16 main()
 			ImageProcessing::Image* outputImage = threadData.outputImage.load();
 			if (outputImage != nullptr)
 			{
-				image.Copy((*outputImage));
+				editingImage.Copy((*outputImage));
 				threadData.outputImage.store(nullptr);
 			}
 
 			const GUI::MainMenuBar::Status mainMenuBarStatus = mainMenuBar.Draw();
-			const GUI::Viewport::Status viewportStatus		 = viewport.Draw();
-			const GUI::OptionsPanel::Status panelStatus		 = optionsPanel.Draw();
-
-			threadData.requestsMutex.lock();
+			if (mainMenuBarStatus.fileStatus.flags == GUI::FileMenu::Status::Open)
 			{
-				// Send any requests to thread
-				SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
+				editingImage.Copy(image);
 			}
-			threadData.requestsMutex.unlock();
+
+			const GUI::Viewport::Status viewportStatus = viewport.Draw();
+
+			if (image.IsValid())
+			{
+				const GUI::OptionsPanel::Status panelStatus = optionsPanel.Draw();
+				threadData.requestsMutex.lock();
+				{
+					// Send any requests to thread
+					SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
+				}
+				threadData.requestsMutex.unlock();
+			}
 		}
 		glBackend.EndFrame();
 	}

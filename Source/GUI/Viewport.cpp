@@ -3,12 +3,12 @@
 namespace GUI
 {
 	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, ImageProcessing::Image& image_) :
-			   glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
-			   glRenderer(stackAllocator_, heapAllocator_),
-			   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight),
-			   heapAllocator(heapAllocator_),
-			   stackAllocator(stackAllocator_),
-			   image(image_)
+					   glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
+					   glRenderer(stackAllocator_, heapAllocator_),
+					   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight),
+					   heapAllocator(heapAllocator_),
+					   stackAllocator(stackAllocator_),
+					   image(image_)
 	{
 		width  = SizeConsts::viewportWidth;
 		height = SizeConsts::viewportHeight;
