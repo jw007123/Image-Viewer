@@ -38,12 +38,14 @@ namespace ImageProcessing
 
 		struct InitialData
 		{
-			// Read-only!
+			// Read-only
 			std::mutex inputMutex;
 			Image&     inputImage;
 
-			// If outputImage != nullptr, take it
-			std::atomic<Image*> outputImage;
+			// Read-only
+			std::atomic_bool outputReady;
+			std::mutex		 outputMutex;
+			Image&			 outputImage;
 
 			// Push any requests on
 			std::mutex			 requestsMutex;
@@ -52,7 +54,7 @@ namespace ImageProcessing
 			std::atomic_bool threadReady;
 			std::atomic_bool threadShutdown;
 
-			InitialData(Image& inputImage_);
+			InitialData(Image& inputImage_, Image& outputImage_);
 		};
 
 		WorkerThread(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, InitialData& initialData_);
@@ -63,6 +65,11 @@ namespace ImageProcessing
 		void Tick();
 		
 	private:
+		struct Consts
+		{
+			static constexpr usize tickTimeMs = 10;
+		};
+
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 		InitialData&			 initialData;

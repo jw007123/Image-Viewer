@@ -8,10 +8,11 @@ namespace ImageProcessing
 	}
 
 
-	WorkerThread::InitialData::InitialData(Image& inputImage_) :
-										   inputImage(inputImage_)
+	WorkerThread::InitialData::InitialData(Image& inputImage_, Image& outputImage_) :
+										   inputImage(inputImage_),
+										   outputImage(outputImage_)
 	{
-		outputImage.store(nullptr);
+		outputReady.store(false);
 
 		threadReady.store(false);
 		threadShutdown.store(false);
@@ -51,9 +52,9 @@ namespace ImageProcessing
 			const auto endTime    = std::chrono::system_clock::now();
 			const auto timePassed = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
 
-			if (timePassed.count() < 10)
+			if (timePassed.count() < Consts::tickTimeMs)
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(10 - timePassed.count()));
+				std::this_thread::sleep_for(std::chrono::milliseconds(Consts::tickTimeMs - timePassed.count()));
 			}
 		}
 
@@ -129,7 +130,11 @@ namespace ImageProcessing
 		}
 
 		// Set output
-		Image* expectedVal = nullptr;
-		initialData.outputImage.compare_exchange_strong(expectedVal, &image);
+		initialData.outputMutex.lock();
+		{
+			initialData.outputImage.Copy(image);
+			initialData.outputReady.store(true);
+		}
+		initialData.outputMutex.unlock();
 	}
 }

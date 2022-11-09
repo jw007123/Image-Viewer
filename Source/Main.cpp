@@ -11,6 +11,7 @@
 #include "ImageProcessing/ImageTypes.h"
 #include "ImageProcessing/Image.cpp"
 #include "ImageProcessing/LuminanceFilter.cpp"
+#include "ImageProcessing/SaturationFilter.cpp"
 #include "ImageProcessing/WorkerThread.cpp"
 
 #include "GUI/SizeConsts.h"
@@ -19,6 +20,7 @@
 #include "GUI/Camera.cpp"
 #include "GUI/Viewport.cpp"
 #include "GUI/LuminanceOptions.cpp"
+#include "GUI/SaturationOptions.cpp"
 #include "GUI/OptionsPanel.cpp"
 
 #include "Rendering/OpenGLBackend.cpp"
@@ -49,9 +51,10 @@ i16 main()
 	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
 	ImageProcessing::Image  image(heapAllocator);
 	ImageProcessing::Image  editingImage(heapAllocator);
+	ImageProcessing::Image  workerOutputImage(heapAllocator);
 
 	// Setup worker thread
-	ImageProcessing::WorkerThread::InitialData threadData(image);
+	ImageProcessing::WorkerThread::InitialData threadData(image, workerOutputImage);
 	std::thread								   workerThread(ImageProcessing::WorkerThread::Main, &threadData);
 	while (!threadData.threadReady.load())
 	{
@@ -69,11 +72,14 @@ i16 main()
 		glBackend.StartFrame();
 		{
 			// Check thread output
-			ImageProcessing::Image* outputImage = threadData.outputImage.load();
-			if (outputImage != nullptr)
+			if (threadData.outputReady.load())
 			{
-				editingImage.Copy((*outputImage));
-				threadData.outputImage.store(nullptr);
+				threadData.outputMutex.lock();
+				{
+					editingImage.Copy(threadData.outputImage);
+					threadData.outputReady.store(false);
+				}
+				threadData.outputMutex.unlock();
 			}
 
 			const GUI::MainMenuBar::Status mainMenuBarStatus = mainMenuBar.Draw();
