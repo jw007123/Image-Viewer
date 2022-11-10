@@ -5,10 +5,18 @@ in vec2 TexCoord;
 out vec4 fColours;
 
 uniform sampler2D textureSamp;
+uniform bool	  onTop;
 
 void main()
 {
-	// Use texture colours and set always on top
-	fColours	 = texture(textureSamp, TexCoord);
-	gl_FragDepth = 0.0f;	
+	fColours = texture(textureSamp, TexCoord);
+
+	if (onTop)
+	{
+		gl_FragDepth = 0.0f;	
+	}
+	else
+	{
+		gl_FragDepth = 0.1f;	
+	}
 }

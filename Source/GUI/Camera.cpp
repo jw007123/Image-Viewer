@@ -10,7 +10,20 @@ namespace GUI
 	}
 
 
-	void Camera::Update(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
+	void Camera::UpdateProjection(const usize vpWidth_, const usize vpHeight_)
+	{
+		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
+	}
+
+
+	void Camera::Reset()
+	{
+		worldToView.setIdentity();
+		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, -1.0f);
+	}
+
+
+	void Camera::UpdateFree(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
 	{
 		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
 
@@ -46,16 +59,13 @@ namespace GUI
 	}
 
 
-	void Camera::UpdateProjection(const usize vpWidth_, const usize vpHeight_)
+	void Camera::UpdateFixed(const Eigen::Vector3f& pos_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
 	{
 		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
-	}
 
-
-	void Camera::Reset()
-	{
-		worldToView.setIdentity();
-		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, -1.0f);
+		worldToView(0, 3) = pos_.x();
+		worldToView(1, 3) = pos_.y();
+		worldToView(2, 3) = -0.1f;
 	}
 
 

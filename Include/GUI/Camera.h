@@ -15,12 +15,14 @@ namespace GUI
 	public:
 		Camera(const f32 aspectRatio_);
 
-		/// Resets the camera to {0, 0, 5} and looking in -Z
 		void Reset();
+		void UpdateProjection(const usize vpWidth_, const usize vpHeight_);
 
 		/// Applies a camera update based on user input
-		void Update(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
-		void UpdateProjection(const usize vpWidth_, const usize vpHeight_);
+		void UpdateFree(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
+
+		/// Applies a camera update based on a fixed position
+		void UpdateFixed(const Eigen::Vector3f& pos_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
 
 		Eigen::Matrix4f GetWorldToView() const;
 		Eigen::Matrix4f GetViewToProj()  const;

@@ -45,6 +45,6 @@ void main()
 	 
 	if (!hasColour)
 	{
-		fColours = vec4(0.1f, 0.1f, 0.1f, 1.0f);
+		discard;
 	}
 }

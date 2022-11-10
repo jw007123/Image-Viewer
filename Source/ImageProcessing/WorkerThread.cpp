@@ -39,23 +39,15 @@ namespace ImageProcessing
 		Utility::HeapAllocator  heapAllocator;
 		Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
 
-		WorkerThread thread(heapAllocator, stackAllocator, (*initialData_));
+		WorkerThread		  thread(heapAllocator, stackAllocator, (*initialData_));
+		Utility::TimeInterval interval(Consts::waitTimeS);
 
 		// Ready!
 		(*initialData_).threadReady.store(true);
 		while (!(*initialData_).threadShutdown.load())
 		{
-			const auto startTime = std::chrono::system_clock::now();
-			{
-				thread.Tick();
-			}
-			const auto endTime    = std::chrono::system_clock::now();
-			const auto timePassed = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-
-			if (timePassed.count() < Consts::tickTimeMs)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(Consts::tickTimeMs - timePassed.count()));
-			}
+			thread.Tick();
+			interval.Wait();
 		}
 
 		return -1;

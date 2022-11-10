@@ -3,6 +3,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "Utility/Literals.h"
+#include "Utility/TimeInterval.cpp"
 #include "Utility/MemoryBlock.cpp"
 #include "Utility/Log.cpp"
 #include "Utility/StackAllocator.cpp"
@@ -11,7 +12,6 @@
 #include "ImageProcessing/ImageTypes.h"
 #include "ImageProcessing/Image.cpp"
 #include "ImageProcessing/LuminanceFilter.cpp"
-#include "ImageProcessing/SaturationFilter.cpp"
 #include "ImageProcessing/WorkerThread.cpp"
 
 #include "GUI/SizeConsts.h"
@@ -19,8 +19,8 @@
 #include "GUI/FileMenu.cpp"
 #include "GUI/Camera.cpp"
 #include "GUI/Viewport.cpp"
+#include "GUI/ZoomViewport.cpp"
 #include "GUI/LuminanceOptions.cpp"
-#include "GUI/SaturationOptions.cpp"
 #include "GUI/OptionsPanel.cpp"
 
 #include "Rendering/OpenGLBackend.cpp"
@@ -49,9 +49,10 @@ i16 main()
 {
 	Utility::HeapAllocator  heapAllocator;
 	Utility::StackAllocator stackAllocator(1024 * 1024 * 10);
-	ImageProcessing::Image  image(heapAllocator);
-	ImageProcessing::Image  editingImage(heapAllocator);
-	ImageProcessing::Image  workerOutputImage(heapAllocator);
+
+	ImageProcessing::Image image(heapAllocator);
+	ImageProcessing::Image editingImage(heapAllocator);
+	ImageProcessing::Image workerOutputImage(heapAllocator);
 
 	// Setup worker thread
 	ImageProcessing::WorkerThread::InitialData threadData(image, workerOutputImage);
@@ -61,12 +62,15 @@ i16 main()
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
-	// Setup rendering
-	Rendering::OpenGLBackend glBackend;
-	GUI::MainMenuBar		 mainMenuBar(threadData.inputMutex, image);
-	GUI::Viewport			 viewport(heapAllocator, stackAllocator, editingImage);
-	GUI::OptionsPanel		 optionsPanel(heapAllocator, stackAllocator);
+	Rendering::OpenGLBackend  glBackend;
+	Rendering::OpenGLRenderer glRenderer(stackAllocator, heapAllocator);
 
+	GUI::MainMenuBar  mainMenuBar(image);
+	GUI::Viewport	  viewport(heapAllocator, stackAllocator, glRenderer);
+	GUI::ZoomViewport zoomViewport(heapAllocator, stackAllocator, glRenderer);
+	GUI::OptionsPanel optionsPanel(heapAllocator, stackAllocator);
+
+	Utility::TimeInterval renderInterval(1.0f / 165.0f);
 	while (glBackend.IsRunning())
 	{
 		glBackend.StartFrame();
@@ -77,31 +81,46 @@ i16 main()
 				threadData.outputMutex.lock();
 				{
 					editingImage.Copy(threadData.outputImage);
+					glRenderer.UpdateTexture(editingImage);
+
 					threadData.outputReady.store(false);
 				}
 				threadData.outputMutex.unlock();
 			}
 
-			const GUI::MainMenuBar::Status mainMenuBarStatus = mainMenuBar.Draw();
+			// Check user image input
+			GUI::MainMenuBar::Status mainMenuBarStatus;
+			threadData.inputMutex.lock();
+			{
+				mainMenuBarStatus = mainMenuBar.Draw();
+			}
+			threadData.inputMutex.unlock();
+
+			// Setup image copies
 			if (mainMenuBarStatus.fileStatus.flags == GUI::FileMenu::Status::Open)
 			{
 				editingImage.Copy(image);
+				glRenderer.UpdateTexture(editingImage);
 			}
 
-			const GUI::Viewport::Status viewportStatus = viewport.Draw();
+			// Draw viewports
+			const GUI::Viewport::Status viewportStatus		   = viewport.Draw();
+			const GUI::ZoomViewport::Status zoomViewportStatus = zoomViewport.Draw(viewportStatus.cameraPos);
 
+			// Send any requests to thread
 			if (image.IsValid())
 			{
 				const GUI::OptionsPanel::Status panelStatus = optionsPanel.Draw();
 				threadData.requestsMutex.lock();
 				{
-					// Send any requests to thread
 					SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
 				}
 				threadData.requestsMutex.unlock();
 			}
 		}
 		glBackend.EndFrame();
+
+		renderInterval.Wait();
 	}
 
 	// Shutdown thread

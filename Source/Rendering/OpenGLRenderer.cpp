@@ -83,32 +83,58 @@ namespace Rendering
 		}
 
 		{
-			OpenGLShader vsBGround;
-			vsBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsBGround");
+			OpenGLShader vsCrossBGround;
+			vsCrossBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsCrossBGround");
 
-			OpenGLShader fsBGround;
-			fsBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsBGround");
+			OpenGLShader fsCrossBGround;
+			fsCrossBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsCrossBGround");
 
-			programs[ProgramID::BGround].Load(vsBGround, fsBGround);
+			programs[ProgramID::CrossBGround].Load(vsCrossBGround, fsCrossBGround);
+		}
+
+		{
+			OpenGLShader vsZoomBGround;
+			vsZoomBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsZoomBGround");
+
+			OpenGLShader fsZoomBGround;
+			fsZoomBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsZoomBGround");
+
+			programs[ProgramID::ZoomBGround].Load(vsZoomBGround, fsZoomBGround);
 		}
 
 		LoadTextureMesh();
 	}
 
 
-	void OpenGLRenderer::Render(const GUI::Camera& cam_, const ImageProcessing::Image& image_, const f32 aspectRatio_)
+	void OpenGLRenderer::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
-		if (image_.IsValid())
+		if (texture.IsValid())
 		{
-			texture.Update((u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
-			RenderTexture(cam_);
+			RenderTexture(cam_, true);
 		}
 
-		RenderBGround(cam_, aspectRatio_);
+		RenderCrossBGround(cam_, aspectRatio_);
 	}
 
 
-	void OpenGLRenderer::RenderTexture(const GUI::Camera& cam_)
+	void OpenGLRenderer::RenderZoomView(const GUI::Camera& cam_)
+	{
+		if (texture.IsValid())
+		{
+			RenderTexture(cam_, false);
+		}
+
+		RenderZoomBGround(cam_);
+	}
+
+
+	void OpenGLRenderer::UpdateTexture(const ImageProcessing::Image& image_)
+	{
+		texture.Update((u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
+	}
+
+
+	void OpenGLRenderer::RenderTexture(const GUI::Camera& cam_, const bool onTop_)
 	{
 		// Use correct program
 		programs[ProgramID::Texture].Use();
@@ -119,6 +145,7 @@ namespace Rendering
 			const GLuint viewToProjLoc   = programs[ProgramID::Texture].GetUniformLoc("viewToProj");
 			const GLuint worldToViewLoc  = programs[ProgramID::Texture].GetUniformLoc("worldToView");
 			const GLuint modelToWorldLoc = programs[ProgramID::Texture].GetUniformLoc("modelToWorld");
+			const GLuint onTopLoc		 = programs[ProgramID::Texture].GetUniformLoc("onTop");
 
 			// Calculate texture model mat
 			Eigen::Matrix4f modelToWorld = Eigen::Matrix4f::Identity();
@@ -127,6 +154,7 @@ namespace Rendering
 			glUniformMatrix4fv(viewToProjLoc,   1, false, cam_.GetViewToProj().data());
 			glUniformMatrix4fv(worldToViewLoc,  1, false, cam_.GetWorldToView().data());
 			glUniformMatrix4fv(modelToWorldLoc, 1, false, modelToWorld.data());
+			glUniform1i(onTopLoc, onTop_);
 
 			// Bind texture. For now, we're just binding one texture a time and can use the 0th unit
 			glActiveTexture(GL_TEXTURE0);
@@ -140,21 +168,41 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::RenderBGround(const GUI::Camera& cam_, const f32 aspectRatio_)
+	void OpenGLRenderer::RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
 		// Use correct program
-		programs[ProgramID::BGround].Use();
+		programs[ProgramID::CrossBGround].Use();
 
 		glBindVertexArray(quadMeshData.VAO);
 		{
 			// Set uniforms
-			const GLuint cameraPosLoc   = programs[ProgramID::BGround].GetUniformLoc("cameraPos");
-			const GLuint aspectRatioLoc = programs[ProgramID::BGround].GetUniformLoc("aspectRatio");
+			const GLuint cameraPosLoc   = programs[ProgramID::CrossBGround].GetUniformLoc("cameraPos");
+			const GLuint aspectRatioLoc = programs[ProgramID::CrossBGround].GetUniformLoc("aspectRatio");
 
 			// Set uniforms
 			const Eigen::Vector3f cameraPos = cam_.GetWorldToView().block<3, 1>(0, 3);
 			glUniform3f(cameraPosLoc,	cameraPos.x(), cameraPos.y(), cameraPos.z());
 			glUniform1f(aspectRatioLoc, aspectRatio_);
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+		glBindVertexArray(0);
+	}
+
+
+	void OpenGLRenderer::RenderZoomBGround(const GUI::Camera& cam_)
+	{
+		programs[ProgramID::ZoomBGround].Use();
+
+		glBindVertexArray(quadMeshData.VAO);
+		{
+			// Set uniforms
+			const GLuint cameraPosLoc = programs[ProgramID::CrossBGround].GetUniformLoc("cameraPos");
+
+			// Set uniforms
+			const Eigen::Vector3f cameraPos = cam_.GetWorldToView().block<3, 1>(0, 3);
+			glUniform3f(cameraPosLoc, cameraPos.x(), cameraPos.y(), cameraPos.z());
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

@@ -26,8 +26,10 @@ namespace Rendering
 	public:
 		OpenGLRenderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_);
 
-		/// Renders the scene from cam_'s view
-		void Render(const GUI::Camera& cam_, const ImageProcessing::Image& image_, const f32 aspectRatio_);
+		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
+		void RenderZoomView(const GUI::Camera& cam_);
+
+		void UpdateTexture(const ImageProcessing::Image& image_);
 
 	private:
 		struct MeshOpenGLData
@@ -49,8 +51,9 @@ namespace Rendering
 
 		enum ProgramID : u8
 		{
-			Texture = 0,
-			BGround = 1,
+			Texture      = 0,
+			CrossBGround = 1,
+			ZoomBGround	 = 2,
 			Num
 		};
 
@@ -60,8 +63,9 @@ namespace Rendering
 		OpenGLProgram programs[ProgramID::Num];
 		OpenGLTexture texture;
 
-		void RenderTexture(const GUI::Camera& cam_);
-		void RenderBGround(const GUI::Camera& cam_, const f32 aspectRatio_);
+		void RenderTexture(const GUI::Camera& cam_, const bool onTop_);
+		void RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_);
+		void RenderZoomBGround(const GUI::Camera& cam_);
 
 		void LoadTextureMesh();
 	};

@@ -2,13 +2,12 @@
 
 namespace GUI
 {
-	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, ImageProcessing::Image& image_) :
+	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
 					   glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
-					   glRenderer(stackAllocator_, heapAllocator_),
 					   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight),
+					   glRenderer(glRenderer_),
 					   heapAllocator(heapAllocator_),
-					   stackAllocator(stackAllocator_),
-					   image(image_)
+					   stackAllocator(stackAllocator_)
 	{
 		width  = SizeConsts::viewportWidth;
 		height = SizeConsts::viewportHeight;
@@ -23,7 +22,7 @@ namespace GUI
 
 		StartFrame();
 		{
-			// Additional ImGui code
+			viewportStatus.cameraPos = camera.GetWorldToView().block<3, 1>(0, 3);
 		}
 		EndFrame();
 
@@ -60,7 +59,7 @@ namespace GUI
 		// Update camera
 		if (ImGui::IsWindowHovered())
 		{
-			camera.Update(ImGui::GetIO(), Eigen::Vector2f(winPos.x, winPos.y), width, height);
+			camera.UpdateFree(ImGui::GetIO(), Eigen::Vector2f(winPos.x, winPos.y), width, height);
 		}
 		else
 		{
@@ -74,7 +73,7 @@ namespace GUI
 		// Render to texture. Could add framebuffer to renderer, but keep this way for genericism
 		glFramebuffer.StartFrame();
 		{
-			glRenderer.Render(camera, image, (f32)width / height);
+			glRenderer.RenderFullView(camera, (f32)width / height);
 		}
 		glFramebuffer.EndFrame();
 

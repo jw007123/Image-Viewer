@@ -9,6 +9,7 @@
 #include "Utility/Log.h"
 #include "Utility/HeapAllocator.h"
 #include "Utility/StackAllocator.h"
+#include "Utility/TimeInterval.h"
 
 #include "GUI/LuminanceOptions.h"
 
@@ -67,7 +68,7 @@ namespace ImageProcessing
 	private:
 		struct Consts
 		{
-			static constexpr usize tickTimeMs = 10;
+			static constexpr f32 waitTimeS = 0.025f;
 		};
 
 		Utility::HeapAllocator&  heapAllocator;

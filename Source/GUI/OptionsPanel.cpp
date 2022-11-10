@@ -57,7 +57,7 @@ namespace GUI
 		ImGuiViewport* vp = ImGui::GetMainViewport();
 
 		ImGui::SetNextWindowPos(ImVec2(SizeConsts::viewportWidth, vp->WorkPos.y));
-		ImGui::SetNextWindowSize(ImVec2(SizeConsts::optionsPanelWidth, vp->Size.y));
+		ImGui::SetNextWindowSize(ImVec2(SizeConsts::optionsPanelWidth, SizeConsts::optionsPanelHeight - vp->WorkPos.y));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));

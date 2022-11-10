@@ -18,6 +18,8 @@ namespace Rendering
 		/// data_ assumed to be RGBA
 		void Update(const u8* data_, const usize width_, const usize height_);
 
+		bool IsValid() const;
+
 		GLuint GetTextureIdx() const;
 		usize  GetWidth() const;
 		usize  GetHeight() const;

@@ -18,17 +18,17 @@
 
 namespace GUI
 {
-	class Viewport
+	class ZoomViewport
 	{
 	public:
 		struct Status
 		{
-			Eigen::Vector3f cameraPos;
+			// Nothing here yet
 		};
 
-		Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_);
+		ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_);
 
-		Status Draw();
+		Status Draw(const Eigen::Vector3f& centrePos_);
 
 	private:
 		Utility::HeapAllocator&  heapAllocator;
@@ -36,13 +36,13 @@ namespace GUI
 
 		GUI::Camera					 camera;
 		Rendering::OpenGLFramebuffer glFramebuffer;
-		Rendering::OpenGLRenderer&	 glRenderer;
+		Rendering::OpenGLRenderer&   glRenderer;
 
 		ImGuiViewport* imguiViewport;
 		usize		   width;
 		usize		   height;
 
-		void StartFrame();
+		void StartFrame(const Eigen::Vector3f& centrePos_);
 		void EndFrame();
 	};
 }
