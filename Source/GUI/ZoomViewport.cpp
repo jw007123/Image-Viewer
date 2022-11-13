@@ -3,15 +3,15 @@
 namespace GUI
 {
 	ZoomViewport::ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
-							  glFramebuffer(SizeConsts::optionsPanelWidth, SizeConsts::zoomWiewportHeight),
-							  camera((f32)SizeConsts::optionsPanelWidth / SizeConsts::zoomWiewportHeight),
+							  glFramebuffer(SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX),
+											SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX)),
+							  camera(1.0f),
 							  glRenderer(glRenderer_),
 							  heapAllocator(heapAllocator_),
 							  stackAllocator(stackAllocator_)
 	{
-		imguiViewport = ImGui::GetMainViewport();
-		width		  = SizeConsts::optionsPanelWidth;
-		height		  = SizeConsts::optionsPanelWidth;
+		width  = SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX);
+		height = SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX);
 	}
 
 
@@ -31,17 +31,20 @@ namespace GUI
 
 	void ZoomViewport::StartFrame(const Eigen::Vector3f& centrePos_)
 	{
-		const ImVec2 winSize  = ImVec2(SizeConsts::optionsPanelWidth, SizeConsts::zoomWiewportHeight);
-		const ImVec2 winPos   = ImVec2(imguiViewport->WorkSize.x - SizeConsts::optionsPanelWidth, imguiViewport->Pos.y + SizeConsts::optionsPanelHeight);
+		ImGuiViewport* vp = ImGui::GetMainViewport();
+
+		const ImVec2 winSize = ImVec2(vp->WorkSize.x * (1.0f - SizeConsts::viewportOptionsRatioX),
+									  vp->WorkSize.x * (1.0f - SizeConsts::viewportOptionsRatioX));
+		const ImVec2 winPos  = ImVec2(vp->WorkSize.x - winSize.x, vp->WorkSize.y - winSize.y);
 
 		ImGui::SetNextWindowPos(winPos);
 		ImGui::SetNextWindowSize(winSize);
+		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-		ImGui::Begin("##Zoom viewport", NULL, ImGuiWindowFlags_NoResize	   |
-											  ImGuiWindowFlags_NoTitleBar  |
+		ImGui::Begin("##Zoom viewport", NULL, ImGuiWindowFlags_NoTitleBar  |
 											  ImGuiWindowFlags_NoScrollbar |
 											  ImGuiWindowFlags_NoBringToFrontOnFocus);
 		ImGui::PopStyleVar(3);
@@ -49,14 +52,15 @@ namespace GUI
 		// Resize internal structs if viewport resized by user
 		if (winSize.x != width || winSize.y != height)
 		{
-			width = winSize.x;
+			width  = winSize.x;
 			height = winSize.y;
 
 			glFramebuffer.Resize(width, height);
 		}
 
-		// Update camera
-		camera.UpdateFixed(centrePos_, Eigen::Vector2f(winPos.x, winPos.y), width, height);
+		// Update camera. Override z so that we get a zoomed-in look
+		camera.UpdateFixed(Eigen::Vector3f(centrePos_.x(), centrePos_.y(), Consts::zoomValue),
+						   Eigen::Vector2f(winPos.x, winPos.y), width, height);
 	}
 
 

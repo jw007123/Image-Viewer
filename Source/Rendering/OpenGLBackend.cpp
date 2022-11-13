@@ -19,9 +19,8 @@ namespace Rendering
 		glfwWindowHint(GLFW_SAMPLES, 8);
 
 		// Setup window
-		const usize width  = GUI::SizeConsts::viewportWidth	+ GUI::SizeConsts::optionsPanelWidth;
-		const usize height = std::max<usize>(GUI::SizeConsts::optionsPanelWidth,
-											(GUI::SizeConsts::optionsPanelHeight + GUI::SizeConsts::zoomWiewportHeight));
+		const usize width  = (1.0f / GUI::SizeConsts::viewportOptionsRatioX) * GUI::SizeConsts::viewportWidth;
+		const usize height = GUI::SizeConsts::viewportHeight;
 
 		glWindow = glfwCreateWindow(width, height, "ImageViewer", NULL, NULL);
 		if (!glWindow)

@@ -13,6 +13,8 @@ namespace GUI
 		height = SizeConsts::viewportHeight;
 
 		imguiViewport = ImGui::GetMainViewport();
+
+		zoomInfo.holdEnabled = false;
 	}
 
 
@@ -20,23 +22,25 @@ namespace GUI
 	{
 		Status viewportStatus;
 
-		StartFrame();
+		StartFrame(viewportStatus);
 		{
-			viewportStatus.cameraPos = camera.GetWorldToView().block<3, 1>(0, 3);
+			HandleZoomInfo(viewportStatus);
 		}
-		EndFrame();
+		EndFrame(viewportStatus);
 
 		return viewportStatus;
 	}
 
 
-	void Viewport::StartFrame()
+	void Viewport::StartFrame(Status& status_)
 	{
+		// 1.25f for weird ImGui padding...
 		ImVec2 winSize      = imguiViewport->WorkSize;
-		winSize.x		   -= SizeConsts::optionsPanelWidth;
-		const ImVec2 winPos = imguiViewport->WorkPos;
+		winSize.x		   *= SizeConsts::viewportOptionsRatioX;
+		const ImVec2 winPos = ImVec2(imguiViewport->WorkPos.x, imguiViewport->WorkPos.y * 1.25f);
 
 		ImGui::SetNextWindowPos(winPos);
+		ImGui::SetNextWindowSize(winSize);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -57,7 +61,8 @@ namespace GUI
 		}
 
 		// Update camera
-		if (ImGui::IsWindowHovered())
+		status_.active = ImGui::IsWindowHovered();
+		if (status_.active)
 		{
 			camera.UpdateFree(ImGui::GetIO(), Eigen::Vector2f(winPos.x, winPos.y), width, height);
 		}
@@ -68,7 +73,7 @@ namespace GUI
 	}
 
 
-	void Viewport::EndFrame()
+	void Viewport::EndFrame(Status& status_)
 	{
 		// Render to texture. Could add framebuffer to renderer, but keep this way for genericism
 		glFramebuffer.StartFrame();
@@ -78,5 +83,35 @@ namespace GUI
 		glFramebuffer.EndFrame();
 
 		ImGui::End();
+	}
+
+
+	void Viewport::HandleZoomInfo(Status& status_)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		if (status_.active)
+		{
+			if (zoomInfo.holdEnabled)
+			{
+				status_.cameraPos = zoomInfo.lastCameraPos;
+			}
+			else
+			{
+				Eigen::Vector2f mousePos = Eigen::Vector2f(io.MousePos.x, io.MousePos.y);
+				status_.cameraPos = camera.CalculateMousePosition(mousePos, width, height);
+				zoomInfo.lastCameraPos   = status_.cameraPos;
+			}
+		}
+		else
+		{
+			status_.cameraPos = zoomInfo.lastCameraPos;
+		}
+
+		// Toggle position hold
+		if (io.KeysDown[GLFW_KEY_H])
+		{
+			zoomInfo.holdEnabled = !zoomInfo.holdEnabled;
+		}
 	}
 }

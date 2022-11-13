@@ -24,6 +24,9 @@ namespace GUI
 		/// Applies a camera update based on a fixed position
 		void UpdateFixed(const Eigen::Vector3f& pos_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
 
+		/// Returns the mouse position in world coordinates
+		Eigen::Vector3f CalculateMousePosition(const Eigen::Vector2f& mousePos_, const usize vpWidth_, const usize vpHeight_);
+
 		Eigen::Matrix4f GetWorldToView() const;
 		Eigen::Matrix4f GetViewToProj()  const;
 
@@ -47,7 +50,13 @@ namespace GUI
 
 		Eigen::Matrix4f CalculateProjection(const f32 aspectRatio_) const;
 
-		/// Returns ray as <origin, dir>, with ||dir||_2 = 1
-		std::pair<Eigen::Vector3f, Eigen::Vector3f> GenerateRayToMousePosition(const Eigen::Vector2f& mousePos_, const usize vpWidth_, const usize vpHeight_) const;
+		/// Returns ray as <origin, dir, t>, with ||dir||_2 = 1
+		struct Ray
+		{
+			Eigen::Vector3f origin;
+			Eigen::Vector3f dir;
+			f32			    t;
+		};
+		Ray GenerateRayToMousePosition(const Eigen::Vector2f& mousePos_, const usize vpWidth_, const usize vpHeight_) const;
 	};
 }

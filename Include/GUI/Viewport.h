@@ -24,6 +24,7 @@ namespace GUI
 		struct Status
 		{
 			Eigen::Vector3f cameraPos;
+			bool			active;
 		};
 
 		Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_);
@@ -31,6 +32,12 @@ namespace GUI
 		Status Draw();
 
 	private:
+		struct ZoomInfo
+		{
+			Eigen::Vector3f lastCameraPos;
+			bool			holdEnabled;
+		} zoomInfo;
+
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
@@ -42,7 +49,9 @@ namespace GUI
 		usize		   width;
 		usize		   height;
 
-		void StartFrame();
-		void EndFrame();
+		void StartFrame(Status& status_);
+		void EndFrame(Status& status_);
+
+		void HandleZoomInfo(Status& status_);
 	};
 }

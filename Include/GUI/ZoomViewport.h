@@ -31,6 +31,11 @@ namespace GUI
 		Status Draw(const Eigen::Vector3f& centrePos_);
 
 	private:
+		struct Consts
+		{
+			static constexpr f32 zoomValue = -0.01f;
+		};
+
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
@@ -38,9 +43,8 @@ namespace GUI
 		Rendering::OpenGLFramebuffer glFramebuffer;
 		Rendering::OpenGLRenderer&   glRenderer;
 
-		ImGuiViewport* imguiViewport;
-		usize		   width;
-		usize		   height;
+		usize width;
+		usize height;
 
 		void StartFrame(const Eigen::Vector3f& centrePos_);
 		void EndFrame();

@@ -12,12 +12,12 @@ namespace GUI
 	{
 		Status barStatus;
 
-		if (ImGui::BeginMainMenuBar())
+		if (ImGui::Begin("Main Menu"))
 		{
 			barStatus.fileStatus = fileMenu.Draw();
 			HandleFileMenuStatus(barStatus.fileStatus);
 
-			ImGui::EndMainMenuBar();
+			ImGui::End();
 		}
 
 		return barStatus;
