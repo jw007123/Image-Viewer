@@ -23,7 +23,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLTexture::Update(const u8* data_, const usize width_, const usize height_)
+	void OpenGLTexture::Update(const TextureFilter& type_, const u8* data_, const usize width_, const usize height_)
 	{
 		// Do we need to do anything?
 		if (glTextIdx == GL_INVALID_INDEX)
@@ -34,8 +34,22 @@ namespace Rendering
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		if (type_ == TextureFilter::Nearest)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
+		else if (type_ == TextureFilter::Bilinear)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+		{
+			assert(0);
+		}
+	
 
 		// Support non-po2 textures
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);

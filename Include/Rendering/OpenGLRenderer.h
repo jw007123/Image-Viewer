@@ -54,16 +54,23 @@ namespace Rendering
 			Texture      = 0,
 			CrossBGround = 1,
 			ZoomBGround	 = 2,
-			Num
+			NumPrograms
+		};
+
+		enum TextureID : u8
+		{
+			Nearest  = 0,
+			Bilinear = 1,
+			NumTextures		// Not Num because C++ committee knows best
 		};
 
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
-		OpenGLProgram programs[ProgramID::Num];
-		OpenGLTexture texture;
+		OpenGLProgram programs[ProgramID::NumPrograms];
+		OpenGLTexture texture[TextureID::NumTextures];
 
-		void RenderTexture(const GUI::Camera& cam_, const bool onTop_);
+		void RenderTexture(const TextureID& type_, const GUI::Camera& cam_, const bool onTop_);
 		void RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_);
 		void RenderZoomBGround(const GUI::Camera& cam_);
 

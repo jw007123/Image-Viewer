@@ -12,11 +12,18 @@ namespace Rendering
 	class OpenGLTexture
 	{
 	public:
+		enum TextureFilter : u8
+		{
+			Nearest  = 0,
+			Bilinear = 1,
+			Num
+		};
+
 		OpenGLTexture();
 		~OpenGLTexture();
 
 		/// data_ assumed to be RGBA
-		void Update(const u8* data_, const usize width_, const usize height_);
+		void Update(const TextureFilter& type_, const u8* data_, const usize width_, const usize height_);
 
 		bool IsValid() const;
 

@@ -108,9 +108,9 @@ namespace Rendering
 
 	void OpenGLRenderer::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
-		if (texture.IsValid())
+		if (texture[TextureID::Bilinear].IsValid())
 		{
-			RenderTexture(cam_, true);
+			RenderTexture(TextureID::Bilinear, cam_, true);
 		}
 
 		RenderCrossBGround(cam_, aspectRatio_);
@@ -119,9 +119,9 @@ namespace Rendering
 
 	void OpenGLRenderer::RenderZoomView(const GUI::Camera& cam_)
 	{
-		if (texture.IsValid())
+		if (texture[TextureID::Nearest].IsValid())
 		{
-			RenderTexture(cam_, false);
+			RenderTexture(TextureID::Nearest, cam_, false);
 		}
 
 		RenderZoomBGround(cam_);
@@ -130,11 +130,12 @@ namespace Rendering
 
 	void OpenGLRenderer::UpdateTexture(const ImageProcessing::Image& image_)
 	{
-		texture.Update((u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
+		texture[TextureID::Nearest].Update(OpenGLTexture::Nearest,   (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
+		texture[TextureID::Bilinear].Update(OpenGLTexture::Bilinear, (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
 	}
 
 
-	void OpenGLRenderer::RenderTexture(const GUI::Camera& cam_, const bool onTop_)
+	void OpenGLRenderer::RenderTexture(const TextureID& type_, const GUI::Camera& cam_, const bool onTop_)
 	{
 		// Use correct program
 		programs[ProgramID::Texture].Use();
@@ -149,7 +150,7 @@ namespace Rendering
 
 			// Calculate texture model mat
 			Eigen::Matrix4f modelToWorld = Eigen::Matrix4f::Identity();
-			modelToWorld(0, 0)			 = (f32)texture.GetWidth() / texture.GetHeight();
+			modelToWorld(0, 0)			 = (f32)texture[type_].GetWidth() / texture[type_].GetHeight();
 
 			glUniformMatrix4fv(viewToProjLoc,   1, false, cam_.GetViewToProj().data());
 			glUniformMatrix4fv(worldToViewLoc,  1, false, cam_.GetWorldToView().data());
@@ -158,7 +159,7 @@ namespace Rendering
 
 			// Bind texture. For now, we're just binding one texture a time and can use the 0th unit
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture.GetTextureIdx());
+			glBindTexture(GL_TEXTURE_2D, texture[type_].GetTextureIdx());
 
 			// Draw
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
