@@ -2,9 +2,9 @@
 
 namespace GUI
 {
-	Camera::Camera(const f32 aspectRatio_)
+	Camera::Camera(const f32 aspectRatio_, const f32 initialZ_)
 	{
-		Reset();
+		Reset(initialZ_);
 
 		viewToProj = CalculateProjection(aspectRatio_);
 	}
@@ -16,10 +16,10 @@ namespace GUI
 	}
 
 
-	void Camera::Reset()
+	void Camera::Reset(const f32 initialZ_)
 	{
 		worldToView.setIdentity();
-		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, -1.0f);
+		worldToView.block<3, 1>(0, 3) = Eigen::Vector3f(0.0f, 0.0f, initialZ_);
 	}
 
 
@@ -42,11 +42,11 @@ namespace GUI
 			const Eigen::Vector3f rayDir   = GenerateRayToMousePosition(mousePos, vpWidth_, vpHeight_).dir;
 			if (io_.MouseWheel > 0 && worldToView(2, 3) != Consts::camZMax)
 			{
-				worldToView.block<3, 1>(0, 3) += (Consts::camZScF * (worldToView(2, 3))) * rayDir;
+				worldToView.block<3, 1>(0, 3) -= (Consts::camZScF * (worldToView(2, 3))) * rayDir;
 			}
 			else if (io_.MouseWheel < 0 && worldToView(2, 3) != Consts::camZMin)
 			{
-				worldToView.block<3, 1>(0, 3) -= (Consts::camZScF * (worldToView(2, 3))) * rayDir;
+				worldToView.block<3, 1>(0, 3) += (Consts::camZScF * (worldToView(2, 3))) * rayDir;
 			}
 		}
 
@@ -57,10 +57,31 @@ namespace GUI
 	}
 
 
+	void Camera::UpdateFixed(const ImGuiIO& io_, const Eigen::Vector2f& posXY_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
+	{
+		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
+
+		// XY is fixed
+		worldToView(0, 3) = posXY_.x();
+		worldToView(1, 3) = posXY_.y();
+
+		// Z can still move
+		if (io_.MouseWheel > 0 && worldToView(2, 3) != Consts::camZMax)
+		{
+			worldToView(2, 3) -= (Consts::camZScF * (worldToView(2, 3)));
+		}
+		else if (io_.MouseWheel < 0 && worldToView(2, 3) != Consts::camZMin)
+		{
+			worldToView(2, 3) += (Consts::camZScF * (worldToView(2, 3)));
+		}
+	}
+
+
 	void Camera::UpdateFixed(const Eigen::Vector3f& pos_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_)
 	{
 		viewToProj = CalculateProjection((f32)vpWidth_ / vpHeight_);
 
+		// XY is fixed
 		worldToView(0, 3) = pos_.x();
 		worldToView(1, 3) = pos_.y();
 		worldToView(2, 3) = pos_.z();
@@ -121,8 +142,8 @@ namespace GUI
 
 		cameraRay.origin		  = (worldToView.inverse() * Eigen::Vector4f(0.0f, 0.0f, 0.0f, 1.0f)).topLeftCorner<3, 1>();
 		const Eigen::Vector3f end = (worldToView.inverse() * Eigen::Vector4f(p.x(), p.y(), -1.0f, 1.0f)).topLeftCorner<3, 1>();
-		cameraRay.dir			  = (end - cameraRay.origin).normalized();
-		cameraRay.t				  = cameraRay.origin.z() / cameraRay.dir.z();	// as camera behind scene, no -1
+		cameraRay.dir			  = (cameraRay.origin - end).normalized();
+		cameraRay.t				  =  cameraRay.origin.z() / cameraRay.dir.z();
 
 		return cameraRay;
 	}

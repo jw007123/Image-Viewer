@@ -13,15 +13,16 @@ namespace GUI
 	class Camera
 	{
 	public:
-		Camera(const f32 aspectRatio_);
+		Camera(const f32 aspectRatio_, const f32 initialZ_);
 
-		void Reset();
+		void Reset(const f32 initialZ_);
 		void UpdateProjection(const usize vpWidth_, const usize vpHeight_);
 
 		/// Applies a camera update based on user input
 		void UpdateFree(const ImGuiIO& io_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
 
-		/// Applies a camera update based on a fixed position
+		/// Applies a camera update based on a fixed position XY or XYZ position
+		void UpdateFixed(const ImGuiIO& io_, const Eigen::Vector2f& posXY_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
 		void UpdateFixed(const Eigen::Vector3f& pos_, const Eigen::Vector2f& vpStart_, const usize vpWidth_, const usize vpHeight_);
 
 		/// Returns the mouse position in world coordinates

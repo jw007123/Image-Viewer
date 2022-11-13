@@ -5,7 +5,7 @@ namespace GUI
 	ZoomViewport::ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
 							  glFramebuffer(SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX),
 											SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX)),
-							  camera(1.0f),
+							  camera(1.0f, Consts::zoomValue),
 							  glRenderer(glRenderer_),
 							  heapAllocator(heapAllocator_),
 							  stackAllocator(stackAllocator_)
@@ -58,9 +58,18 @@ namespace GUI
 			glFramebuffer.Resize(width, height);
 		}
 
-		// Update camera. Override z so that we get a zoomed-in look
-		camera.UpdateFixed(Eigen::Vector3f(centrePos_.x(), centrePos_.y(), Consts::zoomValue),
-						   Eigen::Vector2f(winPos.x, winPos.y), width, height);
+		// Update camera. If window hovered, let user control zoom
+		if (ImGui::IsWindowHovered())
+		{
+			camera.UpdateFixed(ImGui::GetIO(), Eigen::Vector2f(centrePos_.x(), centrePos_.y()),
+											   Eigen::Vector2f(winPos.x, winPos.y), width, height);
+		
+		}
+		else
+		{
+			camera.UpdateFixed(Eigen::Vector3f(centrePos_.x(), centrePos_.y(), camera.GetWorldToView()(2, 3)),
+							   Eigen::Vector2f(winPos.x, winPos.y), width, height);
+		}
 	}
 
 

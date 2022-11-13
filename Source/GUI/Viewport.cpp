@@ -4,7 +4,7 @@ namespace GUI
 {
 	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
 					   glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
-					   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight),
+					   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight, -1.0f),
 					   glRenderer(glRenderer_),
 					   heapAllocator(heapAllocator_),
 					   stackAllocator(stackAllocator_)
@@ -24,7 +24,7 @@ namespace GUI
 
 		StartFrame(viewportStatus);
 		{
-			HandleZoomInfo(viewportStatus);
+			viewportStatus.cameraPos = HandleZoomInfo();
 		}
 		EndFrame(viewportStatus);
 
@@ -61,8 +61,7 @@ namespace GUI
 		}
 
 		// Update camera
-		status_.active = ImGui::IsWindowHovered();
-		if (status_.active)
+		if (ImGui::IsWindowHovered())
 		{
 			camera.UpdateFree(ImGui::GetIO(), Eigen::Vector2f(winPos.x, winPos.y), width, height);
 		}
@@ -86,32 +85,32 @@ namespace GUI
 	}
 
 
-	void Viewport::HandleZoomInfo(Status& status_)
+	Eigen::Vector3f Viewport::HandleZoomInfo()
 	{
-		ImGuiIO& io = ImGui::GetIO();
+		ImGuiIO& io				  = ImGui::GetIO();
+		Eigen::Vector3f cameraPos = Eigen::Vector3f::Zero();
 
-		if (status_.active)
+		if (ImGui::IsWindowHovered())
 		{
 			if (zoomInfo.holdEnabled)
 			{
-				status_.cameraPos = zoomInfo.lastCameraPos;
+				cameraPos = zoomInfo.lastCameraPos;
 			}
 			else
 			{
-				Eigen::Vector2f mousePos = Eigen::Vector2f(io.MousePos.x, io.MousePos.y);
-				status_.cameraPos = camera.CalculateMousePosition(mousePos, width, height);
-				zoomInfo.lastCameraPos   = status_.cameraPos;
+				const Eigen::Vector2f mousePos = Eigen::Vector2f(io.MousePos.x, io.MousePos.y);
+				cameraPos					   = camera.CalculateMousePosition(mousePos, width, height);
+				zoomInfo.lastCameraPos		   = cameraPos;
 			}
+
+			// Toggle position hold
+			zoomInfo.holdEnabled = !io.MouseDown[0];
 		}
 		else
 		{
-			status_.cameraPos = zoomInfo.lastCameraPos;
+			cameraPos = zoomInfo.lastCameraPos;
 		}
 
-		// Toggle position hold
-		if (io.KeysDown[GLFW_KEY_H])
-		{
-			zoomInfo.holdEnabled = !zoomInfo.holdEnabled;
-		}
+		return cameraPos;
 	}
 }
