@@ -39,7 +39,7 @@ namespace Rendering
 
 			void Create(Eigen::Vector3f* points_,		 const usize nPoints_,
 						Eigen::Vector2f* textureCoords_, const usize nTextureCoords_,
-						GLuint* indices_,				 const usize nIndices_);
+						GLuint*			 indices_,		 const usize nIndices_);
 
 			GLuint VAO;
 			GLuint EBO;
@@ -61,7 +61,7 @@ namespace Rendering
 		{
 			Nearest  = 0,
 			Bilinear = 1,
-			NumTextures		// Not Num because C++ committee knows best
+			NumTextures   // Not Num because C++ committee knows best
 		};
 
 		Utility::HeapAllocator&  heapAllocator;

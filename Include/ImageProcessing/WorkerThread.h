@@ -11,10 +11,12 @@
 #include "Utility/StackAllocator.h"
 #include "Utility/TimeInterval.h"
 
-#include "GUI/LuminanceOptions.h"
+#include "GUI/Options/Luminance.h"
+#include "GUI/Options/Saturation.h"
 
 #include "ImageProcessing/Image.h"
-#include "ImageProcessing/LuminanceFilter.h"
+#include "ImageProcessing/Filters/Luminance.h"
+#include "ImageProcessing/Filters/Saturation.h"
 
 namespace ImageProcessing
 {
@@ -25,13 +27,15 @@ namespace ImageProcessing
 		{
 			enum Type : u8
 			{
-				Luminance,
+				Luminance  = 0,
+				Saturation = 1,
 				Num
 			} type;
 
 			union
 			{
-				GUI::LuminanceOptions::Status lumValue;
+				GUI::Options::Luminance::Status  lumValue;
+				GUI::Options::Saturation::Status satValue;
 			};
 
 			Request();
@@ -61,7 +65,9 @@ namespace ImageProcessing
 		WorkerThread(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, InitialData& initialData_);
 		~WorkerThread();
 
-		static i32 Main(InitialData* initialData_);
+		static i32  Main(InitialData* initialData_);
+		static void SendLuminanceRequest(const GUI::Options::Luminance::Status&   status_, std::vector<Request>& addTo_);
+		static void SendSaturationRequest(const GUI::Options::Saturation::Status& status_, std::vector<Request>& addTo_);
 
 		void Tick();
 		
@@ -75,8 +81,9 @@ namespace ImageProcessing
 		Utility::StackAllocator& stackAllocator;
 		InitialData&			 initialData;
 
-		u8				requestFlags[Request::Num];
-		LuminanceFilter luminanceFilter;
+		u8					requestFlags[Request::Num];
+		Filters::Luminance  luminanceFilter;
+		Filters::Saturation saturationFilter;
 
 		// initialData.image is read-only in the main thread, so copying into this image is well-defined
 		Image image;

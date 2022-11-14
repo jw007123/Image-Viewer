@@ -13,7 +13,7 @@ namespace Utility
 	{
 		if (size_ == 0)
 		{
-			Log(LogFlag::Error, "HeapAllocator::Allocate() given size = 0!");
+			Log(Error, "HeapAllocator::Allocate() given size = 0!");
 			assert(0);
 		}
 

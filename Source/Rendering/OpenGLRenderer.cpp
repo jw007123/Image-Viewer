@@ -74,30 +74,30 @@ namespace Rendering
 	{
 		{
 			OpenGLShader vsTexture;
-			vsTexture.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsTexture");
+			vsTexture.Load(stackAllocator, OpenGLShader::Vertex, "vsTexture");
 
 			OpenGLShader fsTexture;
-			fsTexture.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsTexture");
+			fsTexture.Load(stackAllocator, OpenGLShader::Fragment, "fsTexture");
 
 			programs[ProgramID::Texture].Load(vsTexture, fsTexture);
 		}
 
 		{
 			OpenGLShader vsCrossBGround;
-			vsCrossBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsCrossBGround");
+			vsCrossBGround.Load(stackAllocator, OpenGLShader::Vertex, "vsCrossBGround");
 
 			OpenGLShader fsCrossBGround;
-			fsCrossBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsCrossBGround");
+			fsCrossBGround.Load(stackAllocator, OpenGLShader::Fragment, "fsCrossBGround");
 
 			programs[ProgramID::CrossBGround].Load(vsCrossBGround, fsCrossBGround);
 		}
 
 		{
 			OpenGLShader vsZoomBGround;
-			vsZoomBGround.Load(stackAllocator, OpenGLShader::Type::Vertex, "vsZoomBGround");
+			vsZoomBGround.Load(stackAllocator, OpenGLShader::Vertex, "vsZoomBGround");
 
 			OpenGLShader fsZoomBGround;
-			fsZoomBGround.Load(stackAllocator, OpenGLShader::Type::Fragment, "fsZoomBGround");
+			fsZoomBGround.Load(stackAllocator, OpenGLShader::Fragment, "fsZoomBGround");
 
 			programs[ProgramID::ZoomBGround].Load(vsZoomBGround, fsZoomBGround);
 		}
@@ -198,7 +198,7 @@ namespace Rendering
 
 		glBindVertexArray(quadMeshData.VAO);
 		{
-			// Set uniforms
+			// Get uniforms
 			const GLuint cameraPosLoc = programs[ProgramID::CrossBGround].GetUniformLoc("cameraPos");
 
 			// Set uniforms

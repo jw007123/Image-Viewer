@@ -1,8 +1,8 @@
-#include "ImageProcessing/LuminanceFilter.h"
+#include "ImageProcessing/Filters/Luminance.h"
 
-namespace ImageProcessing
+namespace ImageProcessing::Filters
 {
-	LuminanceFilter::LuminanceFilter()
+	Luminance::Luminance()
 	{
 		rgbwVals.setConstant(0.5f);
 
@@ -10,45 +10,20 @@ namespace ImageProcessing
 	}
 
 
-	void LuminanceFilter::UpdateRequests(const GUI::LuminanceOptions::Status& request_)
+	void Luminance::UpdateRequests(const GUI::Options::Luminance::Status& request_)
 	{
-		switch (request_.flags)
+		if (request_.flags == GUI::Options::Luminance::Status::NoOp)
 		{
-			case GUI::LuminanceOptions::Status::RChange:
-			{
-				rgbwVals.x()	= request_.newLumValue;
-				updatedFlags[0] = 1;
-				break;
-			}
-
-			case GUI::LuminanceOptions::Status::GChange:
-			{
-				rgbwVals.y()	= request_.newLumValue;
-				updatedFlags[1] = 1;
-				break;
-			}
-
-			case GUI::LuminanceOptions::Status::BChange:
-			{
-				rgbwVals.z()	= request_.newLumValue;
-				updatedFlags[2] = 1;
-				break;
-			}
-
-			case GUI::LuminanceOptions::Status::WChange:
-			{
-				rgbwVals.w()	= request_.newLumValue;
-				updatedFlags[3] = 1;
-				break;
-			}
-
-			default:
-				assert(0);
+			return;
 		}
+
+		// -1 to match RGBW
+		rgbwVals(request_.flags - 1)	 = request_.newLumValue;
+		updatedFlags[request_.flags - 1] = 1;
 	}
 
 
-	void LuminanceFilter::ApplyFilter(Image& image_)
+	void Luminance::ApplyFilter(Image& image_)
 	{
 		// RGB case
 		for (u8 i = 0; i < 3; ++i)

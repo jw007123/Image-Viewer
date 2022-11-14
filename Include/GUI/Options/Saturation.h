@@ -11,9 +11,9 @@
 
 #include "imgui.h"
 
-namespace GUI
+namespace GUI::Options
 {
-	class LuminanceOptions
+	class Saturation
 	{
 	public:
 		struct Status
@@ -22,22 +22,22 @@ namespace GUI
 			{
 				NoOp	= 0,
 				RChange = 1,
-				BChange = 2,
-				GChange = 3,
+				GChange = 2,
+				BChange = 3,
 				WChange = 4,
 				Num
 			} flags;
 
-			f32 newLumValue;
+			f32 newSatValue;
 
 			Status();
 		};
 
-		LuminanceOptions();
+		Saturation();
 
 		Status Draw();
 
 	private:
-		Eigen::Vector4f lumValsRGBW;
+		Eigen::Vector4f satValsRGBW;
 	};
 }

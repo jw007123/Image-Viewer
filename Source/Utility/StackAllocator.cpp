@@ -6,7 +6,7 @@ namespace Utility
 	{
 		if (!allocSize_)
 		{
-			Log(LogFlag::Error, "StackAllocator() called with allocSize_ == 0!");
+			Log(Error, "StackAllocator() called with allocSize_ == 0!");
 			assert(0);
 		}
 
@@ -38,7 +38,7 @@ namespace Utility
 		// Check that we have space available
 		if ((offset + (alignment + size_)) > buffer.size)
 		{
-			Log(LogFlag::Error, "StackAllocator::Allocate() %zu bytes requested, but only %zu available!", (alignment + size_), (buffer.size - offset));
+			Log(Error, "StackAllocator::Allocate() %zu bytes requested, but only %zu available!", (alignment + size_), (buffer.size - offset));
 			assert(0);
 		}
 

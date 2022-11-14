@@ -14,7 +14,7 @@ namespace Rendering
 	class OpenGLShader
 	{
 	public:
-		enum class Type : u8
+		enum Type : u8
 		{
 			Vertex	 = 0,
 			Fragment = 1,

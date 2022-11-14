@@ -8,7 +8,8 @@
 #include "Utility/HeapAllocator.h"
 
 #include "GUI/SizeConsts.h"
-#include "GUI/LuminanceOptions.h"
+#include "GUI/Options/Luminance.h"
+#include "GUI/Options/Saturation.h"
 
 #include "ImageProcessing/Image.h"
 
@@ -21,7 +22,8 @@ namespace GUI
 	public:
 		struct Status
 		{
-			LuminanceOptions::Status lumStatus;
+			Options::Luminance::Status  lumStatus;
+			Options::Saturation::Status satStatus;
 		};
 
 		OptionsPanel(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_);
@@ -32,7 +34,8 @@ namespace GUI
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
-		LuminanceOptions luminanceOptions;
+		Options::Luminance  luminanceOptions;
+		Options::Saturation saturationOptions;
 
 		void DrawHSL(Status& status_);
 

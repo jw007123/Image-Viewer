@@ -28,7 +28,7 @@ namespace Rendering
 		const bool linked = FindAndPrintProgramLinkageErrors();
 		if (linked)
 		{
-			Utility::Log(Utility::LogFlag::Info, "Program consisting of 2 shaders linked successfully!");
+			Utility::Log(Utility::Info, "Program consisting of 2 shaders linked successfully!");
 		}
 
 		glDetachShader(glProgramIdx, vsShader_.GetShaderIdx());
@@ -87,7 +87,7 @@ namespace Rendering
 			char errorOutput[PATH_MAX_LEN];
 			glGetProgramInfoLog(glProgramIdx, PATH_MAX_LEN, NULL, errorOutput);
 
-			Utility::Log(Utility::LogFlag::Error, "Failed to link %u with error %s!", glProgramIdx, errorOutput);
+			Utility::Log(Utility::Error, "Failed to link %u with error %s!", glProgramIdx, errorOutput);
 			return false;
 		}
 

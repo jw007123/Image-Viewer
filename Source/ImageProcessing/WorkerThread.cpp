@@ -28,11 +28,13 @@ namespace ImageProcessing
 		memset(requestFlags, 0, sizeof(requestFlags));
 	}
 
+
 	WorkerThread::~WorkerThread()
 	{
 		// Needs to be last thing to be performed
 		initialData.threadReady.store(false);
 	}
+
 
 	i32 WorkerThread::Main(InitialData* initialData_)
 	{
@@ -54,6 +56,36 @@ namespace ImageProcessing
 	}
 
 
+	void WorkerThread::SendLuminanceRequest(const GUI::Options::Luminance::Status& status_, std::vector<Request>& addTo_)
+	{
+		if (status_.flags == GUI::Options::Luminance::Status::NoOp)
+		{
+			return;
+		}
+
+		Request request;
+		request.lumValue = status_;
+		request.type	 = Request::Luminance;
+
+		addTo_.push_back(request);
+	}
+
+
+	void WorkerThread::SendSaturationRequest(const GUI::Options::Saturation::Status& status_, std::vector<Request>& addTo_)
+	{
+		if (status_.flags == GUI::Options::Saturation::Status::NoOp)
+		{
+			return;
+		}
+
+		Request request;
+		request.satValue = status_;
+		request.type	 = Request::Saturation;
+
+		addTo_.push_back(request);
+	}
+
+
 	void WorkerThread::Tick()
 	{
 		// Try and find a job
@@ -70,6 +102,12 @@ namespace ImageProcessing
 					case Request::Luminance:
 					{
 						luminanceFilter.UpdateRequests(initialData.requests[i].lumValue);
+						break;
+					}
+
+					case Request::Saturation:
+					{
+						saturationFilter.UpdateRequests(initialData.requests[i].satValue);
 						break;
 					}
 
@@ -111,6 +149,12 @@ namespace ImageProcessing
 				case Request::Luminance:
 				{
 					luminanceFilter.ApplyFilter(image);
+					break;
+				}
+
+				case Request::Saturation:
+				{
+					saturationFilter.ApplyFilter(image);
 					break;
 				}
 

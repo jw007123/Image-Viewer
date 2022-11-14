@@ -7,18 +7,18 @@
 #include "Utility/HeapAllocator.h"
 #include "Utility/StackAllocator.h"
 
-#include "GUI/LuminanceOptions.h"
+#include "GUI/Options/Saturation.h"
 
 #include "ImageProcessing/Image.h"
 
-namespace ImageProcessing
+namespace ImageProcessing::Filters
 {
-	class LuminanceFilter
+	class Saturation
 	{
 	public:
-		LuminanceFilter();
+		Saturation();
 
-		void UpdateRequests(const GUI::LuminanceOptions::Status& request_);
+		void UpdateRequests(const GUI::Options::Saturation::Status& request_);
 		void ApplyFilter(Image& image_);
 
 	private:

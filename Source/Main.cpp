@@ -11,17 +11,18 @@
 
 #include "ImageProcessing/ImageTypes.h"
 #include "ImageProcessing/Image.cpp"
-#include "ImageProcessing/LuminanceFilter.cpp"
 #include "ImageProcessing/WorkerThread.cpp"
+#include "ImageProcessing/Filters/Luminance.cpp"
+#include "ImageProcessing/Filters/Saturation.cpp"
 
 #include "GUI/SizeConsts.h"
-#include "GUI/MainMenuBar.cpp"
-#include "GUI/FileMenu.cpp"
+#include "GUI/MainMenu.cpp"
 #include "GUI/Camera.cpp"
 #include "GUI/Viewport.cpp"
 #include "GUI/ZoomViewport.cpp"
-#include "GUI/LuminanceOptions.cpp"
 #include "GUI/OptionsPanel.cpp"
+#include "GUI/Options/Luminance.cpp"
+#include "GUI/Options/Saturation.cpp"
 
 #include "Rendering/OpenGLBackend.cpp"
 #include "Rendering/OpenGLShader.cpp"
@@ -29,21 +30,6 @@
 #include "Rendering/OpenGLFramebuffer.cpp"
 #include "Rendering/OpenGLTexture.cpp"
 #include "Rendering/OpenGLRenderer.cpp"
-
-void SendLuminanceRequest(const GUI::LuminanceOptions::Status& status_, std::vector<ImageProcessing::WorkerThread::Request>& addTo_)
-{
-	if (status_.flags == GUI::LuminanceOptions::Status::Flags::NoOp)
-	{
-		return;
-	}
-
-	ImageProcessing::WorkerThread::Request request;
-	request.lumValue = status_;
-	request.type	 = ImageProcessing::WorkerThread::Request::Type::Luminance;
-
-	addTo_.push_back(request);
-}
-
 
 i16 main()
 {
@@ -65,7 +51,7 @@ i16 main()
 	Rendering::OpenGLBackend  glBackend;
 	Rendering::OpenGLRenderer glRenderer(stackAllocator, heapAllocator);
 
-	GUI::MainMenuBar  mainMenuBar(image);
+	GUI::MainMenu     mainMenuBar(image);
 	GUI::Viewport	  viewport(heapAllocator, stackAllocator, glRenderer);
 	GUI::ZoomViewport zoomViewport(heapAllocator, stackAllocator, glRenderer);
 	GUI::OptionsPanel optionsPanel(heapAllocator, stackAllocator);
@@ -89,7 +75,7 @@ i16 main()
 			}
 
 			// Check user image input
-			GUI::MainMenuBar::Status mainMenuBarStatus;
+			GUI::MainMenu::Status mainMenuBarStatus;
 			threadData.inputMutex.lock();
 			{
 				mainMenuBarStatus = mainMenuBar.Draw();
@@ -97,7 +83,7 @@ i16 main()
 			threadData.inputMutex.unlock();
 
 			// Setup image copies
-			if (mainMenuBarStatus.fileStatus.flags == GUI::FileMenu::Status::Open)
+			if (mainMenuBarStatus.flags == GUI::MainMenu::Status::Open)
 			{
 				editingImage.Copy(image);
 				glRenderer.UpdateTexture(editingImage);
@@ -113,7 +99,8 @@ i16 main()
 				const GUI::OptionsPanel::Status panelStatus = optionsPanel.Draw();
 				threadData.requestsMutex.lock();
 				{
-					SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
+					ImageProcessing::WorkerThread::SendLuminanceRequest(panelStatus.lumStatus, threadData.requests);
+					ImageProcessing::WorkerThread::SendSaturationRequest(panelStatus.satStatus, threadData.requests);
 				}
 				threadData.requestsMutex.unlock();
 			}

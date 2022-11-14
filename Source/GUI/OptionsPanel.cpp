@@ -37,6 +37,7 @@ namespace GUI
 
 			if (ImGui::TreeNode("Saturation##OptionsPanel"))
 			{
+				status_.satStatus = saturationOptions.Draw();
 				ImGui::TreePop();
 			}
 

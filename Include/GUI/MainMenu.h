@@ -5,13 +5,15 @@
 #include "Utility/Literals.h"
 #include "Utility/Log.h"
 
+#include "ImageProcessing/Image.h"
+
 #include <nfd.h>
 
 #include "imgui.h"
 
 namespace GUI
 {
-	class FileMenu
+	class MainMenu
 	{
 	public:
 		struct Status
@@ -23,15 +25,19 @@ namespace GUI
 				Save = 2
 			} flags;
 
-			char (*openFilePathPtr)[PATH_MAX_LEN];
-			char (*saveFilePathPtr)[PATH_MAX_LEN];
+			char(*openFilePathPtr)[PATH_MAX_LEN];
+			char(*saveFilePathPtr)[PATH_MAX_LEN];
 
 			Status();
 		};
 
+		MainMenu(ImageProcessing::Image& image_);
+
 		Status Draw();
 
 	private:
+		ImageProcessing::Image& image;
+
 		char openFilePath[PATH_MAX_LEN];
 		char saveFilePath[PATH_MAX_LEN];
 

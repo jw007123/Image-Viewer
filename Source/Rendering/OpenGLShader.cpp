@@ -31,7 +31,7 @@ namespace Rendering
 		std::ifstream fStream(concatPath, std::ios::ate | std::ios::binary);
 		if (!fStream.is_open())
 		{
-			Utility::Log(Utility::LogFlag::Error, "Shader file %s does not exist!", concatPath);
+			Utility::Log(Utility::Error, "Shader file %s does not exist!", concatPath);
 			return false;
 		}
 
@@ -60,7 +60,7 @@ namespace Rendering
 		const bool compiled = FindAndPrintShaderCompilationErrors();
 		if (compiled)
 		{
-			Utility::Log(Utility::LogFlag::Info, "Successfuly compiled %s!", concatPath);
+			Utility::Log(Utility::Info, "Successfuly compiled %s!", concatPath);
 		}
 
 		stackAllocator_.Free(fDataBlock);
@@ -90,7 +90,7 @@ namespace Rendering
 			char errorOutput[PATH_MAX_LEN];
 			glGetShaderInfoLog(glShaderIdx, PATH_MAX_LEN, NULL, errorOutput);
 
-			Utility::Log(Utility::LogFlag::Error, "Failed to compile %u with error %s!", glShaderIdx, errorOutput);
+			Utility::Log(Utility::Error, "Failed to compile %u with error %s!", glShaderIdx, errorOutput);
 			return false;
 		}
 
