@@ -25,7 +25,7 @@ namespace ImageProcessing
 							   initialData(initialData_),
 							   image(heapAllocator_)
 	{
-		memset(requestFlags, 0, sizeof(requestFlags));
+		memset(activeFilters, 0, sizeof(activeFilters));
 	}
 
 
@@ -89,12 +89,15 @@ namespace ImageProcessing
 	void WorkerThread::Tick()
 	{
 		// Try and find a job
+		bool anyJobs = false;
 		initialData.requestsMutex.lock();
 		{
+			anyJobs = initialData.requests.size();
+
 			for (usize i = 0; i < initialData.requests.size(); ++i)
 			{
-				// Use vector elements to set request flags and values to their new values
-				requestFlags[initialData.requests[i].type]  = 1;
+				// Use vector elements to set active flags and values to their new values
+				activeFilters[initialData.requests[i].type] = 1;
 
 				// Depding on type, call respective class
 				switch (initialData.requests[i].type)
@@ -121,8 +124,7 @@ namespace ImageProcessing
 		}
 		initialData.requestsMutex.unlock();
 
-		constexpr u8 emptyArr[Request::Num] = { 0 };
-		if (!memcmp((void*)requestFlags, emptyArr, sizeof(requestFlags)))
+		if (!anyJobs)
 		{
 			// Nothing to do
 			return;
@@ -138,7 +140,7 @@ namespace ImageProcessing
 		// Process the image
 		for (usize i = 0; i < Request::Num; ++i)
 		{
-			if (!requestFlags[i])
+			if (!activeFilters[i])
 			{
 				continue;
 			}
@@ -161,8 +163,6 @@ namespace ImageProcessing
 				default:
 					assert(0);
 			}
-
-			requestFlags[i] = 0;
 		}
 
 		// Set output

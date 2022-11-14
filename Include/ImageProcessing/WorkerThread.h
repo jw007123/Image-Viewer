@@ -81,7 +81,7 @@ namespace ImageProcessing
 		Utility::StackAllocator& stackAllocator;
 		InitialData&			 initialData;
 
-		u8					requestFlags[Request::Num];
+		u8					activeFilters[Request::Num];
 		Filters::Luminance  luminanceFilter;
 		Filters::Saturation saturationFilter;
 

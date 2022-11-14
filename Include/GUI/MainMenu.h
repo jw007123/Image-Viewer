@@ -31,12 +31,13 @@ namespace GUI
 			Status();
 		};
 
-		MainMenu(ImageProcessing::Image& image_);
+		MainMenu(ImageProcessing::Image& inputImage_, ImageProcessing::Image& outputImage_);
 
 		Status Draw();
 
 	private:
-		ImageProcessing::Image& image;
+		ImageProcessing::Image& inputImage;
+		ImageProcessing::Image& outputImage;
 
 		char openFilePath[PATH_MAX_LEN];
 		char saveFilePath[PATH_MAX_LEN];

@@ -51,7 +51,7 @@ i16 main()
 	Rendering::OpenGLBackend  glBackend;
 	Rendering::OpenGLRenderer glRenderer(stackAllocator, heapAllocator);
 
-	GUI::MainMenu     mainMenuBar(image);
+	GUI::MainMenu     mainMenuBar(image, workerOutputImage);
 	GUI::Viewport	  viewport(heapAllocator, stackAllocator, glRenderer);
 	GUI::ZoomViewport zoomViewport(heapAllocator, stackAllocator, glRenderer);
 	GUI::OptionsPanel optionsPanel(heapAllocator, stackAllocator);

@@ -10,8 +10,9 @@ namespace GUI
 	}
 
 
-	MainMenu::MainMenu(ImageProcessing::Image& image_) :
-					   image(image_)
+	MainMenu::MainMenu(ImageProcessing::Image& inputImage_, ImageProcessing::Image& outputImage_) :
+					   inputImage(inputImage_),
+					   outputImage(outputImage_)
 	{
 	}
 
@@ -49,14 +50,14 @@ namespace GUI
 
 		if (menuStatus.flags == MainMenu::Status::Open)
 		{
-			if (!image.Load((*menuStatus.openFilePathPtr)))
+			if (!inputImage.Load((*menuStatus.openFilePathPtr)))
 			{
 				Utility::Log(Utility::Warn, "Failed to load %s", (*menuStatus.openFilePathPtr));
 			}
 		}
 		else if (menuStatus.flags == MainMenu::Status::Save)
 		{
-			if (!image.Save((*menuStatus.saveFilePathPtr)))
+			if (!outputImage.Save((*menuStatus.saveFilePathPtr)))
 			{
 				Utility::Log(Utility::Warn, "Failed to save %s", (*menuStatus.saveFilePathPtr));
 			}
