@@ -4,9 +4,7 @@ namespace ImageProcessing::Filters
 {
 	Luminance::Luminance()
 	{
-		rgbwVals.setConstant(0.5f);
-
-		memset(updatedFlags, 0, sizeof(updatedFlags));
+		rgbwVals.setConstant(Consts::defaultValue);
 	}
 
 
@@ -18,8 +16,7 @@ namespace ImageProcessing::Filters
 		}
 
 		// -1 to match RGBW
-		rgbwVals(request_.flags - 1)	 = request_.newLumValue;
-		updatedFlags[request_.flags - 1] = 1;
+		rgbwVals(request_.flags - 1) = request_.newLumValue;
 	}
 
 
@@ -28,7 +25,7 @@ namespace ImageProcessing::Filters
 		// RGB case
 		for (u8 i = 0; i < 3; ++i)
 		{
-			if (!updatedFlags[i])
+			if (!ValueChanged(rgbwVals(i)))
 			{
 				continue;
 			}
@@ -45,7 +42,7 @@ namespace ImageProcessing::Filters
 		}
 
 		// White case
-		if (updatedFlags[3])
+		if (ValueChanged(rgbwVals(3)))
 		{
 			for (usize i = 0; i < image_.GetWidth(); ++i)
 			{
@@ -60,7 +57,11 @@ namespace ImageProcessing::Filters
 				}
 			}
 		}
+	}
 
-		memset(updatedFlags, 0, sizeof(updatedFlags));
+
+	inline bool Luminance::ValueChanged(const f32 val_) const
+	{
+		return std::abs(val_ - Consts::defaultValue) > std::numeric_limits<f32>::epsilon();
 	}
 }

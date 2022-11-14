@@ -22,7 +22,13 @@ namespace ImageProcessing::Filters
 		void ApplyFilter(Image& image_);
 
 	private:
-		u8				updatedFlags[4];
+		struct Consts
+		{
+			static constexpr f32 defaultValue = 0.5f;
+		};
+
 		Eigen::Vector4f rgbwVals;
+
+		inline bool ValueChanged(const f32 val_) const;
 	};
 }

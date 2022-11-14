@@ -4,9 +4,7 @@ namespace ImageProcessing::Filters
 {
 	Saturation::Saturation()
 	{
-		rgbwVals.setConstant(0.5f);
-
-		memset(updatedFlags, 0, sizeof(updatedFlags));
+		rgbwVals.setConstant(Consts::defaultValue);
 	}
 
 
@@ -18,14 +16,18 @@ namespace ImageProcessing::Filters
 		}
 
 		// -1 to match RGBW
-		rgbwVals(request_.flags - 1)	 = request_.newSatValue;
-		updatedFlags[request_.flags - 1] = 1;
+		rgbwVals(request_.flags - 1) = request_.newSatValue;
 	}
 
 
 	void Saturation::ApplyFilter(Image& image_)
 	{
 
-		memset(updatedFlags, 0, sizeof(updatedFlags));
+	}
+
+
+	inline bool Saturation::ValueChanged(const f32 val_) const
+	{
+		return std::abs(val_ - Consts::defaultValue) > std::numeric_limits<f32>::epsilon();
 	}
 }
