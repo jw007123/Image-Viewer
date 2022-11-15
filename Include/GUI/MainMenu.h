@@ -5,6 +5,8 @@
 #include "Utility/Literals.h"
 #include "Utility/Log.h"
 
+#include "GUI/SizeConsts.h"
+
 #include "ImageProcessing/Image.h"
 
 #include <nfd.h>
@@ -36,6 +38,11 @@ namespace GUI
 		Status Draw();
 
 	private:
+		struct Consts
+		{
+			static constexpr f32 posOffset = 20.0f;
+		};
+
 		ImageProcessing::Image& inputImage;
 		ImageProcessing::Image& outputImage;
 

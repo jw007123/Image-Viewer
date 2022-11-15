@@ -21,7 +21,19 @@ namespace GUI
 	{
 		Status menuStatus;
 
-		ImGui::Begin("Main Menu");
+		ImGui::SetNextWindowPos(ImVec2(Consts::posOffset, Consts::posOffset));
+		ImGui::SetNextWindowSize(ImVec2(SizeConsts::menuWidth, SizeConsts::menuWidth));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+		ImGui::PopStyleVar(3);
+
+		ImGui::Begin("Main Menu", NULL, ImGuiWindowFlags_NoCollapse  |
+										ImGuiWindowFlags_NoResize    |
+									    ImGuiWindowFlags_NoScrollbar |
+										ImGuiWindowFlags_NoBringToFrontOnFocus);
 		{
 			if (ImGui::BeginMenu("File Options##FileMenu_ImGui"))
 			{
