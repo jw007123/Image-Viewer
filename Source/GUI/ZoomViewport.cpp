@@ -2,11 +2,11 @@
 
 namespace GUI
 {
-	ZoomViewport::ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
-							  glFramebuffer(SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX),
+	ZoomViewport::ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::Renderer& renderer_) :
+							  framebuffer(SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX),
 											SizeConsts::viewportWidth * (1.0f - SizeConsts::viewportOptionsRatioX)),
 							  camera(1.0f, Consts::zoomValue),
-							  glRenderer(glRenderer_),
+							  renderer(renderer_),
 							  heapAllocator(heapAllocator_),
 							  stackAllocator(stackAllocator_)
 	{
@@ -55,7 +55,7 @@ namespace GUI
 			width  = winSize.x;
 			height = winSize.y;
 
-			glFramebuffer.Resize(width, height);
+			framebuffer.Resize(width, height);
 		}
 
 		// Update camera. If window hovered, let user control zoom
@@ -76,11 +76,11 @@ namespace GUI
 	void ZoomViewport::EndFrame()
 	{
 		// Render to texture. Could add framebuffer to renderer, but keep this way for genericism
-		glFramebuffer.StartFrame();
+		framebuffer.StartFrame();
 		{
-			glRenderer.RenderZoomView(camera);
+			renderer.RenderZoomView(camera);
 		}
-		glFramebuffer.EndFrame();
+		framebuffer.EndFrame();
 
 		ImGui::End();
 	}

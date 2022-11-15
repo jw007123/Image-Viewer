@@ -15,16 +15,16 @@
 
 #include "GUI/Camera.h"
 
-#include "Rendering/OpenGLShader.h"
-#include "Rendering/OpenGLProgram.h"
-#include "Rendering/OpenGLTexture.h"
+#include "Rendering/OpenGL/Shader.h"
+#include "Rendering/OpenGL/Program.h"
+#include "Rendering/OpenGL/Texture.h"
 
 namespace Rendering
 {
-	class OpenGLRenderer
+	class Renderer
 	{
 	public:
-		OpenGLRenderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_);
+		Renderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_);
 
 		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
 		void RenderZoomView(const GUI::Camera& cam_);
@@ -51,7 +51,7 @@ namespace Rendering
 
 		enum ProgramID : u8
 		{
-			Texture      = 0,
+			QuadTexture  = 0,
 			CrossBGround = 1,
 			ZoomBGround	 = 2,
 			NumPrograms
@@ -67,8 +67,8 @@ namespace Rendering
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
-		OpenGLProgram programs[ProgramID::NumPrograms];
-		OpenGLTexture texture[TextureID::NumTextures];
+		Program programs[ProgramID::NumPrograms];
+		Texture texture[TextureID::NumTextures];
 
 		void RenderTexture(const TextureID& type_, const GUI::Camera& cam_, const bool onTop_);
 		void RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_);

@@ -24,12 +24,7 @@
 #include "GUI/Options/Luminance.cpp"
 #include "GUI/Options/Saturation.cpp"
 
-#include "Rendering/OpenGLBackend.cpp"
-#include "Rendering/OpenGLShader.cpp"
-#include "Rendering/OpenGLProgram.cpp"
-#include "Rendering/OpenGLFramebuffer.cpp"
-#include "Rendering/OpenGLTexture.cpp"
-#include "Rendering/OpenGLRenderer.cpp"
+#include "Rendering/API.cpp"
 
 i16 main()
 {
@@ -48,18 +43,18 @@ i16 main()
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
-	Rendering::OpenGLBackend  glBackend;
-	Rendering::OpenGLRenderer glRenderer(stackAllocator, heapAllocator);
+	Rendering::Backend  rendererBackend;
+	Rendering::Renderer renderer(stackAllocator, heapAllocator);
 
 	GUI::MainMenu     mainMenuBar(image, workerOutputImage);
-	GUI::Viewport	  viewport(heapAllocator, stackAllocator, glRenderer);
-	GUI::ZoomViewport zoomViewport(heapAllocator, stackAllocator, glRenderer);
+	GUI::Viewport	  viewport(heapAllocator, stackAllocator, renderer);
+	GUI::ZoomViewport zoomViewport(heapAllocator, stackAllocator, renderer);
 	GUI::OptionsPanel optionsPanel(heapAllocator, stackAllocator);
 
 	Utility::TimeInterval renderInterval(1.0f / 165.0f);
-	while (glBackend.IsRunning())
+	while (rendererBackend.IsRunning())
 	{
-		glBackend.StartFrame();
+		rendererBackend.StartFrame();
 		{
 			// Check thread output
 			if (threadData.outputReady.load())
@@ -67,7 +62,7 @@ i16 main()
 				threadData.outputMutex.lock();
 				{
 					editingImage.Copy(threadData.outputImage);
-					glRenderer.UpdateTexture(editingImage);
+					renderer.UpdateTexture(editingImage);
 
 					threadData.outputReady.store(false);
 				}
@@ -86,7 +81,7 @@ i16 main()
 			if (mainMenuBarStatus.flags == GUI::MainMenu::Status::Open)
 			{
 				editingImage.Copy(image);
-				glRenderer.UpdateTexture(editingImage);
+				renderer.UpdateTexture(editingImage);
 			}
 
 			// Draw viewports
@@ -105,7 +100,7 @@ i16 main()
 				threadData.requestsMutex.unlock();
 			}
 		}
-		glBackend.EndFrame();
+		rendererBackend.EndFrame();
 
 		renderInterval.Wait();
 	}

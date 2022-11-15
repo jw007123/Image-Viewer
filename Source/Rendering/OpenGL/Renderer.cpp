@@ -1,8 +1,8 @@
-#include "Rendering/OpenGLRenderer.h"
+#include "Rendering/OpenGL/Renderer.h"
 
 namespace Rendering
 {
-	OpenGLRenderer::MeshOpenGLData::MeshOpenGLData()
+	Renderer::MeshOpenGLData::MeshOpenGLData()
 	{
 		VAO = GL_INVALID_INDEX;
 		EBO = GL_INVALID_INDEX;
@@ -12,7 +12,7 @@ namespace Rendering
 	}
 
 
-	OpenGLRenderer::MeshOpenGLData::~MeshOpenGLData()
+	Renderer::MeshOpenGLData::~MeshOpenGLData()
 	{
 		if (VAO != GL_INVALID_INDEX)
 		{
@@ -36,7 +36,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::MeshOpenGLData::Create(Eigen::Vector3f* points_,		 const usize nPoints_,
+	void Renderer::MeshOpenGLData::Create(Eigen::Vector3f* points_,				 const usize nPoints_,
 												Eigen::Vector2f* textureCoords_, const usize nTextureCoords_,
 												GLuint* indices_,				 const usize nIndices_)
 	{
@@ -68,36 +68,36 @@ namespace Rendering
 
 
 
-	OpenGLRenderer::OpenGLRenderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_) :
-								   heapAllocator(heapAllocator_),
-								   stackAllocator(stackAllocator_)
+	Renderer::Renderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_) :
+					   heapAllocator(heapAllocator_),
+					   stackAllocator(stackAllocator_)
 	{
 		{
-			OpenGLShader vsTexture;
-			vsTexture.Load(stackAllocator, OpenGLShader::Vertex, "vsTexture");
+			Shader vsTexture;
+			vsTexture.Load(stackAllocator, Shader::Vertex, "vsTexture");
 
-			OpenGLShader fsTexture;
-			fsTexture.Load(stackAllocator, OpenGLShader::Fragment, "fsTexture");
+			Shader fsTexture;
+			fsTexture.Load(stackAllocator, Shader::Fragment, "fsTexture");
 
-			programs[ProgramID::Texture].Load(vsTexture, fsTexture);
+			programs[ProgramID::QuadTexture].Load(vsTexture, fsTexture);
 		}
 
 		{
-			OpenGLShader vsCrossBGround;
-			vsCrossBGround.Load(stackAllocator, OpenGLShader::Vertex, "vsCrossBGround");
+			Shader vsCrossBGround;
+			vsCrossBGround.Load(stackAllocator, Shader::Vertex, "vsCrossBGround");
 
-			OpenGLShader fsCrossBGround;
-			fsCrossBGround.Load(stackAllocator, OpenGLShader::Fragment, "fsCrossBGround");
+			Shader fsCrossBGround;
+			fsCrossBGround.Load(stackAllocator, Shader::Fragment, "fsCrossBGround");
 
 			programs[ProgramID::CrossBGround].Load(vsCrossBGround, fsCrossBGround);
 		}
 
 		{
-			OpenGLShader vsZoomBGround;
-			vsZoomBGround.Load(stackAllocator, OpenGLShader::Vertex, "vsZoomBGround");
+			Shader vsZoomBGround;
+			vsZoomBGround.Load(stackAllocator, Shader::Vertex, "vsZoomBGround");
 
-			OpenGLShader fsZoomBGround;
-			fsZoomBGround.Load(stackAllocator, OpenGLShader::Fragment, "fsZoomBGround");
+			Shader fsZoomBGround;
+			fsZoomBGround.Load(stackAllocator, Shader::Fragment, "fsZoomBGround");
 
 			programs[ProgramID::ZoomBGround].Load(vsZoomBGround, fsZoomBGround);
 		}
@@ -106,7 +106,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
+	void Renderer::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
 		if (texture[TextureID::Bilinear].IsValid())
 		{
@@ -117,7 +117,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::RenderZoomView(const GUI::Camera& cam_)
+	void Renderer::RenderZoomView(const GUI::Camera& cam_)
 	{
 		if (texture[TextureID::Nearest].IsValid())
 		{
@@ -128,25 +128,25 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::UpdateTexture(const ImageProcessing::Image& image_)
+	void Renderer::UpdateTexture(const ImageProcessing::Image& image_)
 	{
-		texture[TextureID::Nearest].Update(OpenGLTexture::Nearest,   (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
-		texture[TextureID::Bilinear].Update(OpenGLTexture::Bilinear, (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
+		texture[TextureID::Nearest].Update(Texture::Nearest,   (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
+		texture[TextureID::Bilinear].Update(Texture::Bilinear, (u8*)image_.GetData().ptr, image_.GetWidth(), image_.GetHeight());
 	}
 
 
-	void OpenGLRenderer::RenderTexture(const TextureID& type_, const GUI::Camera& cam_, const bool onTop_)
+	void Renderer::RenderTexture(const TextureID& type_, const GUI::Camera& cam_, const bool onTop_)
 	{
 		// Use correct program
-		programs[ProgramID::Texture].Use();
+		programs[ProgramID::QuadTexture].Use();
 
 		glBindVertexArray(quadMeshData.VAO);
 		{
 			// Set uniforms
-			const GLuint viewToProjLoc   = programs[ProgramID::Texture].GetUniformLoc("viewToProj");
-			const GLuint worldToViewLoc  = programs[ProgramID::Texture].GetUniformLoc("worldToView");
-			const GLuint modelToWorldLoc = programs[ProgramID::Texture].GetUniformLoc("modelToWorld");
-			const GLuint onTopLoc		 = programs[ProgramID::Texture].GetUniformLoc("onTop");
+			const GLuint viewToProjLoc   = programs[ProgramID::QuadTexture].GetUniformLoc("viewToProj");
+			const GLuint worldToViewLoc  = programs[ProgramID::QuadTexture].GetUniformLoc("worldToView");
+			const GLuint modelToWorldLoc = programs[ProgramID::QuadTexture].GetUniformLoc("modelToWorld");
+			const GLuint onTopLoc		 = programs[ProgramID::QuadTexture].GetUniformLoc("onTop");
 
 			// Calculate texture model mat
 			Eigen::Matrix4f modelToWorld = Eigen::Matrix4f::Identity();
@@ -169,7 +169,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_)
+	void Renderer::RenderCrossBGround(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
 		// Use correct program
 		programs[ProgramID::CrossBGround].Use();
@@ -192,7 +192,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::RenderZoomBGround(const GUI::Camera& cam_)
+	void Renderer::RenderZoomBGround(const GUI::Camera& cam_)
 	{
 		programs[ProgramID::ZoomBGround].Use();
 
@@ -212,7 +212,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLRenderer::LoadTextureMesh()
+	void Renderer::LoadTextureMesh()
 	{
 		Utility::MemoryBlock pointsBuff		   = stackAllocator.Allocate<Eigen::Vector3f>(4);
 		Utility::MemoryBlock textureCoordsBuff = stackAllocator.Allocate<Eigen::Vector2f>(4);

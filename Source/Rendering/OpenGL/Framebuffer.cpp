@@ -1,8 +1,8 @@
-#include "Rendering/OpenGLFramebuffer.h"
+#include "Rendering/OpenGL/Framebuffer.h"
 
 namespace Rendering
 {
-	OpenGLFramebuffer::OpenGLFramebuffer(const usize width_, const usize height_)
+	Framebuffer::Framebuffer(const usize width_, const usize height_)
 	{
 		glGenFramebuffers(1, &glMSAAFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, glMSAAFBO);
@@ -49,7 +49,7 @@ namespace Rendering
 	}
 
 
-	OpenGLFramebuffer::~OpenGLFramebuffer()
+	Framebuffer::~Framebuffer()
 	{
 		glDeleteFramebuffers(1, &glMSAAFBO);
 		glDeleteFramebuffers(1, &glFBO);
@@ -59,7 +59,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLFramebuffer::Resize(const usize width_, const usize height_)
+	void Framebuffer::Resize(const usize width_, const usize height_)
 	{
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, glMSAAText);
 		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGB, width_, height_, GL_TRUE);
@@ -80,7 +80,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLFramebuffer::StartFrame()
+	void Framebuffer::StartFrame()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, glMSAAFBO);
 
@@ -98,7 +98,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLFramebuffer::EndFrame()
+	void Framebuffer::EndFrame()
 	{
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, glMSAAFBO);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, glFBO);

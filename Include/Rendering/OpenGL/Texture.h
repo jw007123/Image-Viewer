@@ -9,7 +9,7 @@
 
 namespace Rendering
 {
-	class OpenGLTexture
+	class Texture
 	{
 	public:
 		enum TextureFilter : u8
@@ -19,8 +19,8 @@ namespace Rendering
 			Num
 		};
 
-		OpenGLTexture();
-		~OpenGLTexture();
+		Texture();
+		~Texture();
 
 		/// data_ assumed to be RGBA
 		void Update(const TextureFilter& type_, const u8* data_, const usize width_, const usize height_);

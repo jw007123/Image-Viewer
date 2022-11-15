@@ -6,17 +6,17 @@
 #include <stdarg.h>
 #include <unordered_map>
 
-#include "Rendering/OpenGLShader.h"
+#include "Rendering/OpenGL/Shader.h"
 
 namespace Rendering
 {
-	class OpenGLProgram
+	class Program
 	{
 	public:
-		OpenGLProgram();
-		~OpenGLProgram();
+		Program();
+		~Program();
 
-		bool Load(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_);
+		bool Load(const Shader& vsShader_, const Shader& fsShader_);
 		void Use() const;
 
 		/// Gets a GLuint handle into a uniform variable for the program

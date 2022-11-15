@@ -15,11 +15,11 @@
 
 namespace Rendering
 {
-	class OpenGLBackend
+	class Backend
 	{
 	public:
-		OpenGLBackend();
-		~OpenGLBackend();
+		Backend();
+		~Backend();
 
 		/// Is true for as long as the window is open
 		bool IsRunning();

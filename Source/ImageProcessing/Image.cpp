@@ -7,6 +7,7 @@ namespace ImageProcessing
 	{
 		width  = 0;
 		height = 0;
+		type   = FileType::Num;
 	}
 
 
@@ -37,13 +38,14 @@ namespace ImageProcessing
 
 	bool Image::Load(const char* filePath_)
 	{
-		// Attempt to load file with stb. Force RGBA with '4'
+		// Attempt to load file with stb
 		i16 widthStb  = 0;
 		i16 heightStb = 0;
 		i16 compStb   = 0;
 		u8* dataStb   = stbi_load(filePath_, &widthStb, &heightStb, &compStb, 0);
 		if (dataStb == nullptr)
 		{
+			Utility::Log(Utility::Warn, "stbimage failed to load %s!", filePath_);
 			return false;
 		}
 
@@ -65,6 +67,7 @@ namespace ImageProcessing
 		// Unrecognised format. Fail
 		if (type == FileType::Num)
 		{
+			Utility::Log(Utility::Warn, "Unknown image type %s!", filePath_);
 			return false;
 		}
 
@@ -76,11 +79,6 @@ namespace ImageProcessing
 		// Copy to our block
 		if (compStb == 4)
 		{
-			for (usize i = 0; i < (height * width * 4); ++i)
-			{
-
-			}
-
 			memcpy(imageData.ptr, dataStb, height * width * compStb);
 		}
 		else if (compStb == 3)
@@ -96,7 +94,7 @@ namespace ImageProcessing
 		}
 		else
 		{
-			Utility::Log(Utility::LogFlag::Warn, "Unhandled image format with %s!", filePath_);
+			Utility::Log(Utility::Warn, "Unhandled image format with %s!", filePath_);
 		}
 
 		// Free original data

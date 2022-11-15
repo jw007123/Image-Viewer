@@ -1,14 +1,14 @@
-#include "Rendering/OpenGLShader.h"
+#include "Rendering/OpenGL/Shader.h"
 
 namespace Rendering
 {
-	OpenGLShader::OpenGLShader()
+	Shader::Shader()
 	{
 		glShaderIdx = GL_INVALID_INDEX;
 	}
 
 
-	OpenGLShader::~OpenGLShader()
+	Shader::~Shader()
 	{
 		if (glShaderIdx != GL_INVALID_INDEX)
 		{
@@ -17,7 +17,7 @@ namespace Rendering
 	}
 
 
-	bool OpenGLShader::Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_)
+	bool Shader::Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_)
 	{
 		// Checks
 		assert(PATH_MAX_LEN > (strlen(fName_) + strlen(shaderPath)));
@@ -69,19 +69,19 @@ namespace Rendering
 	}
 
 
-	GLuint OpenGLShader::GetShaderIdx() const
+	GLuint Shader::GetShaderIdx() const
 	{
 		return glShaderIdx;
 	}
 
 
-	OpenGLShader::Type OpenGLShader::GetShaderType() const
+	Shader::Type Shader::GetShaderType() const
 	{
 		return shaderType;
 	}
 
 
-	bool OpenGLShader::FindAndPrintShaderCompilationErrors() const
+	bool Shader::FindAndPrintShaderCompilationErrors() const
 	{
 		i16 errors = -1;
 		glGetShaderiv(glShaderIdx, GL_COMPILE_STATUS, &errors);

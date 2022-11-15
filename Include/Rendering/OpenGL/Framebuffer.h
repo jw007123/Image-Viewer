@@ -11,11 +11,11 @@
 
 namespace Rendering
 {
-	class OpenGLFramebuffer
+	class Framebuffer
 	{
 	public:
-		OpenGLFramebuffer(const usize width_, const usize height_);
-		~OpenGLFramebuffer();
+		Framebuffer(const usize width_, const usize height_);
+		~Framebuffer();
 
 		void Resize(const usize width_, const usize height_);
 

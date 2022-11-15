@@ -2,10 +2,10 @@
 
 namespace GUI
 {
-	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_) :
-					   glFramebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
+	Viewport::Viewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::Renderer& renderer_) :
+					   framebuffer(SizeConsts::viewportWidth, SizeConsts::viewportHeight),
 					   camera((f32)SizeConsts::viewportWidth / SizeConsts::viewportHeight, -1.0f),
-					   glRenderer(glRenderer_),
+					   renderer(renderer_),
 					   heapAllocator(heapAllocator_),
 					   stackAllocator(stackAllocator_)
 	{
@@ -58,7 +58,7 @@ namespace GUI
 			width  = winSize.x;
 			height = winSize.y;
 
-			glFramebuffer.Resize(width, height);
+			framebuffer.Resize(width, height);
 		}
 
 		// Update camera
@@ -76,11 +76,11 @@ namespace GUI
 	void Viewport::EndFrame(Status& status_)
 	{
 		// Render to texture. Could add framebuffer to renderer, but keep this way for genericism
-		glFramebuffer.StartFrame();
+		framebuffer.StartFrame();
 		{
-			glRenderer.RenderFullView(camera, (f32)width / height);
+			renderer.RenderFullView(camera, (f32)width / height);
 		}
-		glFramebuffer.EndFrame();
+		framebuffer.EndFrame();
 
 		ImGui::End();
 	}

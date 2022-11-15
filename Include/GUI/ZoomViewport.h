@@ -11,8 +11,7 @@
 
 #include "ImageProcessing/Image.h"
 
-#include "Rendering/OpenGLFramebuffer.h"
-#include "Rendering/OpenGLRenderer.h"
+#include "Rendering/API.h"
 
 #include "imgui.h"
 
@@ -26,7 +25,7 @@ namespace GUI
 			// Nothing here yet
 		};
 
-		ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::OpenGLRenderer& glRenderer_);
+		ZoomViewport(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Rendering::Renderer& renderer_);
 
 		Status Draw(const Eigen::Vector3f& centrePos_);
 
@@ -39,9 +38,9 @@ namespace GUI
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 
-		GUI::Camera					 camera;
-		Rendering::OpenGLFramebuffer glFramebuffer;
-		Rendering::OpenGLRenderer&   glRenderer;
+		GUI::Camera			   camera;
+		Rendering::Framebuffer framebuffer;
+		Rendering::Renderer&   renderer;
 
 		usize width;
 		usize height;

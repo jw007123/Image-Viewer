@@ -11,7 +11,7 @@
 
 namespace Rendering
 {
-	class OpenGLShader
+	class Shader
 	{
 	public:
 		enum Type : u8
@@ -21,8 +21,8 @@ namespace Rendering
 			Num
 		};
 
-		OpenGLShader();
-		~OpenGLShader();
+		Shader();
+		~Shader();
 
 		bool Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_);
 

@@ -1,14 +1,14 @@
-#include "Rendering/OpenGLTexture.h"
+#include "Rendering/OpenGL/Texture.h"
 
 namespace Rendering
 {
-	OpenGLTexture::OpenGLTexture()
+	Texture::Texture()
 	{
 		glTextIdx = GL_INVALID_INDEX;
 	}
 
 
-	OpenGLTexture::~OpenGLTexture()
+	Texture::~Texture()
 	{
 		if (glTextIdx != GL_INVALID_INDEX)
 		{
@@ -17,13 +17,13 @@ namespace Rendering
 	}
 
 
-	bool OpenGLTexture::IsValid() const
+	bool Texture::IsValid() const
 	{
 		return glTextIdx != GL_INVALID_INDEX;
 	}
 
 
-	void OpenGLTexture::Update(const TextureFilter& type_, const u8* data_, const usize width_, const usize height_)
+	void Texture::Update(const TextureFilter& type_, const u8* data_, const usize width_, const usize height_)
 	{
 		// Do we need to do anything?
 		if (glTextIdx == GL_INVALID_INDEX)
@@ -61,19 +61,19 @@ namespace Rendering
 	}
 
 
-	GLuint OpenGLTexture::GetTextureIdx() const
+	GLuint Texture::GetTextureIdx() const
 	{
 		return glTextIdx;
 	}
 
 
-	usize OpenGLTexture::GetWidth() const
+	usize Texture::GetWidth() const
 	{
 		return width;
 	}
 
 
-	usize OpenGLTexture::GetHeight() const
+	usize Texture::GetHeight() const
 	{
 		return height;
 	}

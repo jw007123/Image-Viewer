@@ -1,14 +1,14 @@
-#include "Rendering/OpenGLProgram.h"
+#include "Rendering/OpenGL/Program.h"
 
 namespace Rendering
 {
-	OpenGLProgram::OpenGLProgram()
+	Program::Program()
 	{
 		glProgramIdx = GL_INVALID_INDEX;
 	}
 
 
-	OpenGLProgram::~OpenGLProgram()
+	Program::~Program()
 	{
 		if (glProgramIdx != GL_INVALID_INDEX)
 		{
@@ -17,7 +17,7 @@ namespace Rendering
 	}
 
 
-	bool OpenGLProgram::Load(const OpenGLShader& vsShader_, const OpenGLShader& fsShader_)
+	bool Program::Load(const Shader& vsShader_, const Shader& fsShader_)
 	{
 		glProgramIdx = glCreateProgram();
 
@@ -38,14 +38,14 @@ namespace Rendering
 	}
 
 
-	void OpenGLProgram::Use() const
+	void Program::Use() const
 	{
 		assert(glProgramIdx != GL_INVALID_INDEX);
 		glUseProgram(glProgramIdx);
 	}
 
 
-	GLuint OpenGLProgram::GetUniformLoc(const char* glslName_)
+	GLuint Program::GetUniformLoc(const char* glslName_)
 	{
 		GLuint loc = -1;
 		std::unordered_map<usize, GLuint>::const_iterator iter = glUniformLocMap.find(HashFunc(glslName_));
@@ -63,7 +63,7 @@ namespace Rendering
 	}
 
 
-	usize OpenGLProgram::HashFunc(const char* str_) const
+	usize Program::HashFunc(const char* str_) const
 	{
 		// c.f. https://stackoverflow.com/questions/7666509/hash-function-for-string
 		usize hash = 5381;
@@ -78,7 +78,7 @@ namespace Rendering
 	}
 
 
-	bool OpenGLProgram::FindAndPrintProgramLinkageErrors() const
+	bool Program::FindAndPrintProgramLinkageErrors() const
 	{
 		i16 errors = -1;
 		glGetProgramiv(glProgramIdx, GL_LINK_STATUS, &errors);

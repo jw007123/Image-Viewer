@@ -1,8 +1,8 @@
-#include "Rendering/OpenGLBackend.h"
+#include "Rendering/OpenGL/Backend.h"
 
 namespace Rendering
 {
-	OpenGLBackend::OpenGLBackend()
+	Backend::Backend()
 	{
 		// Initialise glfw
 		if (!glfwInit())
@@ -55,7 +55,7 @@ namespace Rendering
 	}
 
 
-	OpenGLBackend::~OpenGLBackend()
+	Backend::~Backend()
 	{
 		glfwDestroyWindow(glWindow);
 
@@ -66,12 +66,12 @@ namespace Rendering
 	}
 
 
-	bool OpenGLBackend::IsRunning()
+	bool Backend::IsRunning()
 	{
 		return !glfwWindowShouldClose(glWindow);
 	}
 
-	void OpenGLBackend::StartFrame()
+	void Backend::StartFrame()
 	{
 		// Read user IO
 		glfwPollEvents();
@@ -89,7 +89,7 @@ namespace Rendering
 	}
 
 
-	void OpenGLBackend::EndFrame()
+	void Backend::EndFrame()
 	{
 		// Set VP size
 		i16 width  = 0;
