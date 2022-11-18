@@ -13,6 +13,8 @@
 
 	#include "Rendering/Vulkan/Impl/VulkanUtility.h"
 	#include "Rendering/Vulkan/Impl/VulkanInstance.h"
+	#include "Rendering/Vulkan/Impl/VulkanImGui.h"
+	#include "Rendering/Vulkan/Impl/VulkanGLFW.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else

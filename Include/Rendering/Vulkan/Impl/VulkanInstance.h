@@ -15,16 +15,18 @@ namespace Rendering
 	class VulkanInstance
 	{
 	public:
-		VulkanInstance();
+		VulkanInstance(Utility::StackAllocator& stackAllocator_);
 		~VulkanInstance();
 
-		void Init(Utility::StackAllocator& stackAllocator_);
-
 	private:
+		struct Consts
+		{
+			static constexpr usize maxNameLength = 1024;
+		};
+
 		VkInstance vulkInstance;
-		bool	   initd;
 
 		/// Returns false if some required Vk extensions are missing
-		bool CheckRequiredExtensions(Utility::StackAllocator& stackAllocator_, const usize nExtensions_, const char** extensions_) const;
+		bool CheckRequiredExtensions(Utility::StackAllocator& stackAllocator_, const usize nRequiredExtensions_, const char** requiredExtensions_) const;
 	};
 }

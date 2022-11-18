@@ -15,6 +15,8 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
 
+#include "Rendering/Vulkan/Impl/VulkanImGui.h"
+#include "Rendering/Vulkan/Impl/VulkanGLFW.h"
 #include "Rendering/Vulkan/Impl/VulkanInstance.h"
 
 namespace Rendering
@@ -32,11 +34,8 @@ namespace Rendering
 		void EndFrame();
 
 	private:
-		GLFWwindow* glWindow;
-
-		ImGuiContext*  imguiContext;
-		ImGuiViewport* imguiViewport;
-
+		VulkanImGui	   vulkImGui;
+		VulkanGLFW	   vulkGlfw;
 		VulkanInstance vulkInstance;
 	};
 }
