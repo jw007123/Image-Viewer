@@ -4,6 +4,12 @@ namespace ImageProcessing::Filters
 {
 	Saturation::Saturation()
 	{
+		Reset();
+	}
+
+
+	void Saturation::Reset()
+	{
 		rgbwVals.setConstant(Consts::defaultValue);
 	}
 

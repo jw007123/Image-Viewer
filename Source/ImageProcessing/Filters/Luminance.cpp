@@ -4,6 +4,12 @@ namespace ImageProcessing::Filters
 {
 	Luminance::Luminance()
 	{
+		Reset();
+	}
+
+
+	void Luminance::Reset()
+	{
 		rgbwVals.setConstant(Consts::defaultValue);
 	}
 

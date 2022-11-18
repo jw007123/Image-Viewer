@@ -86,6 +86,15 @@ namespace ImageProcessing
 	}
 
 
+	void WorkerThread::Reset()
+	{
+		luminanceFilter.Reset();
+		saturationFilter.Reset();
+
+		memset(activeFilters, 0, sizeof(activeFilters));
+	}
+
+
 	void WorkerThread::Tick()
 	{
 		// Try and find a job

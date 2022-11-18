@@ -18,6 +18,8 @@ namespace ImageProcessing::Filters
 	public:
 		Saturation();
 
+		void Reset();
+
 		void UpdateRequests(const GUI::Options::Saturation::Status& request_);
 		void ApplyFilter(Image& image_);
 

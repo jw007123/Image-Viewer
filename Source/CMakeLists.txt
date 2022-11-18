@@ -27,6 +27,7 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
     # Add any sources and define target
     file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/*.cpp
                       ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*glfw.cpp
+                      ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*vulkan.cpp
                       ${CMAKE_CURRENT_SOURCE_DIR}/../External/imgui/backends/*opengl3.cpp
                       ${CMAKE_CURRENT_SOURCE_DIR}/../External/implot/*.cpp
                       ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp)
@@ -46,10 +47,19 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 	# Setup OpenGL
 	find_package(OpenGL REQUIRED)
 	target_link_libraries(ImageViewer OpenGL::GL)
-    add_compile_definitions(RENDERER_API_OPENGL)
+
+    # Setup Vulkan
+    find_package(Vulkan REQUIRED)
+    include_directories("C:/VulkanSDK/1.3.231.1/Include")
+    link_directories("C:/VulkanSDK/1.3.231.1/Bin")
+    link_directories("C:/VulkanSDK/1.3.231.1/Lib")
+
+    target_link_libraries(ImageViewer ${Vulkan_LIBRARY})
 
     # Setup nativefiledialog
     target_link_libraries(ImageViewer nfd)
 else()
 	message(FATAL_ERROR "SetupExternals not called!")
 endif()
+
+add_compile_definitions(RENDERER_API_VULKAN)

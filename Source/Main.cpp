@@ -24,6 +24,11 @@
 #include "GUI/Options/Luminance.cpp"
 #include "GUI/Options/Saturation.cpp"
 
+//// TEMP ////
+#include "Rendering/Vulkan/Impl/VulkanUtility.cpp"
+#include "Rendering/Vulkan/Impl/VulkanInstance.cpp"
+#include "Rendering/Vulkan/Backend.cpp"
+
 #include "Rendering/API.cpp"
 
 i16 main()
@@ -41,6 +46,10 @@ i16 main()
 	while (!threadData.threadReady.load())
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+
+	{
+		Rendering::VulkBackend backend(stackAllocator);
 	}
 
 	Rendering::Backend  rendererBackend;

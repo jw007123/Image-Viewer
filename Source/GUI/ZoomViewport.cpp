@@ -63,7 +63,6 @@ namespace GUI
 		{
 			camera.UpdateFixed(ImGui::GetIO(), Eigen::Vector2f(centrePos_.x(), centrePos_.y()),
 											   Eigen::Vector2f(winPos.x, winPos.y), width, height);
-		
 		}
 		else
 		{

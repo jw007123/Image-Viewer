@@ -69,6 +69,7 @@ namespace ImageProcessing
 		static void SendLuminanceRequest(const GUI::Options::Luminance::Status&   status_, std::vector<Request>& addTo_);
 		static void SendSaturationRequest(const GUI::Options::Saturation::Status& status_, std::vector<Request>& addTo_);
 
+		void Reset();
 		void Tick();
 		
 	private:

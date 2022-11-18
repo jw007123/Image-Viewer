@@ -18,6 +18,8 @@ namespace ImageProcessing::Filters
 	public:
 		Luminance();
 
+		void Reset();
+
 		void UpdateRequests(const GUI::Options::Luminance::Status& request_);
 		void ApplyFilter(Image& image_);
 

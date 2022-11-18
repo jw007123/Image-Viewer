@@ -37,8 +37,8 @@ namespace Rendering
 
 
 	void Renderer::MeshOpenGLData::Create(Eigen::Vector3f* points_,				 const usize nPoints_,
-												Eigen::Vector2f* textureCoords_, const usize nTextureCoords_,
-												GLuint* indices_,				 const usize nIndices_)
+										  Eigen::Vector2f* textureCoords_,		 const usize nTextureCoords_,
+										  GLuint* indices_,						 const usize nIndices_)
 	{
 		glGenVertexArrays(1, &VAO);
 

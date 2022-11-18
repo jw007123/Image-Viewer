@@ -53,8 +53,9 @@ namespace Rendering
 		glShaderIdx = glCreateShader(shaderTypes[(usize)shaderType_]);
 
 		// Compile shader
-		shaderType = shaderType_;
-		glShaderSource(glShaderIdx, 1, &(GLchar*)fDataBlock.ptr, &fSize);
+		shaderType		   = shaderType_;
+		GLchar* sourcePtr  = (GLchar*)fDataBlock.ptr;	 // C++20
+		glShaderSource(glShaderIdx, 1, &sourcePtr, &fSize);
 		glCompileShader(glShaderIdx);
 
 		const bool compiled = FindAndPrintShaderCompilationErrors();
