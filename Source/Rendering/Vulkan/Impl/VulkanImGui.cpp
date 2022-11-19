@@ -2,7 +2,7 @@
 
 namespace Rendering
 {
-	VulkanImGui::VulkanImGui(GLFWwindow* glWindow_)
+	VulkanImGui::VulkanImGui(VulkanGLFW& vulkanGLFW_)
 	{
 		// Setup ImGui
 		imguiContext  = ImGui::CreateContext();
@@ -16,7 +16,7 @@ namespace Rendering
 		// Init ImGui bindings
 		ImGui_ImplVulkan_InitInfo initInfo = {};
 		//ImGui_ImplVulkan_Init();
-		ImGui_ImplGlfw_InitForVulkan(glWindow_, true);
+		ImGui_ImplGlfw_InitForVulkan(vulkanGLFW_.GetWindow(), true);
 	}
 
 

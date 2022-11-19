@@ -29,6 +29,9 @@
 #include "Rendering/Vulkan/Impl/VulkanGLFW.cpp"
 #include "Rendering/Vulkan/Impl/VulkanUtility.cpp"
 #include "Rendering/Vulkan/Impl/VulkanInstance.cpp"
+#include "Rendering/Vulkan/Impl/VulkanLogicalDevice.cpp"
+#include "Rendering/Vulkan/Impl/VulkanPhysicalDevice.cpp"
+#include "Rendering/Vulkan/Impl/VulkanQueueFamilies.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 #include "Rendering/API.cpp"

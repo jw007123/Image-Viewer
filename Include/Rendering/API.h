@@ -15,6 +15,9 @@
 	#include "Rendering/Vulkan/Impl/VulkanInstance.h"
 	#include "Rendering/Vulkan/Impl/VulkanImGui.h"
 	#include "Rendering/Vulkan/Impl/VulkanGLFW.h"
+	#include "Rendering/Vulkan/Impl/VulkanPhysicalDevice.h"
+	#include "Rendering/Vulkan/Impl/VulkanLogicalDevice.h"
+	#include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else

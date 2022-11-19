@@ -3,9 +3,12 @@
 namespace Rendering
 {
 	VulkBackend::VulkBackend(Utility::StackAllocator& stackAllocator_) :
-						     vulkGlfw(),
-							 vulkInstance(stackAllocator_),
-							 vulkImGui(vulkGlfw.GetWindow())
+						     vulkanGlfw(),
+							 vulkanInstance(stackAllocator_),
+							 vulkanPhysicalDevice(stackAllocator_, vulkanInstance),
+							 vulkanQueueFamilies(stackAllocator_, vulkanPhysicalDevice),
+							 vulkanLogicalDevice(stackAllocator_, vulkanQueueFamilies, vulkanPhysicalDevice),
+							 vulkanImGui(vulkanGlfw)
 	{
 		
 	}
@@ -19,6 +22,6 @@ namespace Rendering
 
 	bool VulkBackend::IsRunning()
 	{
-		return vulkGlfw.IsWindowOpen();
+		return vulkanGlfw.IsWindowOpen();
 	}
 }

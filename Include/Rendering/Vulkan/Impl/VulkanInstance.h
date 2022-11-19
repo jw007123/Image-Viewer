@@ -18,15 +18,21 @@ namespace Rendering
 		VulkanInstance(Utility::StackAllocator& stackAllocator_);
 		~VulkanInstance();
 
+		VkInstance& GetVkInstance();
+
 	private:
 		struct Consts
 		{
-			static constexpr usize maxNameLength = 1024;
+			static constexpr usize nRequiredLayers							   = 1;
+			static constexpr const char* debugValidationLayer[nRequiredLayers] =
+			{
+				"VK_LAYER_KHRONOS_validation"
+			};
 		};
 
 		VkInstance vulkInstance;
 
-		/// Returns false if some required Vk extensions are missing
-		bool CheckRequiredExtensions(Utility::StackAllocator& stackAllocator_, const usize nRequiredExtensions_, const char** requiredExtensions_) const;
+		bool CheckRequiredValidationLayers(Utility::StackAllocator& stackAllocator_, const usize nRequiredLayers_, const char* const* requiredLayers_) const;
+		bool CheckRequiredExtensions(Utility::StackAllocator& stackAllocator_, const usize nRequiredExtensions_, const char* const* requiredExtensions_) const;
 	};
 }

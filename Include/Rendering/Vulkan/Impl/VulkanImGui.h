@@ -12,12 +12,14 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
 
+#include "Rendering/Vulkan/Impl/VulkanGLFW.h"
+
 namespace Rendering
 {
 	class VulkanImGui
 	{
 	public:
-		VulkanImGui(GLFWwindow* glWindow_);
+		VulkanImGui(VulkanGLFW& vulkanGLFW_);
 		~VulkanImGui();
 
 	private:
