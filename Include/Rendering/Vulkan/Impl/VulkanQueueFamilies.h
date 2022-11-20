@@ -16,7 +16,8 @@ namespace Rendering
 	public:
 		enum IDs : u8
 		{
-			Graphics = 0,
+			Graphics   = 0,
+			Presenting = 1,
 			Num
 		};
 
@@ -32,6 +33,7 @@ namespace Rendering
 		{
 			static constexpr VkQueueFlagBits requiredQueueBits[IDs::Num] =
 			{
+				VK_QUEUE_GRAPHICS_BIT,
 				VK_QUEUE_GRAPHICS_BIT
 			};
 		};

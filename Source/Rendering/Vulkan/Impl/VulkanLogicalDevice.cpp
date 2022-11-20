@@ -51,7 +51,15 @@ namespace Rendering
 		vulkDeviceCreateInfo.ppEnabledLayerNames = Consts::debugValidationLayer;
 #endif
 
+		// At long last, create the logical device
 		VULK_ASSERT_SUCCESS(vkCreateDevice, vulkanPhysicalDevice.GetVkPhysicalDevice(), &vulkDeviceCreateInfo, nullptr, &vulkLogicalDevice);
+
+		// Setup queues now that we have a valid device
+		for (u8 i = 0; i < VulkanQueueFamilies::Num; ++i)
+		{
+			const VulkanQueueFamilies::IDs iAsIdx = (VulkanQueueFamilies::IDs)i;
+			vkGetDeviceQueue(vulkLogicalDevice, vulkanQueueFamilies.GetQueueHandle(iAsIdx), 0, &vulkQueues[i]);
+		}
 	}
 
 
@@ -64,6 +72,12 @@ namespace Rendering
 	VkDevice& VulkanLogicalDevice::GetVkLogicalDevice()
 	{
 		return vulkLogicalDevice;
+	}
+
+
+	VkQueue& VulkanLogicalDevice::GetVkQueue(const VulkanQueueFamilies::IDs idx_)
+	{
+		return vulkQueues[idx_];
 	}
 
 

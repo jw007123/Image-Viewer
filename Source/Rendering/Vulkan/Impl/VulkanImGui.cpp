@@ -15,8 +15,8 @@ namespace Rendering
 
 		// Init ImGui bindings
 		ImGui_ImplVulkan_InitInfo initInfo = {};
-		//ImGui_ImplVulkan_Init();
-		ImGui_ImplGlfw_InitForVulkan(vulkanGLFW_.GetWindow(), true);
+		ImGui_ImplVulkan_Init(&initInfo, VkRenderPass());
+		ImGui_ImplGlfw_InitForVulkan(vulkanGLFW_.GetGLWindow(), true);
 	}
 
 

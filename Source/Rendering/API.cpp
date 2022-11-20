@@ -8,7 +8,7 @@
 	#include "Rendering/OpenGL/Shader.cpp"
 	#include "Rendering/OpenGL/Texture.cpp"
 //#elif defined(RENDERER_API_VULKAN)
-	#define VMA_IMPLEMENTATION
+
 
 //#else
 //	#error "Unknown rendering API!"

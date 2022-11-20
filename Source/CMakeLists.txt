@@ -50,11 +50,7 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 
     # Setup Vulkan
     find_package(Vulkan REQUIRED)
-    include_directories("C:/VulkanSDK/1.3.231.1/Include")
-    link_directories("C:/VulkanSDK/1.3.231.1/Bin")
-    link_directories("C:/VulkanSDK/1.3.231.1/Lib")
-
-    target_link_libraries(ImageViewer ${Vulkan_LIBRARY})
+    target_link_libraries(ImageViewer Vulkan::Vulkan)
 
     # Setup nativefiledialog
     target_link_libraries(ImageViewer nfd)

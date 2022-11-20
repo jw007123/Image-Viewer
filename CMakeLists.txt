@@ -23,10 +23,10 @@ include_directories("External/nativefiledialog/src/include")
 link_directories("External/nativefiledialog/build/lib/Release/x64")
 
 # Build GLFW
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-add_subdirectory("External/glfw")
+option(GLFW_BUILD_DOCS OFF)
+option(GLFW_BUILD_TESTS OFF)
+option(GLFW_BUILD_EXAMPLES OFF)
 
 # Libs and exe
+add_subdirectory("External/glfw")
 add_subdirectory(Source)

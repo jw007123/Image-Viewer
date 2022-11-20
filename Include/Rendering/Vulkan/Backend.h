@@ -21,6 +21,8 @@
 #include "Rendering/Vulkan/Impl/VulkanPhysicalDevice.h"
 #include "Rendering/Vulkan/Impl/VulkanLogicalDevice.h"
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
+#include "Rendering/Vulkan/Impl/VulkanVma.h"
+#include "Rendering/Vulkan/Impl/VulkanSurface.h"
 
 namespace Rendering
 {
@@ -37,11 +39,13 @@ namespace Rendering
 		void EndFrame();
 
 	private:
-		VulkanImGui			   vulkanImGui;
 		VulkanGLFW			   vulkanGlfw;
 		VulkanInstance		   vulkanInstance;
 		VulkanPhysicalDevice   vulkanPhysicalDevice;
 		VulkanQueueFamilies	   vulkanQueueFamilies;
 		VulkanLogicalDevice	   vulkanLogicalDevice;
+		VulkanVma			   vulkanVma;
+		VulkanSurface		   vulkanSurface;
+		VulkanImGui			   vulkanImGui;
 	};
 }

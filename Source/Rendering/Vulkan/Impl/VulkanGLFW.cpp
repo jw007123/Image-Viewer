@@ -42,7 +42,7 @@ namespace Rendering
 	}
 
 
-	GLFWwindow* const VulkanGLFW::GetWindow() const
+	GLFWwindow* const VulkanGLFW::GetGLWindow() const
 	{
 		return glWindow;
 	}

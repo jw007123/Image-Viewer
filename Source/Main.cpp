@@ -1,6 +1,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define IMGUI_DEFINE_MATH_OPERATORS
+#define GLFW_INCLUDE_VULKAN
+#define VK_USE_PLATFORM_WIN32_KHR
+#define VMA_IMPLEMENTATION
 
 #include "Utility/Literals.h"
 #include "Utility/TimeInterval.cpp"
@@ -24,6 +27,8 @@
 #include "GUI/Options/Luminance.cpp"
 #include "GUI/Options/Saturation.cpp"
 
+#include "Rendering/API.cpp"
+
 //// TEMP ////
 #include "Rendering/Vulkan/Impl/VulkanImGui.cpp"
 #include "Rendering/Vulkan/Impl/VulkanGLFW.cpp"
@@ -32,9 +37,9 @@
 #include "Rendering/Vulkan/Impl/VulkanLogicalDevice.cpp"
 #include "Rendering/Vulkan/Impl/VulkanPhysicalDevice.cpp"
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.cpp"
+#include "Rendering/Vulkan/Impl/VulkanVma.cpp"
+#include "Rendering/Vulkan/Impl/VulkanSurface.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
-
-#include "Rendering/API.cpp"
 
 i16 main()
 {

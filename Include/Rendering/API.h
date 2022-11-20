@@ -8,9 +8,6 @@
 	#include "Rendering/OpenGL/Shader.h"
 	#include "Rendering/OpenGL/Texture.h"
 //#elif defined(RENDERER_API_VULKAN)
-	#define GLFW_INCLUDE_VULKAN
-	#define VK_USE_PLATFORM_WIN32_KHR
-
 	#include "Rendering/Vulkan/Impl/VulkanUtility.h"
 	#include "Rendering/Vulkan/Impl/VulkanInstance.h"
 	#include "Rendering/Vulkan/Impl/VulkanImGui.h"
@@ -18,6 +15,8 @@
 	#include "Rendering/Vulkan/Impl/VulkanPhysicalDevice.h"
 	#include "Rendering/Vulkan/Impl/VulkanLogicalDevice.h"
 	#include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
+	#include "Rendering/Vulkan/Impl/VulkanVma.h"
+	#include "Rendering/Vulkan/Impl/VulkanSurface.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else

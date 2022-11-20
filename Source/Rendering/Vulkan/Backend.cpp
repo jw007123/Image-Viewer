@@ -8,6 +8,8 @@ namespace Rendering
 							 vulkanPhysicalDevice(stackAllocator_, vulkanInstance),
 							 vulkanQueueFamilies(stackAllocator_, vulkanPhysicalDevice),
 							 vulkanLogicalDevice(stackAllocator_, vulkanQueueFamilies, vulkanPhysicalDevice),
+							 vulkanVma(vulkanPhysicalDevice, vulkanLogicalDevice, vulkanInstance),
+							 vulkanSurface(vulkanInstance, vulkanGlfw, vulkanQueueFamilies, vulkanPhysicalDevice),
 							 vulkanImGui(vulkanGlfw)
 	{
 		
@@ -16,7 +18,7 @@ namespace Rendering
 
 	VulkBackend::~VulkBackend()
 	{
-		
+
 	}
 
 

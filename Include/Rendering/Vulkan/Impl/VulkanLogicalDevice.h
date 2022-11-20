@@ -20,7 +20,7 @@ namespace Rendering
 		~VulkanLogicalDevice();
 
 		VkDevice& GetVkLogicalDevice();
-
+		VkQueue&  GetVkQueue(const VulkanQueueFamilies::IDs idx_);
 	private:
 		struct Consts
 		{
@@ -32,11 +32,12 @@ namespace Rendering
 			static constexpr usize nRequiredExtensions						     = 1;
 			static constexpr const char* requiredExtensions[nRequiredExtensions] =
 			{
-				"VK_KHR_swapchain"
+				VK_KHR_SWAPCHAIN_EXTENSION_NAME
 			};
 		};
 
 		VkDevice			  vulkLogicalDevice;
+		VkQueue				  vulkQueues[VulkanQueueFamilies::Num];
 		VulkanQueueFamilies&  vulkanQueueFamilies;
 		VulkanPhysicalDevice& vulkanPhysicalDevice;
 
