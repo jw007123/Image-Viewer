@@ -17,18 +17,38 @@ namespace Rendering
 	class VulkanSurface
 	{
 	public:
-		VulkanSurface(VulkanInstance& vulkanInstance_, VulkanGLFW& vulkanGLFW_,
-					  VulkanQueueFamilies& vulkanQueueFamilies_, VulkanPhysicalDevice& vulkanPhysicalDevice_);
+		VulkanSurface(VulkanInstance&	       vulkanInstance_,		 VulkanGLFW&		   vulkanGLFW_,
+					  VulkanQueueFamilies&     vulkanQueueFamilies_, VulkanPhysicalDevice& vulkanPhysicalDevice_,
+					  Utility::HeapAllocator&  heapAllocator_);
 		~VulkanSurface();
 
-		VkSurfaceKHR& GetVkSurface();
+		VkSurfaceKHR&				  GetVkSurface();
+		uint32_t					  GetRecommendedImageCount() const;
+		VkSurfaceTransformFlagBitsKHR GetRecommendedTransform() const;
+ 
+		bool RequestFormat(VkSurfaceFormatKHR& surfaceformat_, const VkFormat type_) const;
+		bool RequestPresentMode(VkPresentModeKHR& presentMode_, const VkPresentModeKHR type_) const;
+		bool RequestExtent(VkExtent2D& extent_) const;
 
 	private:
+		struct SwapChainSupportInfo
+		{
+			uint32_t nFormats;
+			uint32_t nPresentModes;
+
+			VkSurfaceFormatKHR* formats;
+			VkPresentModeKHR*   presentModes;
+		} swapChainSupportInfo;
+
 		VkSurfaceKHR vulkSurface;
 
-		VulkanGLFW&			  vulkanGLFW;
-		VulkanInstance&		  vulkanInstance;
-		VulkanQueueFamilies&  vulkanQueueFamilies;
-		VulkanPhysicalDevice& vulkanPhysicalDevice;
+		VulkanGLFW&			    vulkanGLFW;
+		VulkanInstance&		    vulkanInstance;
+		VulkanQueueFamilies&    vulkanQueueFamilies;
+		VulkanPhysicalDevice&   vulkanPhysicalDevice;
+		Utility::HeapAllocator& heapAllocator;
+
+		bool CheckPresentingSupport();
+		bool CheckSwapchainSupport();
 	};
 }

@@ -39,6 +39,7 @@
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.cpp"
 #include "Rendering/Vulkan/Impl/VulkanVma.cpp"
 #include "Rendering/Vulkan/Impl/VulkanSurface.cpp"
+#include "Rendering/Vulkan/Impl/VulkanSwapChain.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 i16 main()
@@ -60,7 +61,7 @@ i16 main()
 
 	//// TEMP ////
 	{
-		Rendering::VulkBackend backend(stackAllocator);
+		Rendering::VulkBackend backend(heapAllocator, stackAllocator);
 	}
 
 	Rendering::Backend  rendererBackend;

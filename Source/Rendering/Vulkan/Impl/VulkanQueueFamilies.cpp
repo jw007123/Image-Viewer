@@ -24,23 +24,15 @@ namespace Rendering
 		VkQueueFamilyProperties* queueFamilies = (VkQueueFamilyProperties*)queueFamiliesBlk.ptr;
 		vkGetPhysicalDeviceQueueFamilyProperties(vulkanPhysicalDevice.GetVkPhysicalDevice(), &nQueueFamilies, queueFamilies);
 
-		// Get block to use as indicator for free vs taken queues
-		Utility::MemoryBlock queueTakenBlk = stackAllocator_.Allocate<u8>(nQueueFamilies);
-		u8* queueTaken					   = (u8*)queueTakenBlk.ptr;
-		memset(queueTaken, 0, queueTakenBlk.size);
-
 		// Set queue indices
 		for (u8 i = 0; i < IDs::Num; ++i)
 		{
 			for (usize j = 0; j < nQueueFamilies; ++j)
 			{
-				const bool queueFree	   = !queueTaken[j];
 				const bool queueHasSupport = (Consts::requiredQueueBits[i] & queueFamilies[j].queueFlags);
-
-				if (queueFree && queueHasSupport)
+				if (queueHasSupport)
 				{
 					queueHandles[i] = j;
-					queueTaken[j]   = 1;
 					break;
 				}
 			}
@@ -53,7 +45,6 @@ namespace Rendering
 		}
 
 		// Free mem
-		stackAllocator_.Free(queueTakenBlk);
 		stackAllocator_.Free(queueFamiliesBlk);
 	}
 

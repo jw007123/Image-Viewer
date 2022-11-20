@@ -23,13 +23,14 @@
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
 #include "Rendering/Vulkan/Impl/VulkanVma.h"
 #include "Rendering/Vulkan/Impl/VulkanSurface.h"
+#include "Rendering/Vulkan/Impl/VulkanSwapChain.h"
 
 namespace Rendering
 {
 	class VulkBackend
 	{
 	public:
-		VulkBackend(Utility::StackAllocator& stackAllocator_);
+		VulkBackend(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_);
 		~VulkBackend();
 
 		/// Is true for as long as the window is open
@@ -46,6 +47,7 @@ namespace Rendering
 		VulkanLogicalDevice	   vulkanLogicalDevice;
 		VulkanVma			   vulkanVma;
 		VulkanSurface		   vulkanSurface;
+		VulkanSwapChain		   vulkanSwapChain;
 		VulkanImGui			   vulkanImGui;
 	};
 }

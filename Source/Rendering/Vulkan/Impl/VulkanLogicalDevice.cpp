@@ -13,16 +13,33 @@ namespace Rendering
 			assert(0);
 		}
 
-		// Setup QueueCreateInfo struct for each queue family
+		// Setup QueueCreateInfo struct for each unique queue handle
 		VkDeviceQueueCreateInfo vulkQueueCreateInfos[VulkanQueueFamilies::Num];
+		usize nUniqueHandles = 0;
 		for (u8 i = 0; i < VulkanQueueFamilies::Num; ++i)
 		{
-			const f32 queuePriority					 = 1.0f;
-			vulkQueueCreateInfos[i]					 = {};
-			vulkQueueCreateInfos[i].sType			 = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			vulkQueueCreateInfos[i].queueFamilyIndex = vulkanQueueFamilies.GetQueueHandle((VulkanQueueFamilies::IDs)i);
-			vulkQueueCreateInfos[i].queueCount		 = 1;
-			vulkQueueCreateInfos[i].pQueuePriorities = &queuePriority;
+			const uint32_t curHandle = vulkanQueueFamilies.GetQueueHandle((VulkanQueueFamilies::IDs)i);
+			bool isUnique			 = true;
+			for (u8 j = 0; j < i; ++j)
+			{
+				if (curHandle == vulkanQueueFamilies.GetQueueHandle((VulkanQueueFamilies::IDs)j))
+				{
+					isUnique = false;
+					break;
+				}
+			}
+
+			// Only fill in struct if we're on a unique queue handle
+			nUniqueHandles += isUnique;
+			if (isUnique)
+			{
+				const f32 queuePriority					 = 1.0f;
+				vulkQueueCreateInfos[i]					 = {};
+				vulkQueueCreateInfos[i].sType			 = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				vulkQueueCreateInfos[i].queueFamilyIndex = vulkanQueueFamilies.GetQueueHandle((VulkanQueueFamilies::IDs)i);
+				vulkQueueCreateInfos[i].queueCount		 = 1;
+				vulkQueueCreateInfos[i].pQueuePriorities = &queuePriority;
+			}
 		}
 		
 		VkPhysicalDeviceFeatures vulkDeviceFeatures = {};
@@ -31,7 +48,7 @@ namespace Rendering
 		VkDeviceCreateInfo vulkDeviceCreateInfo      = {};
 		vulkDeviceCreateInfo.sType			         = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		vulkDeviceCreateInfo.pQueueCreateInfos	     = vulkQueueCreateInfos;
-		vulkDeviceCreateInfo.queueCreateInfoCount    = VulkanQueueFamilies::Num;
+		vulkDeviceCreateInfo.queueCreateInfoCount    = nUniqueHandles;
 		vulkDeviceCreateInfo.pEnabledFeatures        = &vulkDeviceFeatures;
 		vulkDeviceCreateInfo.enabledExtensionCount   = Consts::nRequiredExtensions;
 		vulkDeviceCreateInfo.ppEnabledExtensionNames = Consts::requiredExtensions;
