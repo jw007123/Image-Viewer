@@ -14,13 +14,20 @@ namespace Rendering
 	class VulkanSwapChain
 	{
 	public:
-		VulkanSwapChain(Utility::StackAllocator& stackAllocator_,      VulkanPhysicalDevice&    vulkanPhysicalDevice_,
-						VulkanSurface&			 vulkanSurface_,       VulkanQueueFamilies&     vulkanQueueFamilies_,
-						VulkanLogicalDevice&     vulkanLogicalDevice_, const VkImageUsageFlags  usage_);
+		VulkanSwapChain(Utility::HeapAllocator& heapAllocator_,       VulkanPhysicalDevice&    vulkanPhysicalDevice_,
+						VulkanSurface&			vulkanSurface_,       VulkanQueueFamilies&     vulkanQueueFamilies_,
+						VulkanLogicalDevice&    vulkanLogicalDevice_, const VkImageUsageFlags  usage_);
 		~VulkanSwapChain();
 
+		VkImage& GetVkImage(const uint32_t idx_);
+
 	private:
-		VkSwapchainKHR vulkSwapChain;
+		VkSwapchainKHR		 vulkSwapChain;
+		VkFormat			 vulkFormat;
+		VkExtent2D			 vulkExtent;
+
+		Utility::HeapAllocator& heapAllocator;
+		Utility::MemoryBlock    vulkImageBlk;
 
 		VulkanSurface&		  vulkanSurface;
 		VulkanPhysicalDevice& vulkanPhysicalDevice;

@@ -2,13 +2,14 @@
 
 namespace Rendering
 {
-	VulkanSwapChain::VulkanSwapChain(Utility::StackAllocator& stackAllocator_,      VulkanPhysicalDevice&    vulkanPhysicalDevice_,
-									 VulkanSurface&			  vulkanSurface_,       VulkanQueueFamilies&     vulkanQueueFamilies_,
-									 VulkanLogicalDevice&     vulkanLogicalDevice_, const VkImageUsageFlags  usage_) :
+	VulkanSwapChain::VulkanSwapChain(Utility::HeapAllocator& heapAllocator_,       VulkanPhysicalDevice&    vulkanPhysicalDevice_,
+									 VulkanSurface&			 vulkanSurface_,       VulkanQueueFamilies&     vulkanQueueFamilies_,
+									 VulkanLogicalDevice&    vulkanLogicalDevice_, const VkImageUsageFlags  usage_) :
 									 vulkanPhysicalDevice(vulkanPhysicalDevice_),
 									 vulkanSurface(vulkanSurface_),
 									 vulkanQueueFamilies(vulkanQueueFamilies_),
-									 vulkanLogicalDevice(vulkanLogicalDevice_)
+									 vulkanLogicalDevice(vulkanLogicalDevice_),
+									 heapAllocator(heapAllocator_)
 	{
 		// Create chain with requested format and present mode. Use surface size as extent
 		VkSurfaceFormatKHR scFormat      = {};
@@ -41,12 +42,37 @@ namespace Rendering
 		FillQueueInfo(scCreateInfo);
 
 		VULK_ASSERT_SUCCESS(vkCreateSwapchainKHR, vulkanLogicalDevice.GetVkLogicalDevice(), &scCreateInfo, nullptr, &vulkSwapChain);
+
+		// Fill in rest of class data from chain
+		vulkFormat = scFormat.format;
+		vulkExtent = scExtent;
+
+		// Cache images in block
+		uint32_t nImages = 0;
+		VULK_ASSERT_SUCCESS(vkGetSwapchainImagesKHR, vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, &nImages, nullptr);
+
+		vulkImageBlk		= heapAllocator.Allocate<VkImage>(nImages);
+		VkImage* vulkImages = (VkImage*)vulkImageBlk.ptr;
+		VULK_ASSERT_SUCCESS(vkGetSwapchainImagesKHR, vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, &nImages, vulkImages);
 	}
 
 
 	VulkanSwapChain::~VulkanSwapChain()
 	{
 		vkDestroySwapchainKHR(vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, nullptr);
+	}
+
+
+	VkImage& VulkanSwapChain::GetVkImage(const uint32_t idx_)
+	{
+		const uint32_t nImages = vulkImageBlk.size / sizeof(VkImage);
+		if (idx_ > nImages)
+		{
+			assert(0);
+		}
+
+		// See, C is good
+		return *(VkImage*)((VkImage*)vulkImageBlk.ptr + idx_);
 	}
 
 
