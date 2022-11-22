@@ -49,8 +49,9 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../External)
 	target_link_libraries(ImageViewer OpenGL::GL)
 
     # Setup Vulkan
-    find_package(Vulkan REQUIRED)
+    find_package(Vulkan REQUIRED COMPONENTS shaderc_combined)
     target_link_libraries(ImageViewer Vulkan::Vulkan)
+    target_link_libraries(ImageViewer Vulkan::shaderc_combined)
 
     # Setup nativefiledialog
     target_link_libraries(ImageViewer nfd)

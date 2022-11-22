@@ -40,6 +40,8 @@
 #include "Rendering/Vulkan/Impl/VulkanVma.cpp"
 #include "Rendering/Vulkan/Impl/VulkanSurface.cpp"
 #include "Rendering/Vulkan/Impl/VulkanSwapChain.cpp"
+#include "Rendering/Vulkan/Impl/VulkanShader.cpp"
+#include "Rendering/Vulkan/Impl/VulkanPipeline.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 i16 main()

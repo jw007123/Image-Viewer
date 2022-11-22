@@ -24,6 +24,8 @@
 #include "Rendering/Vulkan/Impl/VulkanVma.h"
 #include "Rendering/Vulkan/Impl/VulkanSurface.h"
 #include "Rendering/Vulkan/Impl/VulkanSwapChain.h"
+#include "Rendering/Vulkan/Impl/VulkanShader.h"
+#include "Rendering/Vulkan/Impl/VulkanPipeline.h"
 
 namespace Rendering
 {

@@ -19,7 +19,8 @@ namespace Rendering
 						VulkanLogicalDevice&    vulkanLogicalDevice_, const VkImageUsageFlags  usage_);
 		~VulkanSwapChain();
 
-		VkImage& GetVkImage(const uint32_t idx_);
+		bool GetVkImage(VkImage& vulkImage_, const uint32_t idx_);
+		bool GetVkImageView(VkImageView& vulkImageView_, const uint32_t idx_);
 
 	private:
 		VkSwapchainKHR		 vulkSwapChain;
@@ -28,6 +29,7 @@ namespace Rendering
 
 		Utility::HeapAllocator& heapAllocator;
 		Utility::MemoryBlock    vulkImageBlk;
+		Utility::MemoryBlock	vulkImageViewBlk;
 
 		VulkanSurface&		  vulkanSurface;
 		VulkanPhysicalDevice& vulkanPhysicalDevice;
@@ -35,5 +37,7 @@ namespace Rendering
 		VulkanLogicalDevice&  vulkanLogicalDevice;
 
 		void FillQueueInfo(VkSwapchainCreateInfoKHR& scCreateInfo_);
+		void SetupVulkImages();
+		void SetupVulkImageViews();
 	};
 }

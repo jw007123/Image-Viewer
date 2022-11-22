@@ -13,7 +13,12 @@ namespace Rendering
 							 vulkanSwapChain(heapAllocator_, vulkanPhysicalDevice, vulkanSurface, vulkanQueueFamilies, vulkanLogicalDevice, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT),
 							 vulkanImGui(vulkanGlfw)
 	{
-		
+
+		VulkanShader vsShader(vulkanLogicalDevice);
+		vsShader.Load(stackAllocator_, VulkanShader::Vertex, "vsTest");
+
+		VulkanShader fsShader(vulkanLogicalDevice);
+		fsShader.Load(stackAllocator_, VulkanShader::Fragment, "fsTest");
 	}
 
 
