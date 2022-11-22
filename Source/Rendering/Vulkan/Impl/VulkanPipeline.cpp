@@ -68,6 +68,13 @@ namespace Rendering
 	}
 
 
+	bool VulkanPipeline::GetVkRenderPass(VkRenderPass& vulkRenderPass_)
+	{
+		vulkRenderPass_ = vulkRenderPass;
+		return wasRenderPassCreated;
+	}
+
+
 	bool VulkanPipeline::CreateRenderPass()
 	{
 		const VkFormat vulkFormat = vulkanSwapChain.GetVkFormat();

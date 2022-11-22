@@ -19,6 +19,7 @@
 	#include "Rendering/Vulkan/Impl/VulkanSurface.h"
 	#include "Rendering/Vulkan/Impl/VulkanSwapChain.h"
 	#include "Rendering/Vulkan/Impl/VulkanShader.h"
+	#include "Rendering/Vulkan/Impl/VulkanFramebuffer.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else

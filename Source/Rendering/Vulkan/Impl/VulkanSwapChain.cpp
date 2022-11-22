@@ -81,7 +81,7 @@ namespace Rendering
 		}
 
 		// See, C is good
-		vulkImage_ = *(VkImage*)((VkImage*)vulkImageBlk.ptr + idx_);
+		vulkImage_ = *((VkImage*)vulkImageBlk.ptr + idx_);
 		return true;
 	}
 
@@ -95,7 +95,7 @@ namespace Rendering
 		}
 
 		// See, C is good
-		vulkImageView_ = *(VkImageView*)((VkImageView*)vulkImageViewBlk.ptr + idx_);
+		vulkImageView_ = *((VkImageView*)vulkImageViewBlk.ptr + idx_);
 		return true;
 	}
 

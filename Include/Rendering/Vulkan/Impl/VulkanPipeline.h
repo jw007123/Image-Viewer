@@ -9,7 +9,8 @@
 
 #include "Rendering/Vulkan/Impl/VulkanUtility.h"
 #include "Rendering/Vulkan/Impl/VulkanShader.h"
-#include "Rendering/Vulkan/Impl/VulkanShader.h"
+#include "Rendering/Vulkan/Impl/VulkanLogicalDevice.h"
+#include "Rendering/Vulkan/Impl/VulkanSwapChain.h"
 
 namespace Rendering
 {
@@ -22,6 +23,8 @@ namespace Rendering
 
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
 		bool LoadPipeline();
+
+		bool GetVkRenderPass(VkRenderPass& vulkRenderPass_);
 
 	private:
 		struct Consts
