@@ -11,14 +11,13 @@ namespace Rendering
 							 vulkanVma(vulkanPhysicalDevice, vulkanLogicalDevice, vulkanInstance),
 							 vulkanSurface(vulkanInstance, vulkanGlfw, vulkanQueueFamilies, vulkanPhysicalDevice, heapAllocator_),
 							 vulkanSwapChain(heapAllocator_, vulkanPhysicalDevice, vulkanSurface, vulkanQueueFamilies, vulkanLogicalDevice, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT),
+							 vulkanPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice),
 							 vulkanImGui(vulkanGlfw)
 	{
 
-		VulkanShader vsShader(vulkanLogicalDevice);
-		vsShader.Load(stackAllocator_, VulkanShader::Vertex, "vsTest");
-
-		VulkanShader fsShader(vulkanLogicalDevice);
-		fsShader.Load(stackAllocator_, VulkanShader::Fragment, "fsTest");
+		vulkanPipeline.LoadShaderStage("vsTest", VulkanShader::Vertex);
+		vulkanPipeline.LoadShaderStage("fsTest", VulkanShader::Fragment);
+		vulkanPipeline.LoadPipeline();
 	}
 
 

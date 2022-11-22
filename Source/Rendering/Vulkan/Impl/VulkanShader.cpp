@@ -56,6 +56,24 @@ namespace Rendering
 	}
 
 
+	bool VulkanShader::IsValid() const
+	{
+		return wasCreated;
+	}
+
+
+	VkShaderModule& VulkanShader::GetVkShaderModule()
+	{
+		if (!wasCreated)
+		{
+			// Please don't do this
+			assert(0);
+		}
+
+		return vulkShader;
+	}
+
+
 	bool VulkanShader::CreateVkShader(const Utility::MemoryBlock spirvBlock_)
 	{
 		VkShaderModuleCreateInfo createInfo = {};

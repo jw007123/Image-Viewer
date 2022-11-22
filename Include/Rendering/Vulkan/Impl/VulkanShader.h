@@ -28,6 +28,9 @@ namespace Rendering
 		~VulkanShader();
 
 		bool Load(Utility::StackAllocator& stackAllocator_, const Type shaderType_, const char* fName_);
+		bool IsValid() const;
+
+		VkShaderModule& GetVkShaderModule();
 
 	private:
 		struct Consts

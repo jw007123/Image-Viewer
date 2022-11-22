@@ -50,6 +50,7 @@ namespace Rendering
 		VulkanVma			   vulkanVma;
 		VulkanSurface		   vulkanSurface;
 		VulkanSwapChain		   vulkanSwapChain;
+		VulkanPipeline		   vulkanPipeline;
 		VulkanImGui			   vulkanImGui;
 	};
 }
