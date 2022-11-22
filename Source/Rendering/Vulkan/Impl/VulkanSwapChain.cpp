@@ -100,6 +100,18 @@ namespace Rendering
 	}
 
 
+	VkExtent2D& VulkanSwapChain::GetVkExtent()
+	{
+		return vulkExtent;
+	}
+
+
+	VkFormat& VulkanSwapChain::GetVkFormat()
+	{
+		return vulkFormat;
+	}
+
+
 	void VulkanSwapChain::FillQueueInfo(VkSwapchainCreateInfoKHR& scCreateInfo_)
 	{
 		uint32_t idxs[2];

@@ -134,6 +134,12 @@ namespace Rendering
 				break;
 			}
 
+			case Type::Geometry:
+			{
+				shadercType = shaderc_glsl_geometry_shader;
+				break;
+			}
+
 			default:
 				assert(0);
 		}
@@ -179,6 +185,12 @@ namespace Rendering
 			case Type::Fragment:
 			{
 				shadercType = shaderc_glsl_fragment_shader;
+				break;
+			}
+
+			case Type::Geometry:
+			{
+				shadercType = shaderc_glsl_geometry_shader;
 				break;
 			}
 

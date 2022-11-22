@@ -11,7 +11,7 @@ namespace Rendering
 							 vulkanVma(vulkanPhysicalDevice, vulkanLogicalDevice, vulkanInstance),
 							 vulkanSurface(vulkanInstance, vulkanGlfw, vulkanQueueFamilies, vulkanPhysicalDevice, heapAllocator_),
 							 vulkanSwapChain(heapAllocator_, vulkanPhysicalDevice, vulkanSurface, vulkanQueueFamilies, vulkanLogicalDevice, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT),
-							 vulkanPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice),
+							 vulkanPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
 							 vulkanImGui(vulkanGlfw)
 	{
 

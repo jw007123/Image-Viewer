@@ -21,6 +21,7 @@ namespace Rendering
 		{
 			Vertex   = 0,
 			Fragment = 1,
+			Geometry = 2,
 			Num
 		};
 

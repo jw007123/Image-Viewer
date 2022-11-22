@@ -9,6 +9,7 @@
 
 #include "Rendering/Vulkan/Impl/VulkanUtility.h"
 #include "Rendering/Vulkan/Impl/VulkanShader.h"
+#include "Rendering/Vulkan/Impl/VulkanShader.h"
 
 namespace Rendering
 {
@@ -16,7 +17,7 @@ namespace Rendering
 	{
 	public:
 		VulkanPipeline(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
-					   VulkanLogicalDevice&    vulkanLogicalDevice_);
+					   VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanPipeline();
 
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
@@ -29,18 +30,28 @@ namespace Rendering
 			static constexpr VkShaderStageFlagBits vkShaderStages[VulkanShader::Num] =
 			{
 				VK_SHADER_STAGE_VERTEX_BIT,
-				VK_SHADER_STAGE_FRAGMENT_BIT
+				VK_SHADER_STAGE_FRAGMENT_BIT,
+				VK_SHADER_STAGE_GEOMETRY_BIT
 			};
 		};
-		VkPipeline vulkPipeline;
+
+		VulkanLogicalDevice& vulkanLogicalDevice;
+		VulkanSwapChain&     vulkanSwapChain;
 
 		Utility::StackAllocator& stackAllocator;
 		Utility::HeapAllocator&  heapAllocator;
-		VulkanLogicalDevice&     vulkanLogicalDevice;
 
-		VulkanShader vulkanShaders[VulkanShader::Num];
+		VkPipeline		 vulkPipeline;
+		VkPipelineLayout vulkPipelineLayout;
+		VkRenderPass	 vulkRenderPass;
+		bool			 wasPipelineCreated;
+		bool			 wasRenderPassCreated;
+		VulkanShader	 vulkanShaders[VulkanShader::Num];
 
-		/// Finishes the VkPipeline obj
+		/// Completes the VkRenderPass member
+		bool CreateRenderPass();
+
+		/// Completes the VkPipelineLayout and VkPipeline members
 		bool CreatePipeline(const u8 nTypes_, VulkanShader::Type* typesToUse_);
 	};
 }
