@@ -84,7 +84,7 @@ namespace Rendering
 	bool VulkanFramebuffer::GetVkFramebuffer(VkFramebuffer& vulkFramebuffer_, const uint32_t idx_)
 	{
 		const uint32_t nBuffers = framebufferBlk.size / sizeof(VkFramebuffer);
-		if (idx_ > nBuffers)
+		if (idx_ >= nBuffers)
 		{
 			return false;
 		}

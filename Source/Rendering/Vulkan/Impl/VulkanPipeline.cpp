@@ -94,7 +94,7 @@ namespace Rendering
 		colourAttachmentRef.layout				  = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		VkSubpassDescription subpassDesc = {};
-		subpassDesc.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_COMPUTE;
+		subpassDesc.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpassDesc.colorAttachmentCount = 1;
 		subpassDesc.pColorAttachments    = &colourAttachmentRef;
 

@@ -18,6 +18,10 @@ namespace Rendering
 		vulkanPipeline.LoadShaderStage("vsTest", VulkanShader::Vertex);
 		vulkanPipeline.LoadShaderStage("fsTest", VulkanShader::Fragment);
 		vulkanPipeline.LoadPipeline();
+
+
+		VulkanFramebuffer vulkanFramebuffer(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain);
+		vulkanFramebuffer.BindTo(vulkanPipeline);
 	}
 
 

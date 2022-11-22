@@ -75,7 +75,7 @@ namespace Rendering
 	bool VulkanSwapChain::GetVkImage(VkImage& vulkImage_, const uint32_t idx_)
 	{
 		const uint32_t nImages = vulkImageBlk.size / sizeof(VkImage);
-		if (idx_ > nImages)
+		if (idx_ >= nImages)
 		{
 			return false;
 		}
@@ -89,7 +89,7 @@ namespace Rendering
 	bool VulkanSwapChain::GetVkImageView(VkImageView& vulkImageView_, const uint32_t idx_)
 	{
 		const uint32_t nViews = vulkImageViewBlk.size / sizeof(VkImageView);
-		if (idx_ > nViews)
+		if (idx_ >= nViews)
 		{
 			return false;
 		}
