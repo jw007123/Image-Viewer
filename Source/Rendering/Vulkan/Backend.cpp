@@ -35,4 +35,10 @@ namespace Rendering
 	{
 		return vulkanGlfw.IsWindowOpen();
 	}
+
+
+	void VulkBackend::MainLoop()
+	{
+		vulkanGlfw.MainLoop();
+	}
 }

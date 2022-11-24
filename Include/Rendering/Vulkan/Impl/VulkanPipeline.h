@@ -24,6 +24,7 @@ namespace Rendering
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
 		bool LoadPipeline();
 
+		bool GetVkPipeline(VkPipeline& vulkPipeline_);
 		bool GetVkRenderPass(VkRenderPass& vulkRenderPass_);
 
 	private:

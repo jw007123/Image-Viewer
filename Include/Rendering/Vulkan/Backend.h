@@ -36,11 +36,9 @@ namespace Rendering
 		VulkBackend(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_);
 		~VulkBackend();
 
-		/// Is true for as long as the window is open
 		bool IsRunning();
 
-		void StartFrame();
-		void EndFrame();
+		void MainLoop();
 
 	private:
 		VulkanGLFW			   vulkanGlfw;

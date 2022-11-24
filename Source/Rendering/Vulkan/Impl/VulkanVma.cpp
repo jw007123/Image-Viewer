@@ -3,7 +3,7 @@
 namespace Rendering
 {
 	VulkanVma::VulkanVma(VulkanPhysicalDevice& vulkanPhysicalDevice_, VulkanLogicalDevice& vulkanLogicalDevice_,
-																	  VulkanInstance& vulkanInstance_) :
+						 VulkanInstance&	   vulkanInstance_) :
 						 vulkanPhysicalDevice(vulkanPhysicalDevice_),
 						 vulkanLogicalDevice(vulkanLogicalDevice_),
 						 vulkanInstance(vulkanInstance_)

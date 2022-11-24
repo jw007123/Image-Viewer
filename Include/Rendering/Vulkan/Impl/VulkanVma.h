@@ -18,7 +18,7 @@ namespace Rendering
 	{
 	public:
 		VulkanVma(VulkanPhysicalDevice& vulkanPhysicalDevice_, VulkanLogicalDevice& vulkanLogicalDevice_,
-															   VulkanInstance& vulkanInstance_);
+				  VulkanInstance&		vulkanInstance_);
 		~VulkanVma();
 
 	private:

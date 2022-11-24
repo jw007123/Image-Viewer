@@ -42,6 +42,12 @@ namespace Rendering
 	}
 
 
+	void VulkanGLFW::MainLoop()
+	{
+		glfwPollEvents();
+	}
+
+
 	GLFWwindow* const VulkanGLFW::GetGLWindow() const
 	{
 		return glWindow;

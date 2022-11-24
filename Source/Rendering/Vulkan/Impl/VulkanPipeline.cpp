@@ -68,6 +68,13 @@ namespace Rendering
 	}
 
 
+	bool VulkanPipeline::GetVkPipeline(VkPipeline& vulkPipeline_)
+	{
+		vulkPipeline_ = vulkPipeline;
+		return wasPipelineCreated;
+	}
+
+
 	bool VulkanPipeline::GetVkRenderPass(VkRenderPass& vulkRenderPass_)
 	{
 		vulkRenderPass_ = vulkRenderPass;

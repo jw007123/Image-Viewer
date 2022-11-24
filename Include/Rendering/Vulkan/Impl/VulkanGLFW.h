@@ -15,6 +15,8 @@ namespace Rendering
 
 		bool IsWindowOpen();
 
+		void MainLoop();
+
 		GLFWwindow* const GetGLWindow() const;
 
 	private:
