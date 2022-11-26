@@ -15,7 +15,7 @@ namespace Rendering
 
 		bool IsWindowOpen();
 
-		void MainLoop();
+		void PollEvents();
 
 		GLFWwindow* const GetGLWindow() const;
 

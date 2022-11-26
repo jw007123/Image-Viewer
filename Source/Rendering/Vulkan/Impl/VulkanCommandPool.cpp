@@ -4,11 +4,10 @@ namespace Rendering
 {
 	VulkanCommandPool::VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 										 VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanQueueFamilies&     vulkanQueueFamiles_,
-										 VulkanSwapChain&		 vulkanSwapChain_,	   VulkanFramebuffer&	    vulkanFramebuffer_) :
+										 VulkanSwapChain&		 vulkanSwapChain_) :
 										 vulkanLogicalDevice(vulkanLogicalDevice_),
 										 vulkanQueueFamilies(vulkanQueueFamiles_),
 										 vulkanSwapChain(vulkanSwapChain_),
-										 vulkanFramebuffer(vulkanFramebuffer_),
 										 heapAllocator(heapAllocator_),
 										 stackAllocator(stackAllocator_)
 	{
@@ -35,9 +34,15 @@ namespace Rendering
 	}
 
 
-	bool VulkanCommandPool::RecordToBuffer(VulkanPipeline& vulkanPipeline_, const uint32_t imageIdx_)
+	bool VulkanCommandPool::Reset()
 	{
-		const bool begun = BeginRenderPass(vulkanPipeline_, imageIdx_);
+		return VULK_CHECK_SUCCESS(vkResetCommandBuffer, vulkCommandBuffer, 0);
+	}
+
+
+	bool VulkanCommandPool::RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_)
+	{
+		const bool begun = BeginRenderPass(vulkanPipeline_, vulkanFramebuffer_, imageIdx_);
 		if (!begun)
 		{
 			return false;
@@ -57,7 +62,13 @@ namespace Rendering
 	}
 
 
-	bool VulkanCommandPool::BeginRenderPass(VulkanPipeline& vulkanPipeline_, const uint32_t imageIdx_)
+	VkCommandBuffer& VulkanCommandPool::GetVkCommandBuffer()
+	{
+		return vulkCommandBuffer;
+	}
+
+
+	bool VulkanCommandPool::BeginRenderPass(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_)
 	{
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType					   = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -76,7 +87,7 @@ namespace Rendering
 		}
 
 		VkFramebuffer vulkFramebuffer;
-		if (!vulkanFramebuffer.GetVkFramebuffer(vulkFramebuffer, imageIdx_))
+		if (!vulkanFramebuffer_.GetVkFramebuffer(vulkFramebuffer, imageIdx_))
 		{
 			return false;
 		}

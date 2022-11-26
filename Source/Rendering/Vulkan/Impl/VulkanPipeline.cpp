@@ -105,12 +105,22 @@ namespace Rendering
 		subpassDesc.colorAttachmentCount = 1;
 		subpassDesc.pColorAttachments    = &colourAttachmentRef;
 
+		VkSubpassDependency depInfo = {};
+		depInfo.srcSubpass			= VK_SUBPASS_EXTERNAL;
+		depInfo.dstSubpass			= 0;
+		depInfo.srcStageMask		= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		depInfo.srcAccessMask		= 0;
+		depInfo.dstStageMask		= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		depInfo.dstAccessMask		= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
 		VkRenderPassCreateInfo createInfo = {};
 		createInfo.sType				  = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		createInfo.attachmentCount		  = 1;
 		createInfo.pAttachments			  = &colourAttachment;
 		createInfo.subpassCount			  = 1;
 		createInfo.pSubpasses			  = &subpassDesc;
+		createInfo.dependencyCount		  = 1;
+		createInfo.pDependencies		  = &depInfo;
 
 		return VULK_CHECK_SUCCESS(vkCreateRenderPass, vulkanLogicalDevice.GetVkLogicalDevice(), &createInfo, nullptr, &vulkRenderPass);
 	}

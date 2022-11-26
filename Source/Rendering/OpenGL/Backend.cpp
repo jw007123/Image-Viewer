@@ -2,7 +2,9 @@
 
 namespace Rendering
 {
-	Backend::Backend()
+	Backend::Backend(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_) :
+					 heapAllocator(heapAllocator_),
+					 stackAllocator(stackAllocator_)
 	{
 		// Initialise glfw
 		if (!glfwInit())

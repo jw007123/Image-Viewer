@@ -2,6 +2,8 @@
 
 #include "Utility/Literals.h"
 #include "Utility/Log.h"
+#include "Utility/HeapAllocator.h"
+#include "Utility/StackAllocator.h"
 
 #include "GUI/SizeConsts.h"
 
@@ -15,10 +17,12 @@
 
 namespace Rendering
 {
+	class Renderer;
+
 	class Backend
 	{
 	public:
-		Backend();
+		Backend(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_);
 		~Backend();
 
 		/// Is true for as long as the window is open
@@ -28,6 +32,10 @@ namespace Rendering
 		void EndFrame();
 
 	private:
+		friend class Renderer;
+
+		Utility::HeapAllocator&  heapAllocator;
+		Utility::StackAllocator& stackAllocator;
 
 		GLFWwindow* glWindow;
 

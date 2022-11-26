@@ -29,40 +29,24 @@
 #include "Rendering/Vulkan/Impl/VulkanFramebuffer.h"
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.h"
 
+#include "Rendering/Vulkan/Backend.h"
+
 namespace Rendering
 {
-	class VRenderer;
-
-	class VBackend
+	class VRenderer
 	{
 	public:
-		VBackend(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_);
-		~VBackend();
+		VRenderer(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, VBackend& backend_);
+		~VRenderer();
 
-		bool IsRunning();
-
-		void StartFrame();
-		void EndFrame();
+		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
 
 	private:
-		friend class VRenderer;
+		VBackend&			     backend;
+		Utility::StackAllocator& stackAllocator;
+		Utility::HeapAllocator&  heapAllocator;
 
-		bool GetImageTarget(uint32_t& imageIdx_);
-
-		uint32_t    imageTargetIdx;
-		VkSemaphore vulkImageAvailableSem;
-		VkSemaphore vulkImageFinishedSem;
-		VkFence		vulkInFlightFence;
-
-		VulkanGLFW			   vulkanGlfw;
-		VulkanInstance		   vulkanInstance;
-		VulkanPhysicalDevice   vulkanPhysicalDevice;
-		VulkanQueueFamilies	   vulkanQueueFamilies;
-		VulkanLogicalDevice	   vulkanLogicalDevice;
-		VulkanVma			   vulkanVma;
-		VulkanSurface		   vulkanSurface;
-		VulkanSwapChain		   vulkanSwapChain;
-		VulkanCommandPool	   vulkanCommandPool;
-		VulkanImGui			   vulkanImGui;
+		VulkanPipeline		   mainViewportPipeline;
+		VulkanFramebuffer	   vulkanFramebuffer;
 	};
 }

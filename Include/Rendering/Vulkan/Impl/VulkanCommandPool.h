@@ -21,10 +21,13 @@ namespace Rendering
 	public:
 		VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 						  VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanQueueFamilies&     vulkanQueueFamiles_,
-						  VulkanSwapChain&		  vulkanSwapChain_,		VulkanFramebuffer&		 vulkanFramebuffer_);
+						  VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanCommandPool();
 
-		bool RecordToBuffer(VulkanPipeline& vulkanPipeline_, const uint32_t imageIdx_);
+		bool Reset();
+		bool RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_);
+
+		VkCommandBuffer& GetVkCommandBuffer();
 
 	private:
 		VkCommandPool   vulkCommandPool;
@@ -33,11 +36,10 @@ namespace Rendering
 		VulkanLogicalDevice& vulkanLogicalDevice;
 		VulkanQueueFamilies& vulkanQueueFamilies;
 		VulkanSwapChain&	 vulkanSwapChain;
-		VulkanFramebuffer&   vulkanFramebuffer;
 
 		Utility::StackAllocator& stackAllocator;
 		Utility::HeapAllocator&  heapAllocator;
 
-		bool BeginRenderPass(VulkanPipeline& vulkanPipeline_, const uint32_t imageIdx_);
+		bool BeginRenderPass(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_);
 	};
 }

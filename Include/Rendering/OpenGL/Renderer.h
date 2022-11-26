@@ -18,13 +18,14 @@
 #include "Rendering/OpenGL/Shader.h"
 #include "Rendering/OpenGL/Program.h"
 #include "Rendering/OpenGL/Texture.h"
+#include "Rendering/OpenGL/Backend.h"
 
 namespace Rendering
 {
 	class Renderer
 	{
 	public:
-		Renderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_);
+		Renderer(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Backend& backend_);
 
 		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
 		void RenderZoomView(const GUI::Camera& cam_);
@@ -64,6 +65,7 @@ namespace Rendering
 			NumTextures   // Not Num because C++ committee knows best
 		};
 
+		Backend&				 backend;
 		Utility::HeapAllocator&  heapAllocator;
 		Utility::StackAllocator& stackAllocator;
 

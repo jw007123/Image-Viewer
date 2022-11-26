@@ -68,9 +68,10 @@ namespace Rendering
 
 
 
-	Renderer::Renderer(Utility::StackAllocator& stackAllocator_, Utility::HeapAllocator& heapAllocator_) :
+	Renderer::Renderer(Utility::HeapAllocator& heapAllocator_, Utility::StackAllocator& stackAllocator_, Backend& backend_) :
 					   heapAllocator(heapAllocator_),
-					   stackAllocator(stackAllocator_)
+					   stackAllocator(stackAllocator_),
+					   backend(backend_)
 	{
 		{
 			Shader vsTexture;

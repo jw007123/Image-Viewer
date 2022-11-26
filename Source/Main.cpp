@@ -44,6 +44,7 @@
 #include "Rendering/Vulkan/Impl/VulkanPipeline.cpp"
 #include "Rendering/Vulkan/Impl/VulkanFramebuffer.cpp"
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.cpp"
+#include "Rendering/Vulkan/Renderer.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 i16 main()
@@ -55,6 +56,9 @@ i16 main()
 	ImageProcessing::Image editingImage(heapAllocator);
 	ImageProcessing::Image workerOutputImage(heapAllocator);
 
+	Rendering::VBackend  backend(heapAllocator, stackAllocator);
+	Rendering::VRenderer renderer(heapAllocator, stackAllocator, backend);
+
 	// Setup worker thread
 	ImageProcessing::WorkerThread::InitialData threadData(image, workerOutputImage);
 	std::thread								   workerThread(ImageProcessing::WorkerThread::Main, &threadData);
@@ -63,10 +67,19 @@ i16 main()
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 
-	Rendering::VulkBackend backend(heapAllocator, stackAllocator);
+	GUI::Camera cam(16.0f / 9.0f, -1.0f);
+
+	// Render loop
+	Utility::TimeInterval renderInterval(1.0f / 165.0f);
 	while (backend.IsRunning())
 	{
-		backend.MainLoop();
+		backend.StartFrame();
+		{
+			renderer.RenderFullView(cam, 16.0f / 9.0f);
+		}
+		backend.EndFrame();
+
+		renderInterval.Wait();
 	}
 	
 	// Shutdown thread

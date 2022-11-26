@@ -42,7 +42,7 @@ namespace Rendering
 	}
 
 
-	void VulkanGLFW::MainLoop()
+	void VulkanGLFW::PollEvents()
 	{
 		glfwPollEvents();
 	}

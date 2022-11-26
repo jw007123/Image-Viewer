@@ -112,6 +112,12 @@ namespace Rendering
 	}
 
 
+	VkSwapchainKHR& VulkanSwapChain::GetVkSwapchainKHR()
+	{
+		return vulkSwapChain;
+	}
+
+
 	void VulkanSwapChain::FillQueueInfo(VkSwapchainCreateInfoKHR& scCreateInfo_)
 	{
 		uint32_t idxs[2];

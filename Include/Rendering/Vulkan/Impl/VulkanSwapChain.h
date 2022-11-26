@@ -22,8 +22,9 @@ namespace Rendering
 		bool GetVkImage(VkImage& vulkImage_, const uint32_t idx_);
 		bool GetVkImageView(VkImageView& vulkImageView_, const uint32_t idx_);
 
-		VkExtent2D& GetVkExtent();
-		VkFormat&   GetVkFormat();
+		VkExtent2D&     GetVkExtent();
+		VkFormat&	    GetVkFormat();
+		VkSwapchainKHR& GetVkSwapchainKHR();
 
 	private:
 		VkSwapchainKHR		 vulkSwapChain;
