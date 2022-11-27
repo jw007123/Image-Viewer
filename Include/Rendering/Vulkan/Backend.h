@@ -45,14 +45,21 @@ namespace Rendering
 		void EndFrame();
 
 	private:
+		struct Consts
+		{
+			static constexpr usize maxFramesInFlight = 2;
+		};
+
 		friend class VRenderer;
 
-		bool GetImageTarget(uint32_t& imageIdx_);
-
 		uint32_t    imageTargetIdx;
-		VkSemaphore vulkImageAvailableSem;
-		VkSemaphore vulkImageFinishedSem;
-		VkFence		vulkInFlightFence;
+		uint32_t	currentFrameIdx;
+		VkSemaphore vulkImageAvailableSem[Consts::maxFramesInFlight];
+		VkSemaphore vulkImageFinishedSem[Consts::maxFramesInFlight];
+		VkFence		vulkInFlightFence[Consts::maxFramesInFlight];
+
+		bool swapChainOoD;
+		bool isMinimised;
 
 		VulkanGLFW			   vulkanGlfw;
 		VulkanInstance		   vulkanInstance;
@@ -62,7 +69,7 @@ namespace Rendering
 		VulkanVma			   vulkanVma;
 		VulkanSurface		   vulkanSurface;
 		VulkanSwapChain		   vulkanSwapChain;
-		VulkanCommandPool	   vulkanCommandPool;
+		VulkanCommandPool	   vulkanCommandPool[Consts::maxFramesInFlight];
 		VulkanImGui			   vulkanImGui;
 	};
 }

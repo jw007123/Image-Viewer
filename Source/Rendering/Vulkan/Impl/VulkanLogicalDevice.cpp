@@ -98,6 +98,17 @@ namespace Rendering
 	}
 
 
+	void VulkanLogicalDevice::WaitFor()
+	{
+		vkDeviceWaitIdle(vulkLogicalDevice);
+
+		for (u8 i = 0; i < VulkanQueueFamilies::Num; ++i)
+		{
+			vkQueueWaitIdle(GetVkQueue((VulkanQueueFamilies::IDs)i));
+		}
+	}
+
+
 	bool VulkanLogicalDevice::CheckRequiredExtensions(Utility::StackAllocator& stackAllocator_, const usize nRequiredExtensions_, const char* const* requiredExtensions_) const
 	{
 		// Get max number of extensions

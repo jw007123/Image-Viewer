@@ -17,6 +17,14 @@ namespace Rendering
 
 	VulkanPipeline::~VulkanPipeline()
 	{
+		Destroy();
+	}
+
+
+	void VulkanPipeline::Destroy()
+	{
+		vulkanLogicalDevice.WaitFor();
+
 		if (wasPipelineCreated)
 		{
 			vkDestroyPipelineLayout(vulkanLogicalDevice.GetVkLogicalDevice(), vulkPipelineLayout, nullptr);
@@ -27,6 +35,9 @@ namespace Rendering
 		{
 			vkDestroyRenderPass(vulkanLogicalDevice.GetVkLogicalDevice(), vulkRenderPass, nullptr);
 		}
+
+		wasPipelineCreated   = false;
+		wasRenderPassCreated = false;
 	}
 
 

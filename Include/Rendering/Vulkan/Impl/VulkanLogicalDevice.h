@@ -21,6 +21,9 @@ namespace Rendering
 
 		VkDevice& GetVkLogicalDevice();
 		VkQueue&  GetVkQueue(const VulkanQueueFamilies::IDs idx_);
+
+		void WaitFor();
+
 	private:
 		struct Consts
 		{

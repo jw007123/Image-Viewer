@@ -15,16 +15,39 @@ namespace Rendering
 
 	VulkanFramebuffer::~VulkanFramebuffer()
 	{
-		if (framebufferBlk.size)
+		if (!framebufferBlk.size)
 		{
-			const uint32_t nBuffers = framebufferBlk.size / sizeof(VkFramebuffer);
-			for (uint32_t i = 0; i < nBuffers; ++i)
-			{
-				VkFramebuffer& fbuffer = *((VkFramebuffer*)framebufferBlk.ptr + i);
-				vkDestroyFramebuffer(vulkanLogicalDevice.GetVkLogicalDevice(), fbuffer, nullptr);
-			}
+			return;
+		}
 
-			heapAllocator.Free(framebufferBlk);
+		vulkanLogicalDevice.WaitFor();
+
+		const uint32_t nBuffers = framebufferBlk.size / sizeof(VkFramebuffer);
+		for (uint32_t i = 0; i < nBuffers; ++i)
+		{
+			VkFramebuffer& fbuffer = *((VkFramebuffer*)framebufferBlk.ptr + i);
+			vkDestroyFramebuffer(vulkanLogicalDevice.GetVkLogicalDevice(), fbuffer, nullptr);
+		}
+
+		heapAllocator.Free(framebufferBlk);
+	}
+
+
+	void VulkanFramebuffer::Destroy()
+	{
+		if (!framebufferBlk.size)
+		{
+			// Nothing to do
+			return;
+		}
+
+		vulkanLogicalDevice.WaitFor();
+
+		const uint32_t nBuffers = framebufferBlk.size / sizeof(VkFramebuffer);
+		for (uint32_t i = 0; i < nBuffers; ++i)
+		{
+			VkFramebuffer& fbuffer = *((VkFramebuffer*)framebufferBlk.ptr + i);
+			vkDestroyFramebuffer(vulkanLogicalDevice.GetVkLogicalDevice(), fbuffer, nullptr);
 		}
 	}
 

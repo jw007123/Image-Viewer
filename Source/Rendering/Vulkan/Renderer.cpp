@@ -9,7 +9,6 @@ namespace Rendering
 		mainViewportPipeline(heapAllocator_, stackAllocator_, backend.vulkanLogicalDevice, backend.vulkanSwapChain),
 		vulkanFramebuffer(heapAllocator_, stackAllocator_, backend.vulkanLogicalDevice, backend.vulkanSwapChain)
 	{
-		// Init pipelines
 		if (!mainViewportPipeline.LoadShaderStage("vsTest", VulkanShader::Vertex)   ||
 			!mainViewportPipeline.LoadShaderStage("fsTest", VulkanShader::Fragment) ||
 			!mainViewportPipeline.LoadPipeline())
@@ -17,7 +16,6 @@ namespace Rendering
 			assert(0);
 		}
 
-		// Bind to pipeline
 		if (!vulkanFramebuffer.BindTo(mainViewportPipeline))
 		{
 			assert(0);
@@ -33,12 +31,24 @@ namespace Rendering
 
 	void VRenderer::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
 	{
-		uint32_t imageIdx = 0;
-		if (!backend.GetImageTarget(imageIdx))
+		if (backend.swapChainOoD)
 		{
-			assert(0);
+			vulkanFramebuffer.Destroy();
+			mainViewportPipeline.Destroy();
+			backend.vulkanSwapChain.Destroy();
+			backend.vulkanSwapChain.Create(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+
+			mainViewportPipeline.LoadPipeline();
+			vulkanFramebuffer.BindTo(mainViewportPipeline);
+
+			return;
 		}
 
-		backend.vulkanCommandPool.RecordToBuffer(mainViewportPipeline, vulkanFramebuffer, imageIdx);
+		if (!backend.isMinimised)
+		{
+			const uint32_t imageIdx = backend.imageTargetIdx;
+			const uint32_t frameIdx = backend.currentFrameIdx;
+			backend.vulkanCommandPool[frameIdx].RecordToBuffer(mainViewportPipeline, vulkanFramebuffer, imageIdx);
+		}
 	}
 }

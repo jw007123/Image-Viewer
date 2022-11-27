@@ -19,6 +19,9 @@ namespace Rendering
 						VulkanLogicalDevice&    vulkanLogicalDevice_, const VkImageUsageFlags  usage_);
 		~VulkanSwapChain();
 
+		void Create(const VkImageUsageFlags usage_);
+		void Destroy();
+
 		bool GetVkImage(VkImage& vulkImage_, const uint32_t idx_);
 		bool GetVkImageView(VkImageView& vulkImageView_, const uint32_t idx_);
 

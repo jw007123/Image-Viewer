@@ -21,6 +21,8 @@ namespace Rendering
 					   VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanPipeline();
 
+		void Destroy();
+
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
 		bool LoadPipeline();
 

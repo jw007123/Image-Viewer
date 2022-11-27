@@ -22,8 +22,9 @@ namespace Rendering
 						  VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanSwapChain&         vulkanSwapChain_);
 		~VulkanFramebuffer();
 
-		bool BindTo(VulkanPipeline& vulkanPipeline_);
+		void Destroy();
 
+		bool BindTo(VulkanPipeline& vulkanPipeline_);
 		bool GetVkFramebuffer(VkFramebuffer& vulkFramebuffer_, const uint32_t idx_);
 
 	private:

@@ -13,7 +13,6 @@ namespace Rendering
 
 		// Tell glfw to use Vulkan
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_SAMPLES, 8);
 
 		// Setup window

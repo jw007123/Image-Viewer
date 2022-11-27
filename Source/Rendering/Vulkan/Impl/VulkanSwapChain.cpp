@@ -11,6 +11,22 @@ namespace Rendering
 									 vulkanLogicalDevice(vulkanLogicalDevice_),
 									 heapAllocator(heapAllocator_)
 	{
+		Create(usage_);
+	}
+
+
+	VulkanSwapChain::~VulkanSwapChain()
+	{
+		Destroy();
+
+		// Free allocated blocks
+		heapAllocator.Free(vulkImageBlk);
+		heapAllocator.Free(vulkImageViewBlk);
+	}
+
+
+	void VulkanSwapChain::Create(const VkImageUsageFlags usage_)
+	{
 		// Create chain with requested format and present mode. Use surface size as extent
 		VkSurfaceFormatKHR scFormat      = {};
 		VkPresentModeKHR   scPresentMode = {};
@@ -53,8 +69,10 @@ namespace Rendering
 	}
 
 
-	VulkanSwapChain::~VulkanSwapChain()
+	void VulkanSwapChain::Destroy()
 	{
+		vulkanLogicalDevice.WaitFor();
+
 		// Destroy images before swapchain
 		const uint32_t nImages = vulkImageBlk.size / sizeof(VkImage);
 		for (uint32_t i = 0; i < nImages; ++i)
@@ -65,10 +83,6 @@ namespace Rendering
 
 		// Destroy swapchain
 		vkDestroySwapchainKHR(vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, nullptr);
-
-		// Free allocated blocks
-		heapAllocator.Free(vulkImageBlk);
-		heapAllocator.Free(vulkImageViewBlk);
 	}
 
 
@@ -145,7 +159,11 @@ namespace Rendering
 		uint32_t nImages = 0;
 		VULK_ASSERT_SUCCESS(vkGetSwapchainImagesKHR, vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, &nImages, nullptr);
 
-		vulkImageBlk		= heapAllocator.Allocate<VkImage>(nImages);
+		if (!vulkImageBlk.size)
+		{
+			vulkImageBlk = heapAllocator.Allocate<VkImage>(nImages);
+		}
+
 		VkImage* vulkImages = (VkImage*)vulkImageBlk.ptr;
 		VULK_ASSERT_SUCCESS(vkGetSwapchainImagesKHR, vulkanLogicalDevice.GetVkLogicalDevice(), vulkSwapChain, &nImages, vulkImages);
 	}
@@ -155,7 +173,12 @@ namespace Rendering
 	{
 		// Get image count and alloc mem
 		const uint32_t nImages		= vulkImageBlk.size / sizeof(VkImage);
-		vulkImageViewBlk			= heapAllocator.Allocate<VkImageView>(nImages);
+
+		if (!vulkImageViewBlk.size)
+		{
+			vulkImageViewBlk = heapAllocator.Allocate<VkImageView>(nImages);
+		}
+
 		VkImageView* vulkImageViews = (VkImageView*)vulkImageViewBlk.ptr;
 
 		// Create views
