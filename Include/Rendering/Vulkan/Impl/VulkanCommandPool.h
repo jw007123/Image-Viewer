@@ -21,10 +21,16 @@ namespace Rendering
 	public:
 		struct DrawInfo
 		{
-			VkDeviceSize* vertOffsets;
-			VkBuffer*	  vertBuffers;
-			usize*        verticesCnt;
-			usize         nVertBuffers;
+			VkDeviceSize& vertOffset;
+			VkBuffer&	  vertBuffer;
+
+			VkDeviceSize& indexOffset;
+			VkBuffer&	  indexBuffer;
+			usize	      nIndices;
+
+			DrawInfo(VkDeviceSize& vertOffset_,  VkBuffer& vertBuffer_,
+					 VkDeviceSize& indexOffset_, VkBuffer& indexBuffer_,
+					 usize nIndices_);
 		};
 
 		VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,

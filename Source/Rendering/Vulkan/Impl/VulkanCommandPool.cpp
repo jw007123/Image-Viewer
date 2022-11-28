@@ -2,6 +2,19 @@
 
 namespace Rendering
 {
+	
+	VulkanCommandPool::DrawInfo::DrawInfo(VkDeviceSize& vertOffset_,  VkBuffer& vertBuffer_,
+										  VkDeviceSize& indexOffset_, VkBuffer& indexBuffer_,
+										  usize nIndices_) :
+										  vertOffset(vertOffset_),
+										  vertBuffer(vertBuffer_),
+										  indexOffset(indexOffset_),
+										  indexBuffer(indexBuffer_),
+										  nIndices(nIndices_)
+	{
+	}
+
+
 	VulkanCommandPool::VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 										 VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanQueueFamilies&     vulkanQueueFamiles_,
 										 VulkanSwapChain&		 vulkanSwapChain_) :
@@ -56,11 +69,11 @@ namespace Rendering
 		}
 
 		vkCmdBindPipeline(vulkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vulkPipeline);
-		vkCmdBindVertexBuffers(vulkCommandBuffer, 0, drawInfo_.nVertBuffers, drawInfo_.vertBuffers, drawInfo_.vertOffsets);
-		for (usize i = 0; i < drawInfo_.nVertBuffers; ++i)
-		{
-			vkCmdDraw(vulkCommandBuffer, drawInfo_.verticesCnt[i], 1, 0, 0);
-		}
+		vkCmdBindVertexBuffers(vulkCommandBuffer, 0, 1, &drawInfo_.vertBuffer, &drawInfo_.vertOffset);
+		vkCmdBindIndexBuffer(vulkCommandBuffer, drawInfo_.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+		vkCmdDrawIndexed(vulkCommandBuffer, drawInfo_.nIndices, 1, 0, 0, 0);
+
 		vkCmdEndRenderPass(vulkCommandBuffer);
 
 		return VULK_CHECK_SUCCESS(vkEndCommandBuffer, vulkCommandBuffer);

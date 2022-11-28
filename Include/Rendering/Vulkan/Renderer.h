@@ -44,17 +44,22 @@ namespace Rendering
 	private:
 		struct MeshVulkanData
 		{
-			MeshVulkanData(Utility::HeapAllocator& heapAllocator_, VmaAllocator& vulkAllocator_);
+			MeshVulkanData(Utility::StackAllocator& stackAllocator_, VmaAllocator& vulkAllocator_);
 			~MeshVulkanData();
 
 			void Create(Eigen::Vector3f* points_,    const usize nPoints_,
-						Eigen::Vector2f* texCoords_, const usize nTexCoords_);
+						Eigen::Vector2f* texCoords_, const usize nTexCoords_,
+						uint32_t*		 indices_,   const usize nIndices_);
 
-			VmaAllocator&			vulkAllocator;
-			VmaAllocation			vertAllocation;
-			VkBuffer			    vertBuffer;
-			Utility::HeapAllocator& heapAllocator;
-			Utility::MemoryBlock	meshDataBlk;
+			VmaAllocator&			 vulkAllocator;
+			Utility::StackAllocator& stackAllocator;
+
+			VmaAllocation	  vertAllocation;
+			VmaAllocationInfo vertAllocationInfo;
+			VkBuffer		  vertBuffer;
+			VmaAllocation	  indicesAllocation;
+			VmaAllocationInfo indicesAllocationInfo;
+			VkBuffer		  indicesBuffer;
 
 			VkVertexInputBindingDescription   vulkBindingDescription;
 			VkVertexInputAttributeDescription vulkAttributeDescription[2];
