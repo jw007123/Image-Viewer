@@ -41,7 +41,6 @@ namespace Rendering
 			fenceCreateInfo.sType			  = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			fenceCreateInfo.flags			  = VK_FENCE_CREATE_SIGNALED_BIT;
 			VULK_ASSERT_SUCCESS(vkCreateFence, vulkanLogicalDevice.GetVkLogicalDevice(), &fenceCreateInfo, nullptr, &vulkInFlightFence[i]);
-	
 		}
 	}
 

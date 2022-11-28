@@ -53,7 +53,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::LoadPipeline()
+	bool VulkanPipeline::LoadPipeline(const VertexInfo& vertexInfo_)
 	{
 		u8 nTypes = 0;
 		VulkanShader::Type typesToUse[VulkanShader::Num];
@@ -72,7 +72,7 @@ namespace Rendering
 		wasRenderPassCreated = CreateRenderPass();
 		if (wasRenderPassCreated)
 		{
-			wasPipelineCreated = CreatePipeline(nTypes, typesToUse);
+			wasPipelineCreated = CreatePipeline(vertexInfo_, nTypes, typesToUse);
 		}
 
 		return wasRenderPassCreated && wasPipelineCreated;
@@ -137,7 +137,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::CreatePipeline(const u8 nTypes_, VulkanShader::Type* typesToUse_)
+	bool VulkanPipeline::CreatePipeline(const VertexInfo& vertexInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_)
 	{
 		// Create structs for each shader we want to make use of
 		VkPipelineShaderStageCreateInfo shaderStageInfo[VulkanShader::Num];
@@ -154,10 +154,10 @@ namespace Rendering
 
 		VkPipelineVertexInputStateCreateInfo vertexStageInfo = {};
 		vertexStageInfo.sType								 = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexStageInfo.vertexBindingDescriptionCount		 = 0;
-		vertexStageInfo.pVertexBindingDescriptions			 = nullptr;
-		vertexStageInfo.vertexAttributeDescriptionCount		 = 0;
-		vertexStageInfo.pVertexAttributeDescriptions		 = nullptr;
+		vertexStageInfo.vertexBindingDescriptionCount		 = vertexInfo_.nBindings;
+		vertexStageInfo.pVertexBindingDescriptions			 = vertexInfo_.bindings;
+		vertexStageInfo.vertexAttributeDescriptionCount		 = vertexInfo_.nAttributes;
+		vertexStageInfo.pVertexAttributeDescriptions		 = vertexInfo_.attributes;
 
 		VkPipelineInputAssemblyStateCreateInfo assemblyStageInfo = {};
 		assemblyStageInfo.sType								     = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -192,7 +192,7 @@ namespace Rendering
 		rasterStageInfo.polygonMode							   = VK_POLYGON_MODE_FILL;
 		rasterStageInfo.lineWidth							   = 1.0f;
 		rasterStageInfo.cullMode							   = VK_CULL_MODE_BACK_BIT;
-		rasterStageInfo.frontFace							   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterStageInfo.frontFace							   = VK_FRONT_FACE_CLOCKWISE;
 		rasterStageInfo.depthBiasEnable						   = VK_FALSE;
 		rasterStageInfo.depthBiasConstantFactor				   = 0.0f;
 		rasterStageInfo.depthBiasClamp						   = 0.0f;

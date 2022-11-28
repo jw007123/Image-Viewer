@@ -17,6 +17,14 @@ namespace Rendering
 	class VulkanPipeline
 	{
 	public:
+		struct VertexInfo
+		{
+			VkVertexInputBindingDescription*   bindings;
+			usize							   nBindings;
+			VkVertexInputAttributeDescription* attributes;
+			usize							   nAttributes;
+		};
+
 		VulkanPipeline(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 					   VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanPipeline();
@@ -24,7 +32,7 @@ namespace Rendering
 		void Destroy();
 
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
-		bool LoadPipeline();
+		bool LoadPipeline(const VertexInfo& vertexInfo_);
 
 		bool GetVkPipeline(VkPipeline& vulkPipeline_);
 		bool GetVkRenderPass(VkRenderPass& vulkRenderPass_);
@@ -58,6 +66,6 @@ namespace Rendering
 		bool CreateRenderPass();
 
 		/// Completes the VkPipelineLayout and VkPipeline members
-		bool CreatePipeline(const u8 nTypes_, VulkanShader::Type* typesToUse_);
+		bool CreatePipeline(const VertexInfo& vertexInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_);
 	};
 }

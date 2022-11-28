@@ -24,6 +24,12 @@ namespace Rendering
 	}
 
 
+	VmaAllocator& VulkanVma::GetVmaAllocator()
+	{
+		return vmemAllocator;
+	}
+
+
 	VulkanVma::~VulkanVma()
 	{
 		vmaDestroyAllocator(vmemAllocator);

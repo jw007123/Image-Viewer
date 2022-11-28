@@ -19,13 +19,22 @@ namespace Rendering
 	class VulkanCommandPool
 	{
 	public:
+		struct DrawInfo
+		{
+			VkDeviceSize* vertOffsets;
+			VkBuffer*	  vertBuffers;
+			usize*        verticesCnt;
+			usize         nVertBuffers;
+		};
+
 		VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 						  VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanQueueFamilies&     vulkanQueueFamiles_,
 						  VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanCommandPool();
 
 		bool Reset();
-		bool RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_);
+		bool RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_,
+							const DrawInfo& drawInfo_,		 const uint32_t		imageIdx_);
 
 		VkCommandBuffer& GetVkCommandBuffer();
 

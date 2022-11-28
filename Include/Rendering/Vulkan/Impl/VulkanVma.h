@@ -21,6 +21,8 @@ namespace Rendering
 				  VulkanInstance&		vulkanInstance_);
 		~VulkanVma();
 
+		VmaAllocator& GetVmaAllocator();
+
 	private:
 		VmaAllocator vmemAllocator;
 

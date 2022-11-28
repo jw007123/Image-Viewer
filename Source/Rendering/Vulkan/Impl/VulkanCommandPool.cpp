@@ -40,7 +40,8 @@ namespace Rendering
 	}
 
 
-	bool VulkanCommandPool::RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_, const uint32_t imageIdx_)
+	bool VulkanCommandPool::RecordToBuffer(VulkanPipeline& vulkanPipeline_, VulkanFramebuffer& vulkanFramebuffer_,
+										   const DrawInfo& drawInfo_,		const uint32_t	   imageIdx_)
 	{
 		const bool begun = BeginRenderPass(vulkanPipeline_, vulkanFramebuffer_, imageIdx_);
 		if (!begun)
@@ -55,7 +56,11 @@ namespace Rendering
 		}
 
 		vkCmdBindPipeline(vulkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vulkPipeline);
-		vkCmdDraw(vulkCommandBuffer, 3, 1, 0, 0);
+		vkCmdBindVertexBuffers(vulkCommandBuffer, 0, drawInfo_.nVertBuffers, drawInfo_.vertBuffers, drawInfo_.vertOffsets);
+		for (usize i = 0; i < drawInfo_.nVertBuffers; ++i)
+		{
+			vkCmdDraw(vulkCommandBuffer, drawInfo_.verticesCnt[i], 1, 0, 0);
+		}
 		vkCmdEndRenderPass(vulkCommandBuffer);
 
 		return VULK_CHECK_SUCCESS(vkEndCommandBuffer, vulkCommandBuffer);

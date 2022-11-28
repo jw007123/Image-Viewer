@@ -42,11 +42,33 @@ namespace Rendering
 		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
 
 	private:
+		struct MeshVulkanData
+		{
+			MeshVulkanData(Utility::HeapAllocator& heapAllocator_, VmaAllocator& vulkAllocator_);
+			~MeshVulkanData();
+
+			void Create(Eigen::Vector3f* points_,    const usize nPoints_,
+						Eigen::Vector2f* texCoords_, const usize nTexCoords_);
+
+			VmaAllocator&			vulkAllocator;
+			VmaAllocation			vertAllocation;
+			VkBuffer			    vertBuffer;
+			Utility::HeapAllocator& heapAllocator;
+			Utility::MemoryBlock	meshDataBlk;
+
+			VkVertexInputBindingDescription   vulkBindingDescription;
+			VkVertexInputAttributeDescription vulkAttributeDescription[2];
+		};
+
 		VBackend&			     backend;
 		Utility::StackAllocator& stackAllocator;
 		Utility::HeapAllocator&  heapAllocator;
 
+		MeshVulkanData			 quadMeshData;
+
 		VulkanPipeline		   mainViewportPipeline;
 		VulkanFramebuffer	   vulkanFramebuffer;
+
+		void LoadTextureMesh();
 	};
 }
