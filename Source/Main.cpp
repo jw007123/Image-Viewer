@@ -44,7 +44,8 @@
 #include "Rendering/Vulkan/Impl/VulkanPipeline.cpp"
 #include "Rendering/Vulkan/Impl/VulkanFramebuffer.cpp"
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.cpp"
-#include "Rendering/Vulkan/Renderer.cpp"
+#include "Rendering/Vulkan/Impl/VulkanMeshData.cpp"
+#include "Rendering/Vulkan/Impl/VulkanUBO.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 i16 main()
@@ -57,7 +58,6 @@ i16 main()
 	ImageProcessing::Image workerOutputImage(heapAllocator);
 
 	Rendering::VBackend  backend(heapAllocator, stackAllocator);
-	Rendering::VRenderer renderer(heapAllocator, stackAllocator, backend);
 
 	// Setup worker thread
 	ImageProcessing::WorkerThread::InitialData threadData(image, workerOutputImage);
@@ -75,7 +75,7 @@ i16 main()
 	{
 		backend.StartFrame();
 		{
-			renderer.RenderFullView(cam, 16.0f / 9.0f);
+			backend.RenderFullView(cam, 16.0f / 9.0f);
 		}
 		backend.EndFrame();
 

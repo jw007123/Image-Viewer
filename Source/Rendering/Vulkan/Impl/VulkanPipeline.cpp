@@ -53,7 +53,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::LoadPipeline(const VertexInfo& vertexInfo_)
+	bool VulkanPipeline::LoadPipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_)
 	{
 		u8 nTypes = 0;
 		VulkanShader::Type typesToUse[VulkanShader::Num];
@@ -72,7 +72,7 @@ namespace Rendering
 		wasRenderPassCreated = CreateRenderPass();
 		if (wasRenderPassCreated)
 		{
-			wasPipelineCreated = CreatePipeline(vertexInfo_, nTypes, typesToUse);
+			wasPipelineCreated = CreatePipeline(vertexInfo_, uboInfo_, nTypes, typesToUse);
 		}
 
 		return wasRenderPassCreated && wasPipelineCreated;
@@ -137,7 +137,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::CreatePipeline(const VertexInfo& vertexInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_)
+	bool VulkanPipeline::CreatePipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_)
 	{
 		// Create structs for each shader we want to make use of
 		VkPipelineShaderStageCreateInfo shaderStageInfo[VulkanShader::Num];
@@ -244,8 +244,8 @@ namespace Rendering
 
 		VkPipelineLayoutCreateInfo layoutInfo = {};
 		layoutInfo.sType					  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		layoutInfo.setLayoutCount			  = 0;
-		layoutInfo.pSetLayouts				  = nullptr;
+		layoutInfo.setLayoutCount			  = uboInfo_.nLayouts;
+		layoutInfo.pSetLayouts				  = uboInfo_.layouts;
 		layoutInfo.pushConstantRangeCount	  = 0;
 		layoutInfo.pPushConstantRanges		  = nullptr;
 

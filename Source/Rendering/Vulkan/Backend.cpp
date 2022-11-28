@@ -16,12 +16,17 @@ namespace Rendering
 					       {heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain},
 					       {heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain}
 					   },
-					   vulkanImGui(vulkanGlfw)
+					   cameraDataUBO(stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice),
+					   quadMeshData(stackAllocator_, vulkanVma.GetVmaAllocator()),
+					   mainViewportPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
+					   vulkanFramebuffer(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
+					   vulkanImGui(vulkanGlfw),
+					   stackAllocator(stackAllocator_),
+					   heapAllocator(heapAllocator_)
 	{
 		// First vkFence call is invalid. Setting to 0 to avoid OoB access
 		imageTargetIdx  = 0;
 		currentFrameIdx = 0;
-		swapChainOoD    = false;
 		isMinimised		= false;
 
 		// Create sems
@@ -42,6 +47,17 @@ namespace Rendering
 			fenceCreateInfo.flags			  = VK_FENCE_CREATE_SIGNALED_BIT;
 			VULK_ASSERT_SUCCESS(vkCreateFence, vulkanLogicalDevice.GetVkLogicalDevice(), &fenceCreateInfo, nullptr, &vulkInFlightFence[i]);
 		}
+
+		// Load shaders
+		if (!mainViewportPipeline.LoadShaderStage("vsTest", VulkanShader::Vertex) ||
+			!mainViewportPipeline.LoadShaderStage("fsTest", VulkanShader::Fragment))
+		{
+			assert(0);
+		}
+
+		// Complete pipeline
+		LoadTextureMesh();
+		LoadPipeline();
 	}
 
 
@@ -85,9 +101,16 @@ namespace Rendering
 		// If image is out of date, recreate the full chain
 		if (imgResult == VK_ERROR_OUT_OF_DATE_KHR)
 		{
-			// Signal other classes to recreate their comps
-			swapChainOoD = true;
-			return;
+			vulkanFramebuffer.Destroy();
+			mainViewportPipeline.Destroy();
+			vulkanSwapChain.Destroy();
+			vulkanSwapChain.Create(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+
+			LoadPipeline();
+
+			// Get next image
+			vkAcquireNextImageKHR(vulkanLogicalDevice.GetVkLogicalDevice(), vulkanSwapChain.GetVkSwapchainKHR(),
+								  UINT64_MAX, vulkImageAvailableSem[currentFrameIdx], VK_NULL_HANDLE, &imageTargetIdx);
 		}
 
 		VULK_ASSERT_SUCCESS(vkResetFences, vulkanLogicalDevice.GetVkLogicalDevice(), 1, &vulkInFlightFence[currentFrameIdx]);
@@ -97,13 +120,7 @@ namespace Rendering
 
 	void VBackend::EndFrame()
 	{
-		if (swapChainOoD)
-		{
-			// Must be done
-			swapChainOoD = false;
-			return;
-		}
-		else if (isMinimised)
+		if (isMinimised)
 		{
 			return;
 		}
@@ -137,13 +154,99 @@ namespace Rendering
 		presentInfo.pResults		   = nullptr;
 
 		// If != VK_TRUE, window may be hidden
-		const VkResult queueResult = vkQueuePresentKHR(presentQueue, &presentInfo);
-		if (queueResult == VK_ERROR_OUT_OF_DATE_KHR || queueResult == VK_SUBOPTIMAL_KHR)
-		{
-			swapChainOoD = true;
-		}
-
+		vkQueuePresentKHR(presentQueue, &presentInfo);
+		
 		// Increment frame idx
 		currentFrameIdx = (currentFrameIdx + 1) % Consts::maxFramesInFlight;
+	}
+
+
+	void VBackend::RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_)
+	{
+		if (isMinimised)
+		{
+			return;
+		}
+
+		RecordFullViewToBuffer();
+	}
+
+
+	void VBackend::LoadTextureMesh()
+	{
+		Utility::MemoryBlock pointsBuff		   = stackAllocator.Allocate<Eigen::Vector3f>(4);
+		Utility::MemoryBlock textureCoordsBuff = stackAllocator.Allocate<Eigen::Vector2f>(4);
+		Utility::MemoryBlock indicesBuff       = stackAllocator.Allocate<uint32_t>(6);
+
+		Eigen::Vector3f* points		   = (Eigen::Vector3f*)pointsBuff.ptr;
+		Eigen::Vector2f* textureCoords = (Eigen::Vector2f*)textureCoordsBuff.ptr;
+		uint32_t* indices		       = (uint32_t*)indicesBuff.ptr;;
+
+		// Points
+		{
+			points[0] = Eigen::Vector3f( 0.5f,  0.5f, 0.0f);
+			points[1] = Eigen::Vector3f( 0.5f, -0.5f, 0.0f);
+			points[2] = Eigen::Vector3f(-0.5f, -0.5f, 0.0f);
+			points[3] = Eigen::Vector3f(-0.5f,  0.5f, 0.0f);
+		}
+
+		// Texture Coords
+		{
+			textureCoords[0] = Eigen::Vector2f(1.0f, 0.0f);
+			textureCoords[1] = Eigen::Vector2f(1.0f, 1.0f);
+			textureCoords[2] = Eigen::Vector2f(0.0f, 1.0f);
+			textureCoords[3] = Eigen::Vector2f(0.0f, 0.0f);
+		}
+
+		// Indices
+		{
+			indices[0] = 0;
+			indices[1] = 3;
+			indices[2] = 1;
+			indices[3] = 1;
+			indices[4] = 3;
+			indices[5] = 2;
+		}
+
+		quadMeshData.Create(points, 4, textureCoords, 4, indices, 6);
+
+		stackAllocator.Free(indicesBuff);
+		stackAllocator.Free(textureCoordsBuff);
+		stackAllocator.Free(pointsBuff);
+	}
+
+
+	void VBackend::LoadPipeline()
+	{
+		VulkanPipeline::VertexInfo vInfo;
+		vInfo.bindings    = &quadMeshData.vulkBindingDescription;
+		vInfo.nBindings   = 1;
+		vInfo.attributes  = quadMeshData.vulkAttributeDescription;
+		vInfo.nAttributes = 2;
+
+		VulkanPipeline::UBOInfo uInfo;
+		uInfo.layouts  = &cameraDataUBO.uboLayout;
+		uInfo.nLayouts = 1;
+
+		mainViewportPipeline.LoadPipeline(vInfo, uInfo);
+		vulkanFramebuffer.BindTo(mainViewportPipeline);
+	}
+
+
+	void VBackend::RecordFullViewToBuffer()
+	{
+		usize indexCnt			 = quadMeshData.indicesAllocationInfo.size / sizeof(uint32_t);
+		VkDeviceSize vertOffset  = 0;
+		VkDeviceSize indexOffset = 0;
+
+		VulkanCommandPool::DrawInfo drawInfo
+		(
+			vertOffset,
+			quadMeshData.vertBuffer,
+			indexOffset,
+			quadMeshData.indicesBuffer,
+			indexCnt
+		);
+		vulkanCommandPool[currentFrameIdx].RecordToBuffer(mainViewportPipeline, vulkanFramebuffer, drawInfo, imageTargetIdx);
 	}
 }

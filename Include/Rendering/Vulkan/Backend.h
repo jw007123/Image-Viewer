@@ -28,6 +28,8 @@
 #include "Rendering/Vulkan/Impl/VulkanPipeline.h"
 #include "Rendering/Vulkan/Impl/VulkanFramebuffer.h"
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.h"
+#include "Rendering/Vulkan/Impl/VulkanMeshData.h"
+#include "Rendering/Vulkan/Impl/VulkanUBO.h"
 
 namespace Rendering
 {
@@ -42,6 +44,7 @@ namespace Rendering
 		bool IsRunning();
 
 		void StartFrame();
+		void RenderFullView(const GUI::Camera& cam_, const f32 aspectRatio_);
 		void EndFrame();
 
 	private:
@@ -58,8 +61,9 @@ namespace Rendering
 		VkSemaphore vulkImageFinishedSem[Consts::maxFramesInFlight];
 		VkFence		vulkInFlightFence[Consts::maxFramesInFlight];
 
-		bool swapChainOoD;
-		bool isMinimised;
+		Utility::HeapAllocator&  heapAllocator;
+		Utility::StackAllocator& stackAllocator;
+		bool					 isMinimised;
 
 		VulkanGLFW			   vulkanGlfw;
 		VulkanInstance		   vulkanInstance;
@@ -71,5 +75,15 @@ namespace Rendering
 		VulkanSwapChain		   vulkanSwapChain;
 		VulkanCommandPool	   vulkanCommandPool[Consts::maxFramesInFlight];
 		VulkanImGui			   vulkanImGui;
+
+		VulkanUBO         cameraDataUBO;
+		VulkanMeshData	  quadMeshData;
+		VulkanPipeline	  mainViewportPipeline;
+		VulkanFramebuffer vulkanFramebuffer;
+
+		void LoadTextureMesh();
+		void LoadPipeline();
+
+		void RecordFullViewToBuffer();
 	};
 }

@@ -21,6 +21,8 @@
 	#include "Rendering/Vulkan/Impl/VulkanShader.h"
 	#include "Rendering/Vulkan/Impl/VulkanFramebuffer.h"
 	#include "Rendering/Vulkan/Impl/VulkanCommandPool.h"
+	#include "Rendering/Vulkan/Impl/VulkanMeshData.h"
+	#include "Rendering/Vulkan/Impl/VulkanUBO.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else
