@@ -13,10 +13,14 @@ namespace Rendering
 					   vulkanSwapChain(heapAllocator_, vulkanPhysicalDevice, vulkanSurface, vulkanQueueFamilies, vulkanLogicalDevice, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT),
 					   vulkanCommandPool
 					   {
-					       {heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain},
-					       {heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain}
+					       { heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain },
+					       { heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanQueueFamilies, vulkanSwapChain }
 					   },
-					   cameraDataUBO(stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice),
+					   cameraDataUBO
+					   {
+						   { stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice },
+						   { stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice }
+					   },
 					   quadMeshData(stackAllocator_, vulkanVma.GetVmaAllocator()),
 					   mainViewportPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
 					   vulkanFramebuffer(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
@@ -28,8 +32,8 @@ namespace Rendering
 		imageTargetIdx  = 0;
 		currentFrameIdx = 0;
 		isMinimised		= false;
-
-		// Create sems
+		
+		// Create objs that need to persist across multiple frames
 		for (usize i = 0; i < Consts::maxFramesInFlight; ++i)
 		{
 			VkSemaphoreCreateInfo semCreateInfo = {};
@@ -37,15 +41,17 @@ namespace Rendering
 
 			VULK_ASSERT_SUCCESS(vkCreateSemaphore, vulkanLogicalDevice.GetVkLogicalDevice(), &semCreateInfo, nullptr, &vulkImageAvailableSem[i]);
 			VULK_ASSERT_SUCCESS(vkCreateSemaphore, vulkanLogicalDevice.GetVkLogicalDevice(), &semCreateInfo, nullptr, &vulkImageFinishedSem[i]);
-		}
-		
-		// Create fences
-		for (usize i = 0; i < Consts::maxFramesInFlight; ++i)
-		{
+
 			VkFenceCreateInfo fenceCreateInfo = {};
 			fenceCreateInfo.sType			  = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 			fenceCreateInfo.flags			  = VK_FENCE_CREATE_SIGNALED_BIT;
 			VULK_ASSERT_SUCCESS(vkCreateFence, vulkanLogicalDevice.GetVkLogicalDevice(), &fenceCreateInfo, nullptr, &vulkInFlightFence[i]);
+
+			VulkanUBO::CreateInfo uboCreateInfo = {};
+			uboCreateInfo.bindingNo			    = 0;
+			uboCreateInfo.shaderStageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
+			uboCreateInfo.dataSize				= 3 * sizeof(Eigen::Matrix4f);
+			cameraDataUBO[i].Create(uboCreateInfo);
 		}
 
 		// Load shaders
@@ -168,6 +174,8 @@ namespace Rendering
 			return;
 		}
 
+		// Update UBOs
+
 		RecordFullViewToBuffer();
 	}
 
@@ -225,7 +233,7 @@ namespace Rendering
 		vInfo.nAttributes = 2;
 
 		VulkanPipeline::UBOInfo uInfo;
-		uInfo.layouts  = &cameraDataUBO.uboLayout;
+		uInfo.layouts  = &cameraDataUBO[currentFrameIdx].uboLayout;
 		uInfo.nLayouts = 1;
 
 		mainViewportPipeline.LoadPipeline(vInfo, uInfo);

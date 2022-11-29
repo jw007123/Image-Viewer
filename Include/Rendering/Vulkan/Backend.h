@@ -74,12 +74,12 @@ namespace Rendering
 		VulkanSurface		   vulkanSurface;
 		VulkanSwapChain		   vulkanSwapChain;
 		VulkanCommandPool	   vulkanCommandPool[Consts::maxFramesInFlight];
-		VulkanImGui			   vulkanImGui;
 
-		VulkanUBO         cameraDataUBO;
+		VulkanUBO         cameraDataUBO[Consts::maxFramesInFlight];
 		VulkanMeshData	  quadMeshData;
 		VulkanPipeline	  mainViewportPipeline;
 		VulkanFramebuffer vulkanFramebuffer;
+		VulkanImGui		  vulkanImGui;
 
 		void LoadTextureMesh();
 		void LoadPipeline();

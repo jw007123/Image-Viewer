@@ -25,12 +25,13 @@ namespace Rendering
 		{
 			uint32_t		   bindingNo;
 			VkShaderStageFlags shaderStageFlags;
+			usize			   dataSize;
 		};
 
 		VulkanUBO(Utility::StackAllocator& stackAllocator_, VmaAllocator& vulkAllocator_, VulkanLogicalDevice& vulkLogicalDevice_);
 		~VulkanUBO();
 
-		void Create(const CreateInfo& createInfo_, const Utility::MemoryBlock dataBlk_);
+		void Create(const CreateInfo& createInfo_);
 		void Update(const Utility::MemoryBlock dataBlk_);
 	
 		VmaAllocator&			 vulkAllocator;
@@ -39,5 +40,8 @@ namespace Rendering
 
 		bool				  created;
 		VkDescriptorSetLayout uboLayout;
+		VmaAllocation		  uboAllocation;
+		VmaAllocationInfo     uboAllocationInfo;
+		VkBuffer			  uboBuffer;
 	};
 }
