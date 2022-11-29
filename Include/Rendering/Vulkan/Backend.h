@@ -30,6 +30,7 @@
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.h"
 #include "Rendering/Vulkan/Impl/VulkanMeshData.h"
 #include "Rendering/Vulkan/Impl/VulkanUBO.h"
+#include "Rendering/Vulkan/Impl/VulkanPushConstant.h"
 
 namespace Rendering
 {
@@ -75,11 +76,12 @@ namespace Rendering
 		VulkanSwapChain		   vulkanSwapChain;
 		VulkanCommandPool	   vulkanCommandPool[Consts::maxFramesInFlight];
 
-		VulkanUBO         cameraDataUBO[Consts::maxFramesInFlight];
-		VulkanMeshData	  quadMeshData;
-		VulkanPipeline	  mainViewportPipeline;
-		VulkanFramebuffer vulkanFramebuffer;
-		VulkanImGui		  vulkanImGui;
+		VulkanUBO          cameraDataUBO[Consts::maxFramesInFlight];
+		VulkanPushConstant modelDataPC[Consts::maxFramesInFlight];
+		VulkanMeshData	   quadMeshData;
+		VulkanPipeline	   mainViewportPipeline;
+		VulkanFramebuffer  vulkanFramebuffer;
+		VulkanImGui		   vulkanImGui;
 
 		void LoadTextureMesh();
 		void LoadPipeline();

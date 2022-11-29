@@ -13,6 +13,7 @@
 #include "Rendering/Vulkan/Impl/VulkanSwapChain.h"
 #include "Rendering/Vulkan/Impl/VulkanPipeline.h"
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
+#include "Rendering/Vulkan/Impl/VulkanPushConstant.h"
 
 namespace Rendering
 {
@@ -27,6 +28,9 @@ namespace Rendering
 			VkDeviceSize& indexOffset;
 			VkBuffer&	  indexBuffer;
 			usize	      nIndices;
+
+			VulkanPushConstant* pushConstants;
+			usize				nPushConstants;
 
 			DrawInfo(VkDeviceSize& vertOffset_,  VkBuffer& vertBuffer_,
 					 VkDeviceSize& indexOffset_, VkBuffer& indexBuffer_,

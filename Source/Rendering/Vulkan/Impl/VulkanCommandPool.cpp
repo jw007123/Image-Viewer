@@ -12,6 +12,8 @@ namespace Rendering
 										  indexBuffer(indexBuffer_),
 										  nIndices(nIndices_)
 	{
+		pushConstants  = nullptr;
+		nPushConstants = 0;
 	}
 
 
@@ -62,18 +64,30 @@ namespace Rendering
 			return false;
 		}
 
-		VkPipeline vulkPipeline;
-		if (!vulkanPipeline_.GetVkPipeline(vulkPipeline))
+		VkPipeline		 vulkPipeline;
+		VkPipelineLayout vulkPipelineLayout;
+		if (!vulkanPipeline_.GetVkPipeline(vulkPipeline) || !vulkanPipeline_.GetVkPipelineLayout(vulkPipelineLayout))
 		{
 			return false;
 		}
 
+		// Bind stage
 		vkCmdBindPipeline(vulkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vulkPipeline);
 		vkCmdBindVertexBuffers(vulkCommandBuffer, 0, 1, &drawInfo_.vertBuffer, &drawInfo_.vertOffset);
 		vkCmdBindIndexBuffer(vulkCommandBuffer, drawInfo_.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
+		// Upload UBOs/PCs
+		for (usize i = 0; i < drawInfo_.nPushConstants; ++i)
+		{
+			const VulkanPushConstant& pc = drawInfo_.pushConstants[i];
+			vkCmdPushConstants(vulkCommandBuffer, vulkPipelineLayout, pc.pushConstant.stageFlags,
+							   pc.pushConstant.offset, pc.pushConstant.size, pc.dataBlk.ptr);
+		}
+
+		// Draw stage
 		vkCmdDrawIndexed(vulkCommandBuffer, drawInfo_.nIndices, 1, 0, 0, 0);
 
+		// Cleanup
 		vkCmdEndRenderPass(vulkCommandBuffer);
 
 		return VULK_CHECK_SUCCESS(vkEndCommandBuffer, vulkCommandBuffer);

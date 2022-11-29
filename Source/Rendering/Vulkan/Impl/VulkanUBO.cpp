@@ -7,7 +7,7 @@ namespace Rendering
 						 vulkAllocator(vulkAllocator_),
 						 vulkLogicalDevice(vulkLogicalDevice_)
 	{
-
+		created = false;
 	}
 
 
@@ -47,9 +47,9 @@ namespace Rendering
 		bufferCreateInfo.sharingMode		= VK_SHARING_MODE_EXCLUSIVE;
 
 		VmaAllocationCreateInfo allocCreateInfo = {};
-		allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
-		allocCreateInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT |
-								VMA_ALLOCATION_CREATE_MAPPED_BIT;
+		allocCreateInfo.usage					= VMA_MEMORY_USAGE_AUTO;
+		allocCreateInfo.flags				    = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT |
+								                  VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
 		VULK_ASSERT_SUCCESS(vmaCreateBuffer, vulkAllocator, &bufferCreateInfo, &allocCreateInfo, &uboBuffer, &uboAllocation, &uboAllocationInfo);
 	}

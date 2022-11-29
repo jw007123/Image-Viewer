@@ -31,6 +31,12 @@ namespace Rendering
 			usize				   nLayouts;
 		};
 
+		struct PCSInfo
+		{
+			VkPushConstantRange* pcs;
+			usize				 nPcs;
+		};
+
 		VulkanPipeline(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,
 					   VulkanLogicalDevice&    vulkanLogicalDevice_, VulkanSwapChain&		  vulkanSwapChain_);
 		~VulkanPipeline();
@@ -38,10 +44,11 @@ namespace Rendering
 		void Destroy();
 
 		bool LoadShaderStage(const char* fName_, const VulkanShader::Type type_);
-		bool LoadPipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_);
+		bool LoadPipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const PCSInfo& pcsInfo_);
 
 		bool GetVkPipeline(VkPipeline& vulkPipeline_);
 		bool GetVkRenderPass(VkRenderPass& vulkRenderPass_);
+		bool GetVkPipelineLayout(VkPipelineLayout& vulkPipelineLayout_);
 
 	private:
 		struct Consts
@@ -72,6 +79,6 @@ namespace Rendering
 		bool CreateRenderPass();
 
 		/// Completes the VkPipelineLayout and VkPipeline members
-		bool CreatePipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_);
+		bool CreatePipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const PCSInfo& pcsInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_);
 	};
 }

@@ -21,6 +21,11 @@ namespace Rendering
 						   { stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice },
 						   { stackAllocator_, vulkanVma.GetVmaAllocator(), vulkanLogicalDevice }
 					   },
+					   modelDataPC
+					   {
+						   { heapAllocator_, vulkanPhysicalDevice },
+						   { heapAllocator_, vulkanPhysicalDevice }
+					   },
 					   quadMeshData(stackAllocator_, vulkanVma.GetVmaAllocator()),
 					   mainViewportPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
 					   vulkanFramebuffer(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
@@ -50,8 +55,12 @@ namespace Rendering
 			VulkanUBO::CreateInfo uboCreateInfo = {};
 			uboCreateInfo.bindingNo			    = 0;
 			uboCreateInfo.shaderStageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
-			uboCreateInfo.dataSize				= 3 * sizeof(Eigen::Matrix4f);
+			uboCreateInfo.dataSize				= 2 * sizeof(Eigen::Matrix4f);
 			cameraDataUBO[i].Create(uboCreateInfo);
+
+			VulkanPushConstant::CreateInfo pcsCreateInfo = {};
+			pcsCreateInfo.shaderStageFlags				 = VK_SHADER_STAGE_VERTEX_BIT;
+			pcsCreateInfo.dataSize						 = sizeof(Eigen::Matrix4f);
 		}
 
 		// Load shaders
@@ -175,6 +184,14 @@ namespace Rendering
 		}
 
 		// Update UBOs
+		Eigen::Matrix4f camData[2];
+		camData[0] = cam_.GetViewToProj();
+		camData[1] = cam_.GetWorldToView();
+		cameraDataUBO[currentFrameIdx].Update(Utility::MemoryBlock(sizeof(camData), (void*)&camData));
+
+		// Update PCs
+		Eigen::Matrix4f idMat4(Eigen::Matrix4f::Identity());
+		modelDataPC[currentFrameIdx].Update(Utility::MemoryBlock(sizeof(Eigen::Matrix4f), (void*)&idMat4));
 
 		RecordFullViewToBuffer();
 	}
@@ -236,7 +253,11 @@ namespace Rendering
 		uInfo.layouts  = &cameraDataUBO[currentFrameIdx].uboLayout;
 		uInfo.nLayouts = 1;
 
-		mainViewportPipeline.LoadPipeline(vInfo, uInfo);
+		VulkanPipeline::PCSInfo pcsInfo;
+		pcsInfo.pcs  = &modelDataPC[currentFrameIdx].pushConstant;
+		pcsInfo.nPcs = 1;
+
+		mainViewportPipeline.LoadPipeline(vInfo, uInfo, pcsInfo);
 		vulkanFramebuffer.BindTo(mainViewportPipeline);
 	}
 

@@ -53,7 +53,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::LoadPipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_)
+	bool VulkanPipeline::LoadPipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const PCSInfo& pcsInfo_)
 	{
 		u8 nTypes = 0;
 		VulkanShader::Type typesToUse[VulkanShader::Num];
@@ -72,7 +72,7 @@ namespace Rendering
 		wasRenderPassCreated = CreateRenderPass();
 		if (wasRenderPassCreated)
 		{
-			wasPipelineCreated = CreatePipeline(vertexInfo_, uboInfo_, nTypes, typesToUse);
+			wasPipelineCreated = CreatePipeline(vertexInfo_, uboInfo_, pcsInfo_, nTypes, typesToUse);
 		}
 
 		return wasRenderPassCreated && wasPipelineCreated;
@@ -90,6 +90,13 @@ namespace Rendering
 	{
 		vulkRenderPass_ = vulkRenderPass;
 		return wasRenderPassCreated;
+	}
+
+
+	bool VulkanPipeline::GetVkPipelineLayout(VkPipelineLayout& vulkPipelineLayout_)
+	{
+		vulkPipelineLayout_ = vulkPipelineLayout;
+		return wasPipelineCreated;
 	}
 
 
@@ -137,7 +144,7 @@ namespace Rendering
 	}
 
 
-	bool VulkanPipeline::CreatePipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_)
+	bool VulkanPipeline::CreatePipeline(const VertexInfo& vertexInfo_, const UBOInfo& uboInfo_, const PCSInfo& pcsInfo_, const u8 nTypes_, VulkanShader::Type* typesToUse_)
 	{
 		// Create structs for each shader we want to make use of
 		VkPipelineShaderStageCreateInfo shaderStageInfo[VulkanShader::Num];
@@ -246,8 +253,8 @@ namespace Rendering
 		layoutInfo.sType					  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		layoutInfo.setLayoutCount			  = uboInfo_.nLayouts;
 		layoutInfo.pSetLayouts				  = uboInfo_.layouts;
-		layoutInfo.pushConstantRangeCount	  = 0;
-		layoutInfo.pPushConstantRanges		  = nullptr;
+		layoutInfo.pushConstantRangeCount	  = pcsInfo_.nPcs;
+		layoutInfo.pPushConstantRanges		  = pcsInfo_.pcs;
 
 		// Assert here as will do check on VkPipeline
 		VULK_ASSERT_SUCCESS(vkCreatePipelineLayout, vulkanLogicalDevice.GetVkLogicalDevice(),  &layoutInfo, nullptr, &vulkPipelineLayout);

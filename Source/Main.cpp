@@ -46,6 +46,7 @@
 #include "Rendering/Vulkan/Impl/VulkanCommandPool.cpp"
 #include "Rendering/Vulkan/Impl/VulkanMeshData.cpp"
 #include "Rendering/Vulkan/Impl/VulkanUBO.cpp"
+#include "Rendering/Vulkan/Impl/VulkanPushConstant.cpp"
 #include "Rendering/Vulkan/Backend.cpp"
 
 i16 main()
