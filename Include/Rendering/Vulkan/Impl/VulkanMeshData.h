@@ -34,6 +34,7 @@ namespace Rendering
 		VmaAllocation	  vertAllocation;
 		VmaAllocationInfo vertAllocationInfo;
 		VkBuffer		  vertBuffer;
+
 		VmaAllocation	  indicesAllocation;
 		VmaAllocationInfo indicesAllocationInfo;
 		VkBuffer		  indicesBuffer;

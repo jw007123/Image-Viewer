@@ -14,6 +14,7 @@
 #include "Rendering/Vulkan/Impl/VulkanPipeline.h"
 #include "Rendering/Vulkan/Impl/VulkanQueueFamilies.h"
 #include "Rendering/Vulkan/Impl/VulkanPushConstant.h"
+#include "Rendering/Vulkan/Impl/VulkanMeshData.h"
 
 namespace Rendering
 {
@@ -22,19 +23,13 @@ namespace Rendering
 	public:
 		struct DrawInfo
 		{
-			VkDeviceSize& vertOffset;
-			VkBuffer&	  vertBuffer;
-
-			VkDeviceSize& indexOffset;
-			VkBuffer&	  indexBuffer;
-			usize	      nIndices;
+			VulkanMeshData* meshData;
+			usize			nMeshData;
 
 			VulkanPushConstant* pushConstants;
 			usize				nPushConstants;
 
-			DrawInfo(VkDeviceSize& vertOffset_,  VkBuffer& vertBuffer_,
-					 VkDeviceSize& indexOffset_, VkBuffer& indexBuffer_,
-					 usize nIndices_);
+			DrawInfo();
 		};
 
 		VulkanCommandPool(Utility::HeapAllocator& heapAllocator_,       Utility::StackAllocator& stackAllocator_,

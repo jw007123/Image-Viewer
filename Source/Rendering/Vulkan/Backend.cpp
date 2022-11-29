@@ -26,6 +26,7 @@ namespace Rendering
 						   { heapAllocator_, vulkanPhysicalDevice },
 						   { heapAllocator_, vulkanPhysicalDevice }
 					   },
+					   uniformBufferPool(heapAllocator_, stackAllocator_, vulkanLogicalDevice),
 					   quadMeshData(stackAllocator_, vulkanVma.GetVmaAllocator()),
 					   mainViewportPipeline(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
 					   vulkanFramebuffer(heapAllocator_, stackAllocator_, vulkanLogicalDevice, vulkanSwapChain),
@@ -37,7 +38,13 @@ namespace Rendering
 		imageTargetIdx  = 0;
 		currentFrameIdx = 0;
 		isMinimised		= false;
-		
+
+		// Setup descriptor pools
+		VulkanDescriptorPool::CreateInfo uniformPoolCreateInfo = {};
+		uniformPoolCreateInfo.size							   = Consts::maxFramesInFlight;
+		uniformPoolCreateInfo.type							   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		uniformBufferPool.Create(uniformPoolCreateInfo);
+
 		// Create objs that need to persist across multiple frames
 		for (usize i = 0; i < Consts::maxFramesInFlight; ++i)
 		{
@@ -61,6 +68,8 @@ namespace Rendering
 			VulkanPushConstant::CreateInfo pcsCreateInfo = {};
 			pcsCreateInfo.shaderStageFlags				 = VK_SHADER_STAGE_VERTEX_BIT;
 			pcsCreateInfo.dataSize						 = sizeof(Eigen::Matrix4f);
+
+			uniformBufferPool.Allocate(cameraDataUBO[i]);
 		}
 
 		// Load shaders
@@ -205,7 +214,7 @@ namespace Rendering
 
 		Eigen::Vector3f* points		   = (Eigen::Vector3f*)pointsBuff.ptr;
 		Eigen::Vector2f* textureCoords = (Eigen::Vector2f*)textureCoordsBuff.ptr;
-		uint32_t* indices		       = (uint32_t*)indicesBuff.ptr;;
+		uint32_t* indices		       = (uint32_t*)indicesBuff.ptr;
 
 		// Points
 		{
@@ -264,18 +273,12 @@ namespace Rendering
 
 	void VBackend::RecordFullViewToBuffer()
 	{
-		usize indexCnt			 = quadMeshData.indicesAllocationInfo.size / sizeof(uint32_t);
-		VkDeviceSize vertOffset  = 0;
-		VkDeviceSize indexOffset = 0;
+		VulkanCommandPool::DrawInfo dInfo;
+		dInfo.meshData		 = &quadMeshData;
+		dInfo.nMeshData		 = 1;
+		dInfo.pushConstants  = &modelDataPC[currentFrameIdx];
+		dInfo.nPushConstants = 1;
 
-		VulkanCommandPool::DrawInfo drawInfo
-		(
-			vertOffset,
-			quadMeshData.vertBuffer,
-			indexOffset,
-			quadMeshData.indicesBuffer,
-			indexCnt
-		);
-		vulkanCommandPool[currentFrameIdx].RecordToBuffer(mainViewportPipeline, vulkanFramebuffer, drawInfo, imageTargetIdx);
+		vulkanCommandPool[currentFrameIdx].RecordToBuffer(mainViewportPipeline, vulkanFramebuffer, dInfo, imageTargetIdx);
 	}
 }

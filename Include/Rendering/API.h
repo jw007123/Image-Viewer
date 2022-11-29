@@ -24,6 +24,7 @@
 	#include "Rendering/Vulkan/Impl/VulkanMeshData.h"
 	#include "Rendering/Vulkan/Impl/VulkanUBO.h"
 	#include "Rendering/Vulkan/Impl/VulkanPushConstant.h"
+	#include "Rendering/Vulkan/Impl/VulkanDescriptorPool.h"
 
 	#include "Rendering/Vulkan/Backend.h"
 //#else

@@ -2,17 +2,9 @@
 
 namespace Rendering
 {
-	
-	VulkanCommandPool::DrawInfo::DrawInfo(VkDeviceSize& vertOffset_,  VkBuffer& vertBuffer_,
-										  VkDeviceSize& indexOffset_, VkBuffer& indexBuffer_,
-										  usize nIndices_) :
-										  vertOffset(vertOffset_),
-										  vertBuffer(vertBuffer_),
-										  indexOffset(indexOffset_),
-										  indexBuffer(indexBuffer_),
-										  nIndices(nIndices_)
+	VulkanCommandPool::DrawInfo::DrawInfo()
 	{
-		pushConstants  = nullptr;
+		nMeshData      = 0;
 		nPushConstants = 0;
 	}
 
@@ -71,10 +63,7 @@ namespace Rendering
 			return false;
 		}
 
-		// Bind stage
 		vkCmdBindPipeline(vulkCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vulkPipeline);
-		vkCmdBindVertexBuffers(vulkCommandBuffer, 0, 1, &drawInfo_.vertBuffer, &drawInfo_.vertOffset);
-		vkCmdBindIndexBuffer(vulkCommandBuffer, drawInfo_.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
 		// Upload UBOs/PCs
 		for (usize i = 0; i < drawInfo_.nPushConstants; ++i)
@@ -84,10 +73,18 @@ namespace Rendering
 							   pc.pushConstant.offset, pc.pushConstant.size, pc.dataBlk.ptr);
 		}
 
-		// Draw stage
-		vkCmdDrawIndexed(vulkCommandBuffer, drawInfo_.nIndices, 1, 0, 0, 0);
+		// Draw
+		for (usize i = 0; i < drawInfo_.nMeshData; ++i)
+		{
+			const VkDeviceSize vertOffset = 0;
+			const uint32_t nIndices		  = (drawInfo_.meshData[i].indicesAllocationInfo.size / sizeof(uint32_t));
 
-		// Cleanup
+			vkCmdBindVertexBuffers(vulkCommandBuffer, 0, 1, &drawInfo_.meshData[i].vertBuffer, &vertOffset);
+			vkCmdBindIndexBuffer(vulkCommandBuffer, drawInfo_.meshData[i].indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
+
+			vkCmdDrawIndexed(vulkCommandBuffer, nIndices, 1, 0, 0, 0);
+		}
+
 		vkCmdEndRenderPass(vulkCommandBuffer);
 
 		return VULK_CHECK_SUCCESS(vkEndCommandBuffer, vulkCommandBuffer);
